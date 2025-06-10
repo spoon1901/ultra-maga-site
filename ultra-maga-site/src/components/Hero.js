@@ -70,7 +70,7 @@ export default function Hero() {
 
           <a href="https://xpmarket.com/token/MAGA-rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d" target="_blank" rel="noopener noreferrer" className="hover:animate-bounce" title="xpmarket">
             <div className="w-[3rem] h-[3rem] flex items-center justify-center">
-              <img src="https://files.catbox.moe/wlebau.png" alt="xpmarket" className="w-full h-full object-contain" />
+              <img src="https://files.catbox.moe/pfxchr.png" alt="xpmarket" className="w-full h-full object-contain" />
             </div>
           </a>
 
