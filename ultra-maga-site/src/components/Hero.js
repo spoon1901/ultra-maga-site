@@ -115,7 +115,7 @@ export default function Hero() {
             <img
               src="https://files.catbox.moe/wlebau.png"
               alt="xpmarket"
-              className="w-13 h-13"
+              className="w-10 h-10"
             />
           </a>
         </div>
