@@ -23,7 +23,7 @@ export default function HowToBuy() {
               href="https://xaman.app"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-400 underline"
+              className="text-xl sm:text-3xl md:text-4xl lg:text-2xl text-blue-400 underline"
             >
               XAMAN Wallet
             </a>
