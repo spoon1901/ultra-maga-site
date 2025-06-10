@@ -57,6 +57,17 @@ export default function Hero() {
             />
           </a>
           <a
+            href="https://www.tiktok.com/@ultra_maga_xrpl"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:animate-bounce"
+            title="TikTok">
+            <img
+              src="https://files.catbox.moe/b6ahj7.png"
+              alt="TikTok"
+              className="w-8 h-8"/>
+          </a>
+          <a
             href="https://dexscreener.com/xrpl/4d41474100000000000000000000000000000000.rwh49fhnr48feup7nx9eul4k1pelrpws3d_xrp"
             target="_blank"
             rel="noopener noreferrer"
