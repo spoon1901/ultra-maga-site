@@ -25,7 +25,7 @@ export default function Hero() {
             <img
               src="https://files.catbox.moe/m51h4t.png"
               alt="Copy"
-              className="w-full h-full object-contain"
+              className="w-12 h-12 object-contain"
             />
           </button>
         </div>
@@ -64,7 +64,7 @@ export default function Hero() {
 
           <a href="https://firstledger.net/token/rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d/4D41474100000000000000000000000000000000" target="_blank" rel="noopener noreferrer" className="hover:animate-bounce" title="FirstLedger (Verified)">
             <div className="w-[3rem] h-[3rem] flex items-center justify-center">
-              <img src="https://files.catbox.moe/hnqcbg.png" alt="FirstLedger" className="w-full h-full object-contain" />
+              <img src="https://files.catbox.moe/0hbbp3.png" alt="FirstLedger" className="w-full h-full object-contain" />
             </div>
           </a>
 
