@@ -34,19 +34,19 @@ export default function Hero() {
 
           <a href="https://x.com/Ultra_MAGA_XRPL" target="_blank" rel="noopener noreferrer" className="hover:animate-bounce" title="X">
             <div className="w-[3rem] h-[3rem] flex items-center justify-center">
-              <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X" className="w-full h-full object-contain" />
+              <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X" className="w-full h-full object-contain invert" />
             </div>
           </a>
 
           <a href="https://t.me/UltraMAGAXRP" target="_blank" rel="noopener noreferrer" className="hover:animate-bounce" title="Telegram">
             <div className="w-[3rem] h-[3rem] flex items-center justify-center">
-              <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg" alt="Telegram" className="w-full h-full object-contain" />
+              <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg" alt="Telegram" className="w-full h-full object-contain invert" />
             </div>
           </a>
 
           <a href="https://www.tiktok.com/@ultra_maga_xrpl" target="_blank" rel="noopener noreferrer" className="hover:animate-bounce" title="TikTok">
             <div className="w-[3rem] h-[3rem] flex items-center justify-center">
-              <img src="https://files.catbox.moe/rtxl3m.png" alt="TikTok" className="w-full h-full object-contain" />
+              <img src="https://files.catbox.moe/rtxl3m.png" alt="TikTok" className="w-full h-full object-contain invert" />
             </div>
           </a>
 
