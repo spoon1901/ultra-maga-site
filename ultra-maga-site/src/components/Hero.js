@@ -58,7 +58,7 @@ export default function Hero() {
 
           <a href="https://xmagnetic.org/?token=rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d" target="_blank" rel="noopener noreferrer" className="hover:animate-bounce" title="XMagnetic">
             <div className="w-[3rem] h-[3rem] flex items-center justify-center">
-              <img src="https://i.imgur.com/bjIraur.png" alt="XMagnetic" className="w-full h-full object-contain" />
+              <img src="https://files.catbox.moe/qdyqko.png" alt="XMagnetic" className="w-full h-full object-contain" />
             </div>
           </a>
 
