@@ -9,9 +9,9 @@ export default function Hero() {
       
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-8 bg-black bg-opacity-60 backdrop-blur-sm border border-red-600 rounded-xl p-8 shadow-lg max-w-4xl w-full text-center">
 
-       <h1 className="text-[clamp(1.5rem,6vw,2.75rem)] font-bold mb-4 text-white drop-shadow">ULTRA $MAGA</h1>
+       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow">ULTRA $MAGA</h1>
 
-        <p className="text-[clamp(1rem,4.5vw,1.25rem)] mb-4 text-white">
+        <p className="text-base sm:text-lg md:text-xl mb-4 text-white">
           The people’s token is back. Fuel the freedom. Dominate the XRPL. <br />
           Welcome to the Golden Age of Memes.
         </p>
