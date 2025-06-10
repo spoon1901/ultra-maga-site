@@ -25,7 +25,7 @@ export default function App() {
   <div className="text-4xl font-bold text-white drop-shadow">
     ULTRA $MAGA
   </div>
-  <div className="ml-auto flex flex-wrap justify-end space-x-4 text-md sm:text-base lg:text-xl">
+  <div className="ml-auto flex flex-wrap justify-end space-x-4 text-xl sm:text-base lg:text-2xl">
 
     <a href="#home" className="text-white hover:text-blue-400">HOME</a>
     <a href="#about" className="text-white hover:text-blue-400">ABOUT</a>
