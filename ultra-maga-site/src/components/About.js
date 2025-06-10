@@ -5,8 +5,10 @@ export default function About() {
   return (
     <section id="about" className="relative w-full py-20 px-6 text-white text-center">
       <div className="bg-black bg-opacity-60 backdrop-blur-sm border border-red-600 rounded-xl p-8 shadow-lg max-w-4xl mx-auto">
-        <h2 className="text-4xl font-bold mb-4">About</h2>
-        <p className="text-lg">
+        <h2 className="text-4xl sm:text-4xl md:text-5xl lg:text-4xl font-bold mb-4 text-white drop-shadow">
+About</h2>
+        <p className="text-xl sm:text-3xl md:text-4xl lg:text-2xl text-white">
+
           ULTRA $MAGA launched in January as a bold meme coin on the XRP Ledger. When momentum slowed and leadership vanished, the community didn't fold, it rallied.
           <br /><br />
           What followed wasn't a reboot, it was a grassroots resurgence. A small crew of holders stepped in, fueling a quiet rebuild with one mission: push $MAGA to where it always belonged.
