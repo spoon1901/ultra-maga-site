@@ -22,10 +22,10 @@ export default function App() {
 
       {/* Navigation Bar */}
       <nav className="fixed top-0 left-0 w-full z-40 px-6 py-4 flex items-center bg-black bg-opacity-50 backdrop-blur-md">
-  <div className="text-2xl font-bold text-white drop-shadow">
+  <div className="text-4xl font-bold text-white drop-shadow">
     ULTRA $MAGA
   </div>
-  <div className="ml-auto flex flex-wrap justify-end space-x-4 text-sm sm:text-base md:text-lg">
+  <div className="ml-auto flex flex-wrap justify-end space-x-4 text-md sm:text-base lg:text-xl">
 
     <a href="#home" className="text-white hover:text-blue-400">HOME</a>
     <a href="#about" className="text-white hover:text-blue-400">ABOUT</a>
