@@ -81,6 +81,7 @@ export default function Hero() {
               src="https://i.imgur.com/pXfkND9.png"
               alt="DexScreener"
               className="w-16 h-16"/>
+                </div>
           </a>
           <a
             href="https://xmagnetic.org/?token=rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d"
