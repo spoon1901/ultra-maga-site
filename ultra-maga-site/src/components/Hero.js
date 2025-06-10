@@ -24,11 +24,10 @@ export default function Hero() {
             <img
               src="https://files.catbox.moe/m51h4t.png"
               alt="Copy"
-              className="w-full h-full object-contain"
-    />
-  </div>
-          </button>
-        </div>
+              className="w-full h-full object-contain"/>
+                </button>
+                </div>
+                  </div>
         
         <div className="flex justify-center items-center space-x-6 mt-4">
           <a
