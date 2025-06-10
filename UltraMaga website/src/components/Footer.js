@@ -3,7 +3,7 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <footer className="py-6 text-center text-gray-500 bg-black bg-opacity-40">
+    <footer className="relative z-10 bg-black bg-opacity-80 text-white text-center py-6 mt-16">
       Powered by the ULTRA MAGA XRP community – 2025
       <div className="mt-4 space-x-4">
         <a
