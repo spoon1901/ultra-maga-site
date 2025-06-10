@@ -40,7 +40,7 @@ export default function HowToBuy() {
                 href="https://www.binance.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 underline"
+                className="text-xl sm:text-3xl md:text-4xl lg:text-2xl text-blue-400 underline"
               >
                 Binance
               </a>
@@ -48,7 +48,7 @@ export default function HowToBuy() {
                 href="https://www.coinbase.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 underline"
+                className="text-xl sm:text-3xl md:text-4xl lg:text-2xl text-blue-400 underline"
               >
                 Coinbase
               </a>
@@ -56,7 +56,7 @@ export default function HowToBuy() {
                 href="https://www.crypto.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 underline"
+                className="text-xl sm:text-3xl md:text-4xl lg:text-2xl text-blue-400 underline"
               >
                 Crypto.com
               </a>
@@ -73,7 +73,7 @@ export default function HowToBuy() {
                 href="https://xmagnetic.org/?token=rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 underline"
+                className="text-xl sm:text-3xl md:text-4xl lg:text-2xl text-blue-400 underline"
               >
                 XMagnetic
               </a>
@@ -81,7 +81,7 @@ export default function HowToBuy() {
                 href="https://xpmarket.com/token/MAGA-rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 underline"
+                className="text-xl sm:text-3xl md:text-4xl lg:text-2xl text-blue-400 underline"
               >
                 XPMarket
               </a>
@@ -89,7 +89,7 @@ export default function HowToBuy() {
                 href="https://firstledger.net/token/rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d/4D41474100000000000000000000000000000000"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 underline"
+                className="text-xl sm:text-3xl md:text-4xl lg:text-2xl text-blue-400 underline"
               >
                 First Ledger
               </a>
