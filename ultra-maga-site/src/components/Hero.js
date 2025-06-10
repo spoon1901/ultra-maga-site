@@ -24,8 +24,9 @@ export default function Hero() {
             <img
               src="https://files.catbox.moe/m51h4t.png"
               alt="Copy"
-              className="w-10 h-10 inline"
-            />
+              className="w-full h-full object-contain"
+    />
+  </div>
           </button>
         </div>
         
@@ -36,12 +37,13 @@ export default function Hero() {
             rel="noopener noreferrer"
             className="hover:animate-bounce"
             title="X"
-          >
+          ><div className="w-[3rem] h-[3rem] flex items-center justify-center">
             <img
               src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg"
               alt="X"
-              className="w-12 h-12 invert"
-            />
+              className="w-full h-full object-contain"
+    />
+  </div>
           </a>
           <a
             href="https://t.me/UltraMAGAXRP"
@@ -49,30 +51,33 @@ export default function Hero() {
             rel="noopener noreferrer"
             className="hover:animate-bounce"
             title="Telegram"
-          >
+          ><div className="w-[3rem] h-[3rem] flex items-center justify-center">
             <img
               src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg"
               alt="Telegram"
-              className="w-14 h-14 invert"
-            />
+              className="w-full h-full object-contain"
+    />
+  </div>
           </a>
           <a
             href="https://www.tiktok.com/@ultra_maga_xrpl"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:animate-bounce"
-            title="TikTok">
+            title="TikTok"><div className="w-[3rem] h-[3rem] flex items-center justify-center">
             <img
               src="https://files.catbox.moe/rtxl3m.png"
               alt="TikTok"
-              className="w-14 h-14 invert"/>
+              className="w-full h-full object-contain"
+    />
+  </div>
           </a>
           <a
             href="https://dexscreener.com/xrpl/4d41474100000000000000000000000000000000.rwh49fhnr48feup7nx9eul4k1pelrpws3d_xrp"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:animate-bounce"
-            title="DexScreener">
+            title="DexScreener"><div className="w-[3rem] h-[3rem] flex items-center justify-center">
             <img
               src="https://i.imgur.com/pXfkND9.png"
               alt="DexScreener"
@@ -84,12 +89,13 @@ export default function Hero() {
             rel="noopener noreferrer"
             className="hover:animate-bounce"
             title="XMagnetic"
-          >
+          ><div className="w-[3rem] h-[3rem] flex items-center justify-center">
             <img
               src="https://i.imgur.com/bjIraur.png"
               alt="XMagnetic"
-              className="w-12 h-12"
-            />
+              className="w-full h-full object-contain"
+    />
+  </div>
           </a>
           
           <a
@@ -98,12 +104,13 @@ export default function Hero() {
             rel="noopener noreferrer"
             className="hover:animate-bounce"
             title="FirstLedger (Verified)"
-          >
+          ><div className="w-[3rem] h-[3rem] flex items-center justify-center">
             <img
               src="https://files.catbox.moe/hnqcbg.png"
               alt="FirstLedger"
-              className="w-24 h-24"
-            />
+              className="w-full h-full object-contain"
+    />
+  </div>
           </a>
           <a
             href="https://xpmarket.com/token/MAGA-rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d"
@@ -111,12 +118,13 @@ export default function Hero() {
             rel="noopener noreferrer"
             className="hover:animate-bounce"
             title="xpmarket"
-          >
+          ><div className="w-[3rem] h-[3rem] flex items-center justify-center">
             <img
               src="https://files.catbox.moe/wlebau.png"
               alt="xpmarket"
-              className="w-10 h-10"
-            />
+              className="w-full h-full object-contain"
+    />
+  </div>
           </a>
         </div>
       </div>
