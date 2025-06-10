@@ -24,7 +24,7 @@ export default function Footer() {
           X
         </a>
       </div>
-      <div className="mt-4 text-xs max-w-3xl mx-auto text-gray-400">
+      <div className="mt-4 text-md max-w-3xl mx-auto text-gray-400">
         Crypto assets are highly volatile and carry risk. This project is for entertainment and community engagement purposes only and does not constitute financial advice. Always do your own research before investing in any digital asset.
       </div>
     </footer>
