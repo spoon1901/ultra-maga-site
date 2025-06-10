@@ -3,9 +3,12 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <footer className="relative z-20 bg-black bg-opacity-80 text-white text-center py-6 mt-16">
-      Powered by the ULTRA MAGA XRP community – 2025
-      <div className="mt-4 space-x-4">
+    <footer className="relative z-20 bg-black bg-opacity-80 text-white text-center py-6 mt-16 text-sm sm:text-base md:text-lg">
+      <div className="font-semibold mb-2">
+        Powered by the ULTRA MAGA XRP community – 2025
+      </div>
+
+      <div className="mt-2 space-x-4">
         <a
           href="https://t.me/UltraMagaXRP"
           target="_blank"
@@ -24,7 +27,8 @@ export default function Footer() {
           X
         </a>
       </div>
-      <div className="mt-4 text-md max-w-3xl mx-auto text-gray-400">
+
+      <div className="mt-4 text-xs sm:text-sm md:text-base max-w-3xl mx-auto text-gray-400 px-4">
         Crypto assets are highly volatile and carry risk. This project is for entertainment and community engagement purposes only and does not constitute financial advice. Always do your own research before investing in any digital asset.
       </div>
     </footer>
