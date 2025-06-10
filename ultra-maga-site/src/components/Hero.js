@@ -24,7 +24,7 @@ export default function Hero() {
             <img
               src="https://files.catbox.moe/m51h4t.png"
               alt="Copy"
-              className="w-5 h-5 inline"
+              className="w-10 h-10 inline"
             />
           </button>
         </div>
@@ -40,7 +40,7 @@ export default function Hero() {
             <img
               src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg"
               alt="X"
-              className="w-6 h-6 invert"
+              className="w-12 h-12 invert"
             />
           </a>
           <a
@@ -53,7 +53,7 @@ export default function Hero() {
             <img
               src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg"
               alt="Telegram"
-              className="w-7 h-7 invert"
+              className="w-14 h-14 invert"
             />
           </a>
           <a
@@ -65,7 +65,7 @@ export default function Hero() {
             <img
               src="https://files.catbox.moe/rtxl3m.png"
               alt="TikTok"
-              className="w-7 h-7 invert"/>
+              className="w-14 h-14 invert"/>
           </a>
           <a
             href="https://dexscreener.com/xrpl/4d41474100000000000000000000000000000000.rwh49fhnr48feup7nx9eul4k1pelrpws3d_xrp"
@@ -76,7 +76,7 @@ export default function Hero() {
             <img
               src="https://i.imgur.com/pXfkND9.png"
               alt="DexScreener"
-              className="w-8 h-8"/>
+              className="w-16 h-16"/>
           </a>
           <a
             href="https://xmagnetic.org/?token=rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d"
@@ -88,7 +88,7 @@ export default function Hero() {
             <img
               src="https://i.imgur.com/bjIraur.png"
               alt="XMagnetic"
-              className="w-6 h-6"
+              className="w-12 h-12"
             />
           </a>
           
@@ -102,7 +102,7 @@ export default function Hero() {
             <img
               src="https://files.catbox.moe/hnqcbg.png"
               alt="FirstLedger"
-              className="w-12 h-12"
+              className="w-24 h-24"
             />
           </a>
           <a
@@ -115,7 +115,7 @@ export default function Hero() {
             <img
               src="https://files.catbox.moe/wlebau.png"
               alt="xpmarket"
-              className="w-9 h-9"
+              className="w-18 h-18"
             />
           </a>
         </div>
