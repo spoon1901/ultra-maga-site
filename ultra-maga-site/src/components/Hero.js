@@ -15,7 +15,7 @@ export default function Hero() {
           The people’s token is back. Fuel the freedom. Dominate the XRPL. <br />
           Welcome to the Golden Age of Memes.
         </p>
-        <div className="bg-black text-white rounded-md px-4 py-2 text-base sm:text-lg font-mono mb-6 border border-red-600 flex items-center justify-center">rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d
+        <div className="bg-black text-white rounded-md px-4 py-2 text-base sm:text-2xl md:text-3xl lg:text-xl font-mono mb-6 border border-red-600 flex items-center justify-center">rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d
           <button
             onClick={() => navigator.clipboard.writeText("rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d")}
             className="ml-2 text-white hover:text-red-500"
