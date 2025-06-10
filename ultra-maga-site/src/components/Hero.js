@@ -9,13 +9,13 @@ export default function Hero() {
       
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-8 bg-black bg-opacity-60 backdrop-blur-sm border border-red-600 rounded-xl p-8 shadow-lg max-w-4xl w-full text-center">
 
-        <h1 className="text-5xl font-bold mb-4 text-white drop-shadow">ULTRA $MAGA</h1>
-        <p className="text-xl mb-4 text-white">
+       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow">ULTRA $MAGA</h1>
+
+        <p className="text-base sm:text-lg md:text-xl mb-4 text-white">
           The people’s token is back. Fuel the freedom. Dominate the XRPL. <br />
           Welcome to the Golden Age of Memes.
         </p>
-        <div className="bg-black text-white rounded-md px-4 py-2 text-sm font-mono mb-6 border border-red-600 flex items-center justify-center">
-          rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d
+        <div className="bg-black text-white rounded-md px-4 py-2 text-sm sm:text-base font-mono mb-6 border border-red-600 flex items-center justify-center">rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d
           <button
             onClick={() => navigator.clipboard.writeText("rwH49FHnr48FeUP7NX9EuL4k1peLrPwS3d")}
             className="ml-2 text-white hover:text-red-500"
