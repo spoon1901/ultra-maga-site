@@ -12,7 +12,7 @@ export default function Roadmap() {
           <h3 className="text-2xl font-semibold mb-4 drop-shadow">Phase 1: Rise of the Golden Age</h3>
           <ul className="list-disc list-inside text-lg text-left max-w-xl mx-auto">
             <li>
-              <span className="text-green-400 mr-2">✔</span>
+              <span className="text-green-400 mr-2">&#10003;</span>
               <span className="text-white/30">Relaunch $MAGA on XRPL with updated vision</span>
             </li>
             <li>
