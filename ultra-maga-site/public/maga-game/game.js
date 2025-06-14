@@ -28,8 +28,8 @@ function preload() {
 }
 
 function create() {
-  trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.12);
-trump.body.setSize(trump.width * 0.12, trump.height * 0.12);
+  trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.09);
+trump.body.setSize(trump.width * 0.12, trump.height * 0.09);
 
   trump.setCollideWorldBounds(true);
 
@@ -85,7 +85,7 @@ function addPipe() {
   pipe.setImmovable(true);
 
   // Manually set smaller hitbox
-  pipe.body.setSize(pipe.width * 0.15, pipe.height * 0.15);
+  pipe.body.setSize(pipe.width * 0.15, pipe.height * 0.7);
 });
 
 
