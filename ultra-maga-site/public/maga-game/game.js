@@ -129,11 +129,15 @@ function addPipe() {
     pipe.setDepth(1);
   });
 
-  const burgerY = Phaser.Math.Between(y - gap + 50, y + gap - 50);
-  const burger = burgers.create(config.width + 30, burgerY, 'burger').setScale(0.05);
-  burger.setVelocityX(-200);
-  burger.body.allowGravity = false;
-  burger.setDepth(1);
+  if (Phaser.Math.Between(0, 1)) {
+    const burgerY = Phaser.Math.Between(y - gap + 30, y + gap - 30);
+    const burger = burgers.create(config.width + 30, burgerY, 'burger').setScale(0.07);
+    burger.setVelocityX(-200);
+    burger.body.allowGravity = false;
+    burger.body.setSize(burger.displayWidth * 1.3, burger.displayHeight * 1.3);
+    burger.body.setOffset(-burger.displayWidth * 0.15, -burger.displayHeight * 0.15);
+    burger.setDepth(1);
+  }
 }
 
 function update() {
