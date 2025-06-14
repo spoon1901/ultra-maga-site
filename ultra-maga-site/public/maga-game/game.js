@@ -1,3 +1,4 @@
+// ULTRA $MAGA Flappy Trump Game
 const config = {
   type: Phaser.AUTO,
   width: 400,
@@ -10,17 +11,15 @@ const config = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
-  scene: {
-    preload,
-    create,
-    update
-  }
+  scene: { preload, create, update }
 };
 
-let trump, cursors, pipes, scoreText, gameOver = false;
+let trump, cursors, pipes, scoreText, highScoreText, gameOver = false;
 let score = 0;
+let highScore = 0;
 let startText, restartText, background;
 let music;
+let musicStarted = false;
 
 const game = new Phaser.Game(config);
 
@@ -32,47 +31,38 @@ function preload() {
 }
 
 function create() {
-  // Background
   background = this.add.tileSprite(0, 0, config.width, config.height, 'background').setOrigin(0);
 
-  // Music
-  music = this.sound.add('music', { loop: true, volume: 0.2 });
-  music.play();
-
-  // Trump sprite
   trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.07);
   trump.body.setSize(trump.width * 0.7, trump.height * 0.7);
   trump.setCollideWorldBounds(true);
   trump.setVisible(false);
   trump.body.allowGravity = false;
 
-  // Pipes group
   pipes = this.physics.add.group();
 
-  // Score
-  scoreText = this.add.text(config.width / 2, 20, '0', {
-    fontSize: '32px',
-    fill: '#fff'
+  scoreText = this.add.text(config.width / 2, 20, 'Score: 0', {
+    fontSize: '20px', fill: '#fff'
   }).setOrigin(0.5).setDepth(1);
 
-  // Start text
+  highScoreText = this.add.text(config.width / 2, 50, 'High: 0', {
+    fontSize: '16px', fill: '#ffffff'
+  }).setOrigin(0.5).setDepth(1);
+
   startText = this.add.text(config.width / 2, config.height / 2, 'TAP TO START', {
-    fontSize: '28px',
-    fill: '#ffff00'
+    fontSize: '28px', fill: '#ffff00'
   }).setOrigin(0.5).setDepth(1);
 
-  // Input
   this.input.on('pointerdown', () => {
-    if (!trump.visible) {
+    if (!trump.visible && !gameOver) {
       startGame.call(this);
     } else if (gameOver) {
-      restartGame.call(this);
+      this.scene.restart();
     } else {
       flap();
     }
   });
 
-  // Keyboard
   cursors = this.input.keyboard.createCursorKeys();
   this.physics.add.collider(trump, pipes, hitPipe, null, this);
 }
@@ -81,6 +71,15 @@ function startGame() {
   startText.setVisible(false);
   trump.setVisible(true);
   trump.body.allowGravity = true;
+  gameOver = false;
+  score = 0;
+  scoreText.setText('Score: ' + score);
+
+  if (!musicStarted) {
+    music = this.sound.add('music', { loop: true, volume: 0.2 });
+    music.play();
+    musicStarted = true;
+  }
 
   this.time.addEvent({
     delay: 1500,
@@ -90,16 +89,12 @@ function startGame() {
   });
 }
 
-function restartGame() {
-  this.scene.restart();
-}
-
 function flap() {
   trump.setVelocityY(-300);
 }
 
 function addPipe() {
-  const gap = config.height / 4;
+  const gap = config.height / 3.5; // Tighter gap for challenge
   const y = Phaser.Math.Between(150, config.height - 150);
 
   const topPipe = pipes.create(config.width, y - gap, 'pipe').setOrigin(0, 1);
@@ -128,7 +123,11 @@ function update() {
     if (!pipe.passed && pipe.x + pipe.width < trump.x) {
       pipe.passed = true;
       score += 1;
-      scoreText.setText(score);
+      scoreText.setText('Score: ' + score);
+      if (score > highScore) {
+        highScore = score;
+        highScoreText.setText('High: ' + highScore);
+      }
     }
   });
 }
@@ -142,7 +141,6 @@ function hitPipe() {
   trump.setTint(0xff0000);
 
   restartText = this.add.text(config.width / 2, config.height / 2 + 50, 'CLICK TO TRY AGAIN', {
-    fontSize: '20px',
-    fill: '#ff0000'
+    fontSize: '20px', fill: '#ff0000'
   }).setOrigin(0.5).setDepth(1);
 }
