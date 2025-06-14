@@ -43,10 +43,12 @@ function create() {
   score = 0;
 
   // Background scroll layer
-  this.bg = this.add.tileSprite(0, 0, config.width, config.height, 'background')
-    .setOrigin(0)
-    .setScrollFactor(0)
-    .setDepth(-10);
+  this.bg = this.add.tileSprite(0, 0, 800, 600, 'background')
+  .setOrigin(0)
+  .setScrollFactor(0)
+  .setScale(config.width / 800, config.height / 600)
+  .setDepth(-10);
+
 
   startText = this.add.text(config.width / 2, config.height / 2, 'Tap to Start', {
     fontSize: '32px',
