@@ -28,7 +28,7 @@ function preload() {
 }
 
 function create() {
-  trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.5);
+  trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.2);
   trump.setCollideWorldBounds(true);
 
   pipes = this.physics.add.group();
@@ -75,12 +75,14 @@ function addPipe() {
   const topPipe = pipes.create(400, y - gap, 'pipe');
   const bottomPipe = pipes.create(400, y + gap, 'pipe');
 
-  [topPipe, bottomPipe].forEach(pipe => {
-    pipe.setVelocityX(-200);
-    pipe.passed = false;
-    pipe.body.allowGravity = false;
-    pipe.setImmovable(true);
-  });
+ [topPipe, bottomPipe].forEach(pipe => {
+  pipe.setScale(0.25);
+  pipe.setVelocityX(-200);
+  pipe.passed = false;
+  pipe.body.allowGravity = false;
+  pipe.setImmovable(true);
+});
+
 }
 
 function hitPipe() {
