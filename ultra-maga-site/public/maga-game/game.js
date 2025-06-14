@@ -30,6 +30,7 @@ function preload() {
   this.load.audio('music', 'https://files.catbox.moe/4eq3qy.mp3');
   this.load.image('burger', 'https://files.catbox.moe/hwbf07.png');
   this.load.audio('burp', 'https://files.catbox.moe/5c5st7.mp3');
+  this.load.audio('fired', 'https://files.catbox.moe/2v2pm7.mp3');
 }
 
 function create() {
@@ -85,6 +86,7 @@ function startGame() {
   scoreText.setText('Score: 0');
   highScoreText.setText('High: ' + highScore);
   pipes.clear(true, true);
+  burgers.clear(true, true);
 
   if (music) music.stop();
   music = this.sound.add('music', { loop: true, volume: 0.2 });
@@ -127,13 +129,11 @@ function addPipe() {
     pipe.setDepth(1);
   });
 
-  // Add cheeseburger between pipes
   const burgerY = Phaser.Math.Between(y - gap + 50, y + gap - 50);
   const burger = burgers.create(config.width + 30, burgerY, 'burger').setScale(0.05);
   burger.setVelocityX(-200);
   burger.body.allowGravity = false;
   burger.setDepth(1);
-});
 }
 
 function update() {
@@ -150,13 +150,6 @@ function update() {
       burger.destroy();
     }
   });
-  if (gameOver) return;
-
-  background.tilePositionX += 1;
-
-  if (cursors.space && Phaser.Input.Keyboard.JustDown(cursors.space)) {
-    flap();
-  }
 
   pipes.getChildren().forEach(pipe => {
     if (!pipe.passed && pipe.x + pipe.displayWidth / 2 < trump.x) {
@@ -177,6 +170,7 @@ function hitPipe() {
   gameOver = true;
   this.physics.pause();
   trump.setTint(0xff0000);
+  this.sound.play('fired');
 
   restartText = this.add.text(config.width / 2, config.height / 2 + 50, 'CLICK TO TRY AGAIN', {
     fontSize: '20px', fill: '#ff0000'
