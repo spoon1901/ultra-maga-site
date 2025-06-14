@@ -19,7 +19,6 @@ let score = 0;
 let highScore = 0;
 let startText, restartText, background;
 let music;
-let musicStarted = false;
 let pipeTimer;
 
 const game = new Phaser.Game(config);
@@ -70,18 +69,21 @@ function create() {
 
 function startGame() {
   startText.setVisible(false);
+  if (restartText) restartText.setVisible(false);
   trump.setVisible(true);
+  trump.clearTint();
   trump.body.allowGravity = true;
+  trump.setPosition(100, 300);
+  trump.setVelocity(0);
   gameOver = false;
   score = 0;
   scoreText.setText('Score: 0');
+  highScoreText.setText('High: ' + highScore);
   pipes.clear(true, true);
 
-  if (!musicStarted) {
-    music = this.sound.add('music', { loop: true, volume: 0.2 });
-    music.play();
-    musicStarted = true;
-  }
+  if (music) music.stop();
+  music = this.sound.add('music', { loop: true, volume: 0.2 });
+  music.play();
 
   if (pipeTimer) pipeTimer.remove();
   pipeTimer = this.time.addEvent({
@@ -90,12 +92,12 @@ function startGame() {
     callbackScope: this,
     loop: true
   });
+
+  this.physics.resume();
 }
 
 function restartGame() {
-  this.scene.restart();
-  musicStarted = false;
-  if (music) music.stop();
+  startGame.call(this);
 }
 
 function flap() {
@@ -103,7 +105,7 @@ function flap() {
 }
 
 function addPipe() {
-  const gap = config.height / 4.5;
+  const gap = config.height / 5.5;
   const y = Phaser.Math.Between(150, config.height - 150);
 
   const topPipe = pipes.create(config.width, y - gap, 'pipe').setOrigin(0, 1);
