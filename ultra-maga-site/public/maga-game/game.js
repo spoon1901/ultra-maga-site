@@ -75,13 +75,17 @@ function addPipe() {
   const topPipe = pipes.create(400, y - gap, 'pipe');
   const bottomPipe = pipes.create(400, y + gap, 'pipe');
 
- [topPipe, bottomPipe].forEach(pipe => {
-  pipe.setScale(0.25);
+[topPipe, bottomPipe].forEach(pipe => {
+  pipe.setScale(0.15);
   pipe.setVelocityX(-200);
   pipe.passed = false;
   pipe.body.allowGravity = false;
   pipe.setImmovable(true);
+
+  // Manually set smaller hitbox
+  pipe.body.setSize(pipe.width * 0.15, pipe.height * 0.15);
 });
+
 
 }
 
