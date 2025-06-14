@@ -6,7 +6,7 @@ const config = {
     default: 'arcade',
     arcade: {
       gravity: { y: 600 },
-      debug: false // set to true to see hitboxes
+      debug: false // Set to true to see hitboxes
     }
   },
   scale: {
@@ -112,7 +112,7 @@ function flap() {
 }
 
 function addPipe() {
-  const gap = config.height / 5.5; // tighter gap
+  const gap = config.height / 6.5; // tighter visual and real gap
   const y = Phaser.Math.Between(150, config.height - 150);
 
   const topPipe = pipes.create(config.width, y - gap, 'pipe').setOrigin(0, 1);
@@ -125,8 +125,8 @@ function addPipe() {
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
 
-    // ⛳ Set hitbox to match visual display
-    pipe.body.setSize(pipe.displayWidth, pipe.displayHeight);
+    // Tight hitbox that matches the scaled visual
+    pipe.body.setSize(pipe.displayWidth * 0.9, pipe.displayHeight * 0.8);
     pipe.setDepth(1);
   });
 }
