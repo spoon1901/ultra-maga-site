@@ -1,10 +1,14 @@
 const config = {
   type: Phaser.AUTO,
-  width: 400,
-  height: 600,
+  width: window.innerWidth,
+  height: window.innerHeight,
   physics: {
     default: 'arcade',
     arcade: { gravity: { y: 600 }, debug: false }
+  },
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
   },
   scene: {
     preload,
@@ -12,6 +16,7 @@ const config = {
     update
   }
 };
+
 
 let trump;
 let cursors;
