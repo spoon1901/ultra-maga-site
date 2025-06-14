@@ -1,7 +1,7 @@
 const config = {
   type: Phaser.AUTO,
-  width: 400,
-  height: 600,
+  width: 800, // Match your background image width
+  height: 600, // Match your background image height
   physics: {
     default: 'arcade',
     arcade: { gravity: { y: 600 }, debug: false }
@@ -34,7 +34,7 @@ const game = new Phaser.Game(config);
 function preload() {
   this.load.image('trump', 'https://files.catbox.moe/kbcy6t.png');
   this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
-  this.load.image('background', 'https://files.catbox.moe/chw14r.png');
+  this.load.image('background', 'https://files.catbox.moe/chw14r.png'); // Your uploaded image
 }
 
 function create() {
@@ -42,13 +42,11 @@ function create() {
   gameStarted = false;
   score = 0;
 
-  // Background scroll layer
+  // Scrollable tile background at native size
   this.bg = this.add.tileSprite(0, 0, 800, 600, 'background')
-  .setOrigin(0)
-  .setScrollFactor(0)
-  .setDepth(-10);
-
-
+    .setOrigin(0)
+    .setScrollFactor(0)
+    .setDepth(-10);
 
   startText = this.add.text(config.width / 2, config.height / 2, 'Tap to Start', {
     fontSize: '32px',
