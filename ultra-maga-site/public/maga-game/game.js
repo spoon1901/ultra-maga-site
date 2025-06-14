@@ -1,7 +1,7 @@
 const config = {
   type: Phaser.AUTO,
-  width: window.innerWidth,
-  height: window.innerHeight,
+  width: 400,
+  height: 600,
   physics: {
     default: 'arcade',
     arcade: { gravity: { y: 600 }, debug: false }
@@ -16,6 +16,7 @@ const config = {
     update
   }
 };
+
 
 let trump;
 let cursors;
@@ -32,9 +33,7 @@ function preload() {
 }
 
 function create() {
-  const spriteScale = config.height / 600 * 0.07;
-
-  trump = this.physics.add.sprite(config.width * 0.2, config.height / 2, 'trump').setScale(spriteScale);
+  trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.07);
 
   trump.body.setSize(trump.width * spriteScale, trump.height * spriteScale);
   trump.setCollideWorldBounds(true);
@@ -90,10 +89,9 @@ function addPipe() {
   const topPipe = pipes.create(config.width, y - gap, 'pipe');
   const bottomPipe = pipes.create(config.width, y + gap, 'pipe');
 
-  const pipeScale = config.height / 600 * 0.15;
 
   [topPipe, bottomPipe].forEach(pipe => {
-    pipe.setScale(pipeScale);
+    pipe.setScale(0.15);
     pipe.setVelocityX(-200);
     pipe.passed = false;
     pipe.body.allowGravity = false;
