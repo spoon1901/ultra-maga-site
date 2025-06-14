@@ -118,8 +118,8 @@ function addPipe() {
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.body.setSize(pipe.displayWidth * 1.3, pipe.displayHeight * 2);
-    pipe.body.setOffset(-pipe.displayWidth * 0.15, -pipe.displayHeight);
+    pipe.body.setSize(pipe.displayWidth * 1.3, pipe.displayHeight * 2.0);
+    pipe.body.setOffset(-pipe.displayWidth * 1.3, -pipe.displayHeight);
     pipe.setDepth(1);
   });
 }
