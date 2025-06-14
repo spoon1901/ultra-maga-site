@@ -1,7 +1,7 @@
 const config = {
   type: Phaser.AUTO,
-  width: 800, // Match your background image width
-  height: 600, // Match your background image height
+  width: 480,
+  height: 600,
   physics: {
     default: 'arcade',
     arcade: { gravity: { y: 600 }, debug: false }
@@ -34,7 +34,7 @@ const game = new Phaser.Game(config);
 function preload() {
   this.load.image('trump', 'https://files.catbox.moe/kbcy6t.png');
   this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
-  this.load.image('background', 'https://files.catbox.moe/chw14r.png'); // Your uploaded image
+  this.load.image('background', 'https://files.catbox.moe/chw14r.png');
 }
 
 function create() {
@@ -42,7 +42,6 @@ function create() {
   gameStarted = false;
   score = 0;
 
-  // Scrollable tile background at native size
   this.bg = this.add.tileSprite(0, 0, 800, 600, 'background')
     .setOrigin(0)
     .setScrollFactor(0)
@@ -70,7 +69,7 @@ function create() {
     fill: '#fff'
   }).setOrigin(0.5).setDepth(10);
 
-  trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.07);
+  trump = this.physics.add.sprite(120, 300, 'trump').setScale(0.07);
   trump.body.setSize(trump.width * 0.07, trump.height * 0.07);
   trump.setCollideWorldBounds(true);
   trump.setVisible(false);
