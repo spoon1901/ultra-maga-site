@@ -46,8 +46,8 @@ function create() {
   this.bg = this.add.tileSprite(0, 0, 800, 600, 'background')
   .setOrigin(0)
   .setScrollFactor(0)
-  .setScale(config.width / 800, config.height / 600)
   .setDepth(-10);
+
 
 
   startText = this.add.text(config.width / 2, config.height / 2, 'Tap to Start', {
