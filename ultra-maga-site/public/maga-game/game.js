@@ -134,7 +134,7 @@ function update() {
   }
 
   pipes.getChildren().forEach(pipe => {
-    if (!pipe.passed && pipe.x + pipe.width < trump.x) {
+     if (!pipe.passed && pipe.x + pipe.displayWidth / 2 < trump.x) {
       pipe.passed = true;
       score += 1;
       scoreText.setText('Score: ' + score);
