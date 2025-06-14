@@ -28,6 +28,7 @@ function preload() {
   this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
   this.load.image('background', 'https://files.catbox.moe/chw14r.png');
   this.load.audio('music', 'https://files.catbox.moe/4eq3qy.mp3');
+  this.load.audio('youreFired', 'https://files.catbox.moe/2v2pm7.mp3');
 }
 
 function create() {
@@ -133,9 +134,19 @@ function update() {
     flap();
   }
 
+  // Count score once per pipe pair
+  const pipePairs = {};
   pipes.getChildren().forEach(pipe => {
-     if (!pipe.passed && pipe.x + pipe.displayWidth / 2 < trump.x) {
-      pipe.passed = true;
+    const key = Math.floor(pipe.x);
+    if (!pipePairs[key]) pipePairs[key] = [];
+    pipePairs[key].push(pipe);
+  });
+
+  Object.values(pipePairs).forEach(pair => {
+    const firstPipe = pair[0];
+    if (!firstPipe.passed && firstPipe.x + firstPipe.width < trump.x) {
+      firstPipe.passed = true;
+      pair.forEach(p => p.passed = true);
       score += 1;
       scoreText.setText('Score: ' + score);
       if (score > highScore) {
@@ -152,6 +163,7 @@ function hitPipe() {
   gameOver = true;
   this.physics.pause();
   trump.setTint(0xff0000);
+  this.sound.play('youreFired');
 
   restartText = this.add.text(config.width / 2, config.height / 2 + 50, 'CLICK TO TRY AGAIN', {
     fontSize: '20px', fill: '#ff0000'
