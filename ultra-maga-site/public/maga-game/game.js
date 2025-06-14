@@ -20,6 +20,7 @@ let highScore = 0;
 let startText, restartText, background;
 let music;
 let musicStarted = false;
+let pipeTimer;
 
 const game = new Phaser.Game(config);
 
@@ -43,21 +44,21 @@ function create() {
 
   scoreText = this.add.text(config.width / 2, 20, 'Score: 0', {
     fontSize: '20px', fill: '#fff'
-  }).setOrigin(0.5).setDepth(1);
+  }).setOrigin(0.5).setDepth(2);
 
   highScoreText = this.add.text(config.width / 2, 50, 'High: 0', {
     fontSize: '16px', fill: '#ffffff'
-  }).setOrigin(0.5).setDepth(1);
+  }).setOrigin(0.5).setDepth(2);
 
   startText = this.add.text(config.width / 2, config.height / 2, 'TAP TO START', {
     fontSize: '28px', fill: '#ffff00'
-  }).setOrigin(0.5).setDepth(1);
+  }).setOrigin(0.5).setDepth(2);
 
   this.input.on('pointerdown', () => {
     if (!trump.visible && !gameOver) {
       startGame.call(this);
     } else if (gameOver) {
-      this.scene.restart();
+      restartGame.call(this);
     } else {
       flap();
     }
@@ -73,7 +74,8 @@ function startGame() {
   trump.body.allowGravity = true;
   gameOver = false;
   score = 0;
-  scoreText.setText('Score: ' + score);
+  scoreText.setText('Score: 0');
+  pipes.clear(true, true);
 
   if (!musicStarted) {
     music = this.sound.add('music', { loop: true, volume: 0.2 });
@@ -81,7 +83,8 @@ function startGame() {
     musicStarted = true;
   }
 
-  this.time.addEvent({
+  if (pipeTimer) pipeTimer.remove();
+  pipeTimer = this.time.addEvent({
     delay: 1500,
     callback: addPipe,
     callbackScope: this,
@@ -89,12 +92,18 @@ function startGame() {
   });
 }
 
+function restartGame() {
+  this.scene.restart();
+  musicStarted = false;
+  if (music) music.stop();
+}
+
 function flap() {
   trump.setVelocityY(-300);
 }
 
 function addPipe() {
-  const gap = config.height / 3.5; // Tighter gap for challenge
+  const gap = config.height / 4.5;
   const y = Phaser.Math.Between(150, config.height - 150);
 
   const topPipe = pipes.create(config.width, y - gap, 'pipe').setOrigin(0, 1);
@@ -107,6 +116,7 @@ function addPipe() {
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
     pipe.body.setSize(pipe.width * 0.15, pipe.height * 0.6);
+    pipe.setDepth(1);
   });
 }
 
@@ -137,10 +147,11 @@ function hitPipe() {
 
   gameOver = true;
   this.physics.pause();
-
   trump.setTint(0xff0000);
 
   restartText = this.add.text(config.width / 2, config.height / 2 + 50, 'CLICK TO TRY AGAIN', {
     fontSize: '20px', fill: '#ff0000'
-  }).setOrigin(0.5).setDepth(1);
+  }).setOrigin(0.5).setDepth(2);
+
+  if (pipeTimer) pipeTimer.remove();
 }
