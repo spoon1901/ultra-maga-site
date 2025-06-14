@@ -5,7 +5,7 @@ const config = {
   height: 600,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: true }
+    arcade: { gravity: { y: 600 }, debug:  }
   },
   scale: {
     mode: Phaser.Scale.FIT,
@@ -134,8 +134,8 @@ function addPipe() {
     const burger = burgers.create(config.width + 30, burgerY, 'burger').setScale(0.07);
     burger.setVelocityX(-200);
     burger.body.allowGravity = false;
-    burger.body.setSize(burger.displayWidth * 6, burger.displayHeight * 6); // tripled size
-    burger.body.setOffset(-burger.displayWidth * 1.5, -burger.displayHeight * 1.5);
+    burger.body.setSize(burger.displayWidth * 9, burger.displayHeight * 9); // tripled size
+    burger.body.setOffset(-burger.displayWidth * 2.25, -burger.displayHeight * 2.25);
     burger.setDepth(1);
   }
 }
@@ -174,7 +174,7 @@ function hitPipe() {
   gameOver = true;
   this.physics.pause();
   trump.setTint(0xff0000);
-  this.sound.play('fired', { volume: 0.75 });
+  this.sound.play('fired', { volume: 0.5 });
 
   restartText = this.add.text(config.width / 2, config.height / 2 + 50, 'CLICK TO TRY AGAIN', {
     fontSize: '20px', fill: '#ff0000'
@@ -187,7 +187,7 @@ function collectBurger(trump, burger) {
   burger.destroy();
   score += 10;
   scoreText.setText('Score: ' + score);
-  this.sound.play('burp', { volume: 0.75 });
+  this.sound.play('burp', { volume: 0.5 });
   if (score > highScore) {
     highScore = score;
     highScoreText.setText('High: ' + highScore);
