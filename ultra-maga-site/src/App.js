@@ -20,7 +20,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-black bg-no-repeat bg-center bg-fixed overflow-hidden">
 
-      {/* Navigation Bar */}
+      {/* Navigation Bar  */}
       <nav className="fixed top-0 left-0 w-full z-40 px-6 py-4 flex items-center bg-black bg-opacity-50 backdrop-blur-md">
   <div className="text-4xl font-bold text-white drop-shadow">
     ULTRA $MAGA
