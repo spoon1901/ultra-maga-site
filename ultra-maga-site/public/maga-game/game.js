@@ -34,13 +34,19 @@ const game = new Phaser.Game(config);
 function preload() {
   this.load.image('trump', 'https://files.catbox.moe/kbcy6t.png');
   this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
+  this.load.image('background', 'https://files.catbox.moe/chw14r.png');
 }
 
 function create() {
-  // RESET all state
   gameOver = false;
   gameStarted = false;
   score = 0;
+
+  // Background scroll layer
+  this.bg = this.add.tileSprite(0, 0, config.width, config.height, 'background')
+    .setOrigin(0)
+    .setScrollFactor(0)
+    .setDepth(-10);
 
   startText = this.add.text(config.width / 2, config.height / 2, 'Tap to Start', {
     fontSize: '32px',
@@ -76,7 +82,7 @@ function create() {
     if (!gameStarted && !gameOver) {
       startGame.call(this);
     } else if (gameOver) {
-      this.scene.restart(); // Clean restart
+      this.scene.restart();
     } else {
       flap();
     }
@@ -104,6 +110,10 @@ function startGame() {
 }
 
 function update() {
+  if (gameStarted && !gameOver) {
+    this.bg.tilePositionX += 1.5;
+  }
+
   if (!gameStarted || gameOver) return;
 
   if (cursors.space && Phaser.Input.Keyboard.JustDown(cursors.space)) {
