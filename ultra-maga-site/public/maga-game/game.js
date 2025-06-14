@@ -34,8 +34,8 @@ function create() {
   background = this.add.tileSprite(0, 0, config.width, config.height, 'background').setOrigin(0);
 
   trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.07);
-  trump.body.setSize(trump.displayWidth * 1.2, trump.displayHeight * 1.2);
-  trump.body.setOffset(-trump.displayWidth * 0.1, -trump.displayHeight * 0.1);
+  trump.body.setSize(trump.displayWidth * 1.4, trump.displayHeight * 1.4);
+  trump.body.setOffset(-trump.displayWidth * 0.2, -trump.displayHeight * 0.2);
   trump.setCollideWorldBounds(true);
   trump.setVisible(false);
   trump.body.allowGravity = false;
@@ -118,8 +118,8 @@ function addPipe() {
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.body.setSize(pipe.displayWidth * 1.25, pipe.displayHeight * 1.25);
-    pipe.body.setOffset(-pipe.displayWidth * 0.125, -pipe.displayHeight * 0.125);
+    pipe.body.setSize(pipe.displayWidth * 1.3, pipe.displayHeight);
+    pipe.body.setOffset(-pipe.displayWidth * 0.15, 0);
     pipe.setDepth(1);
   });
 }
