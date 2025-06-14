@@ -86,7 +86,7 @@ function addPipe() {
   pipe.setImmovable(true);
 
   // Manually set smaller hitbox
-  pipe.body.setSize(pipe.width * 0.15, pipe.height * 0.7);
+  pipe.body.setSize(pipe.width * 0.15, pipe.height * 1.0);
 });
 
 
