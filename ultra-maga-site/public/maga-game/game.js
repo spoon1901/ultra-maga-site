@@ -1,6 +1,6 @@
 const config = {
   type: Phaser.AUTO,
-  width: 480,
+  width: 400,
   height: 600,
   physics: {
     default: 'arcade',
@@ -17,68 +17,51 @@ const config = {
   }
 };
 
-let trump;
-let cursors;
-let pipes;
-let score = 0;
-let highScore = 0;
-let scoreText;
-let highScoreText;
-let gameOver = false;
-let gameStarted = false;
-let startText;
-let restartText;
+let trump, cursors, pipes, score = 0, scoreText, gameOver = false;
+let bg, bg2;
+let startText, restartText, music;
 
 const game = new Phaser.Game(config);
 
 function preload() {
   this.load.image('trump', 'https://files.catbox.moe/kbcy6t.png');
   this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
-  this.load.image('background', 'https://files.catbox.moe/chw14r.png');
+  this.load.image('bg', 'https://files.catbox.moe/chw14r.png');
+  this.load.audio('bgm', 'https://files.catbox.moe/4eq3qy.mp3');
 }
 
 function create() {
-  gameOver = false;
-  gameStarted = false;
-  score = 0;
+  const screenWidth = this.scale.width;
+  const screenHeight = this.scale.height;
 
-  this.bg = this.add.tileSprite(0, 0, 800, 600, 'background')
-    .setOrigin(0)
-    .setScrollFactor(0)
-    .setDepth(-10);
+  bg = this.add.tileSprite(0, 0, screenWidth, screenHeight, 'bg').setOrigin(0).setScrollFactor(0);
 
-  startText = this.add.text(config.width / 2, config.height / 2, 'Tap to Start', {
-    fontSize: '32px',
-    fill: '#ffffff'
-  }).setOrigin(0.5);
-
-  restartText = this.add.text(config.width / 2, config.height / 2 + 50, 'Click to Try Again', {
-    fontSize: '24px',
-    fill: '#ffffff'
-  }).setOrigin(0.5).setVisible(false);
-
-  highScore = localStorage.getItem('highScore') || 0;
-
-  scoreText = this.add.text(config.width / 2, 20, 'Score: 0', {
-    fontSize: '28px',
-    fill: '#fff'
-  }).setOrigin(0.5).setDepth(10);
-
-  highScoreText = this.add.text(config.width / 2, 55, 'High Score: ' + highScore, {
-    fontSize: '18px',
-    fill: '#fff'
-  }).setOrigin(0.5).setDepth(10);
-
-  trump = this.physics.add.sprite(120, 300, 'trump').setScale(0.07);
-  trump.body.setSize(trump.width * 0.07, trump.height * 0.07);
+  trump = this.physics.add.sprite(100, screenHeight / 2, 'trump').setScale(0.07);
+  trump.body.setSize(trump.width * 0.8, trump.height * 0.8);
   trump.setCollideWorldBounds(true);
   trump.setVisible(false);
-  trump.body.allowGravity = false;
 
   pipes = this.physics.add.group();
 
+  scoreText = this.add.text(screenWidth / 2, screenHeight * 0.05, 'Score: 0', {
+    fontSize: '24px',
+    fill: '#fff'
+  }).setOrigin(0.5).setDepth(10).setVisible(false);
+
+  startText = this.add.text(screenWidth / 2, screenHeight / 2, 'TAP TO START', {
+    fontSize: '28px',
+    fill: '#ffffff'
+  }).setOrigin(0.5).setDepth(10);
+
+  restartText = this.add.text(screenWidth / 2, screenHeight / 2 + 40, 'CLICK TO TRY AGAIN', {
+    fontSize: '20px',
+    fill: '#ff0000'
+  }).setOrigin(0.5).setDepth(10).setVisible(false);
+
+  cursors = this.input.keyboard.createCursorKeys();
+
   this.input.on('pointerdown', () => {
-    if (!gameStarted && !gameOver) {
+    if (!trump.visible && !gameOver) {
       startGame.call(this);
     } else if (gameOver) {
       this.scene.restart();
@@ -87,16 +70,19 @@ function create() {
     }
   });
 
-  cursors = this.input.keyboard.createCursorKeys();
+  this.physics.add.collider(trump, pipes, hitPipe, null, this);
+
+  music = this.sound.add('bgm', { loop: true, volume: 0.3 });
+  music.play();
 }
 
 function startGame() {
-  gameStarted = true;
-  startText.setVisible(false);
   trump.setVisible(true);
-  trump.setActive(true);
-  trump.setVelocityY(0);
-  trump.body.allowGravity = true;
+  scoreText.setVisible(true);
+  startText.setVisible(false);
+  gameOver = false;
+  score = 0;
+  scoreText.setText('Score: 0');
 
   this.time.addEvent({
     delay: 1500,
@@ -104,28 +90,24 @@ function startGame() {
     callbackScope: this,
     loop: true
   });
-
-  this.physics.add.collider(trump, pipes, hitPipe, null, this);
 }
 
 function update() {
-  if (gameStarted && !gameOver) {
-    this.bg.tilePositionX += 1.5;
-  }
-
-  if (!gameStarted || gameOver) return;
-
-  if (cursors.space && Phaser.Input.Keyboard.JustDown(cursors.space)) {
-    flap();
-  }
-
-  pipes.getChildren().forEach(pipe => {
-    if (pipe.x < trump.x && !pipe.passed) {
-      score += 1;
-      pipe.passed = true;
-      scoreText.setText('Score: ' + score);
+  if (!gameOver && trump.visible) {
+    if (cursors.space && Phaser.Input.Keyboard.JustDown(cursors.space)) {
+      flap();
     }
-  });
+
+    pipes.getChildren().forEach(pipe => {
+      if (pipe.x < trump.x && !pipe.passed) {
+        score += 1;
+        pipe.passed = true;
+        scoreText.setText('Score: ' + score);
+      }
+    });
+
+    bg.tilePositionX += 1;
+  }
 }
 
 function flap() {
@@ -147,26 +129,13 @@ function addPipe() {
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.body.setSize(pipe.width * 0.15, pipe.height * 1.0);
+    pipe.body.setSize(pipe.width * 0.9, pipe.height * 1.0);
   });
 }
 
 function hitPipe() {
-  this.physics.pause();
-
+  if (gameOver) return;
   gameOver = true;
-  gameStarted = false;
-
-  if (score > highScore) {
-    highScore = score;
-    localStorage.setItem('highScore', highScore);
-    highScoreText.setText('High Score: ' + highScore);
-  }
-
-  this.add.text(config.width / 2, config.height / 2, 'GAME OVER', {
-    fontSize: '32px',
-    fill: '#ff0000'
-  }).setOrigin(0.5).setDepth(10);
-
+  this.physics.pause();
   restartText.setVisible(true);
 }
