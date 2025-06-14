@@ -118,8 +118,8 @@ function addPipe() {
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.body.setSize(pipe.displayWidth * 1.3, pipe.displayHeight * 1.3);
-    pipe.body.setOffset(-pipe.displayWidth * 0.15, -pipe.displayHeight * 0.15);
+    pipe.body.setSize(pipe.displayWidth * 1.3, pipe.displayHeight * 2);
+    pipe.body.setOffset(-pipe.displayWidth * 0.15, -pipe.displayHeight);
     pipe.setDepth(1);
   });
 }
@@ -159,3 +159,4 @@ function hitPipe() {
 
   if (pipeTimer) pipeTimer.remove();
 }
+
