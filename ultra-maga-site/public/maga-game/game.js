@@ -23,7 +23,7 @@ let gameOver = false;
 const game = new Phaser.Game(config);
 
 function preload() {
-  this.load.image('trump', 'https://i.imgur.com/sbIWoGU.png'); // Temp sprite
+  this.load.image('trump', 'https://files.catbox.moe/kbcy6t.png'); // Temp sprite
   this.load.image('pipe', 'https://i.imgur.com/wUK0bky.png');  // Temp pipe
 }
 
