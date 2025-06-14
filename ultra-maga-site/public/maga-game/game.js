@@ -5,7 +5,7 @@ const config = {
   height: 600,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: true }
+    arcade: { gravity: { y: 600 }, debug: false }
   },
   scale: {
     mode: Phaser.Scale.FIT,
