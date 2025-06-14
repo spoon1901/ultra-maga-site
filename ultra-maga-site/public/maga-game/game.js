@@ -5,7 +5,7 @@ const config = {
   height: 600,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: false }
+    arcade: { gravity: { y: 600 }, debug: true }
   },
   scale: {
     mode: Phaser.Scale.FIT,
@@ -35,6 +35,7 @@ function create() {
 
   trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.07);
   trump.body.setSize(trump.displayWidth * 1.2, trump.displayHeight * 1.2);
+  trump.body.setOffset(-trump.displayWidth * 0.1, -trump.displayHeight * 0.1);
   trump.setCollideWorldBounds(true);
   trump.setVisible(false);
   trump.body.allowGravity = false;
@@ -118,6 +119,7 @@ function addPipe() {
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
     pipe.body.setSize(pipe.displayWidth * 1.25, pipe.displayHeight * 1.25);
+    pipe.body.setOffset(-pipe.displayWidth * 0.125, -pipe.displayHeight * 0.125);
     pipe.setDepth(1);
   });
 }
