@@ -21,8 +21,13 @@ let trump;
 let cursors;
 let pipes;
 let score = 0;
+let highScore = 0;
 let scoreText;
+let highScoreText;
 let gameOver = false;
+let gameStarted = false;
+let startText;
+let restartText;
 
 const game = new Phaser.Game(config);
 
@@ -32,11 +37,54 @@ function preload() {
 }
 
 function create() {
+  // Start text
+  startText = this.add.text(config.width / 2, config.height / 2, 'Tap to Start', {
+    fontSize: '32px',
+    fill: '#ffffff'
+  }).setOrigin(0.5);
+
+  restartText = this.add.text(config.width / 2, config.height / 2 + 50, 'Click to Try Again', {
+    fontSize: '24px',
+    fill: '#ffffff'
+  }).setOrigin(0.5).setVisible(false);
+
+  // High score from localStorage
+  highScore = localStorage.getItem('highScore') || 0;
+
+  scoreText = this.add.text(config.width / 2, 20, 'Score: 0', {
+    fontSize: '28px',
+    fill: '#fff'
+  }).setOrigin(0.5).setDepth(10);
+
+  highScoreText = this.add.text(config.width / 2, 55, 'High Score: ' + highScore, {
+    fontSize: '18px',
+    fill: '#fff'
+  }).setOrigin(0.5).setDepth(10);
+
   trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.07);
   trump.body.setSize(trump.width * 0.07, trump.height * 0.07);
   trump.setCollideWorldBounds(true);
+  trump.setVisible(false);
 
   pipes = this.physics.add.group();
+
+  this.input.on('pointerdown', () => {
+    if (!gameStarted) {
+      startGame.call(this);
+    } else if (!gameOver) {
+      flap();
+    } else {
+      this.scene.restart();
+    }
+  });
+
+  cursors = this.input.keyboard.createCursorKeys();
+}
+
+function startGame() {
+  gameStarted = true;
+  startText.setVisible(false);
+  trump.setVisible(true);
 
   this.time.addEvent({
     delay: 1500,
@@ -45,22 +93,14 @@ function create() {
     loop: true
   });
 
-  scoreText = this.add.text(16, config.height * 0.05, 'Score: 0', {
-    fontSize: `${Math.floor(config.height / 30)}px`,
-    fill: '#fff'
-  });
-
-  this.input.on('pointerdown', flap, this);
-  cursors = this.input.keyboard.createCursorKeys();
-
   this.physics.add.collider(trump, pipes, hitPipe, null, this);
 }
 
 function update() {
-  if (gameOver) return;
+  if (!gameStarted || gameOver) return;
 
   if (cursors.space && Phaser.Input.Keyboard.JustDown(cursors.space)) {
-    flap.call(this);
+    flap();
   }
 
   pipes.getChildren().forEach(pipe => {
@@ -97,9 +137,18 @@ function addPipe() {
 
 function hitPipe() {
   gameOver = true;
-  this.add.text(100, config.height / 2, 'GAME OVER', {
+  this.physics.pause();
+
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem('highScore', highScore);
+    highScoreText.setText('High Score: ' + highScore);
+  }
+
+  this.add.text(config.width / 2, config.height / 2, 'GAME OVER', {
     fontSize: '32px',
     fill: '#ff0000'
-  });
-  this.physics.pause();
+  }).setOrigin(0.5).setDepth(10);
+
+  restartText.setVisible(true);
 }
