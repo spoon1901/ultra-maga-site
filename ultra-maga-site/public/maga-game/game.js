@@ -37,7 +37,11 @@ function preload() {
 }
 
 function create() {
-  // Start & Restart Text
+  // RESET all state
+  gameOver = false;
+  gameStarted = false;
+  score = 0;
+
   startText = this.add.text(config.width / 2, config.height / 2, 'Tap to Start', {
     fontSize: '32px',
     fill: '#ffffff'
@@ -48,10 +52,8 @@ function create() {
     fill: '#ffffff'
   }).setOrigin(0.5).setVisible(false);
 
-  // High Score (from browser storage)
   highScore = localStorage.getItem('highScore') || 0;
 
-  // Score display
   scoreText = this.add.text(config.width / 2, 20, 'Score: 0', {
     fontSize: '28px',
     fill: '#fff'
@@ -62,20 +64,19 @@ function create() {
     fill: '#fff'
   }).setOrigin(0.5).setDepth(10);
 
-  // Trump setup
   trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.07);
   trump.body.setSize(trump.width * 0.07, trump.height * 0.07);
   trump.setCollideWorldBounds(true);
   trump.setVisible(false);
+  trump.body.allowGravity = false;
 
   pipes = this.physics.add.group();
 
-  // Click/tap input handler
   this.input.on('pointerdown', () => {
     if (!gameStarted && !gameOver) {
       startGame.call(this);
     } else if (gameOver) {
-      this.scene.restart();
+      this.scene.restart(); // Clean restart
     } else {
       flap();
     }
