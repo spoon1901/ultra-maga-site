@@ -34,7 +34,7 @@ function create() {
   background = this.add.tileSprite(0, 0, config.width, config.height, 'background').setOrigin(0);
 
   trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.07);
-  trump.body.setSize(trump.displayWidth * 0.6, trump.displayHeight * 0.6);
+  trump.body.setSize(trump.displayWidth * 0.8, trump.displayHeight * 0.8);
   trump.setCollideWorldBounds(true);
   trump.setVisible(false);
   trump.body.allowGravity = false;
@@ -105,7 +105,7 @@ function flap() {
 }
 
 function addPipe() {
-  const gap = config.height / 8.5;
+  const gap = config.height / 17;
   const y = Phaser.Math.Between(150, config.height - 150);
 
   const topPipe = pipes.create(config.width, y - gap, 'pipe').setOrigin(0, 1);
@@ -117,7 +117,7 @@ function addPipe() {
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.body.setSize(pipe.displayWidth * 0.95, pipe.displayHeight * 0.95);
+    pipe.body.setSize(pipe.displayWidth, pipe.displayHeight);
     pipe.setDepth(1);
   });
 }
