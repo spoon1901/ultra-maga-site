@@ -85,6 +85,10 @@ function startGame() {
   gameStarted = true;
   startText.setVisible(false);
   trump.setVisible(true);
+  trump.setActive(true);
+trump.setVelocityY(0);
+trump.body.allowGravity = true;
+
 
   this.time.addEvent({
     delay: 1500,
