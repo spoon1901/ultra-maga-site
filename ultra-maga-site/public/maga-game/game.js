@@ -28,8 +28,9 @@ function preload() {
 }
 
 function create() {
-  trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.05);
-trump.body.setSize(trump.width * 0.12, trump.height * 0.05);
+trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.05);
+trump.body.setSize(trump.width * 0.05, trump.height * 0.05);
+
 
   trump.setCollideWorldBounds(true);
 
