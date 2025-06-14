@@ -1,13 +1,11 @@
+// ULTRA $MAGA Flappy Trump Game
 const config = {
   type: Phaser.AUTO,
   width: 400,
   height: 600,
   physics: {
     default: 'arcade',
-    arcade: {
-      gravity: { y: 600 },
-      debug: false // Set to true to see hitboxes
-    }
+    arcade: { gravity: { y: 600 }, debug: false }
   },
   scale: {
     mode: Phaser.Scale.FIT,
@@ -44,18 +42,15 @@ function create() {
   pipes = this.physics.add.group();
 
   scoreText = this.add.text(config.width / 2, 20, 'Score: 0', {
-    fontSize: '20px',
-    fill: '#fff'
+    fontSize: '20px', fill: '#fff'
   }).setOrigin(0.5).setDepth(2);
 
   highScoreText = this.add.text(config.width / 2, 50, 'High: 0', {
-    fontSize: '16px',
-    fill: '#ffffff'
+    fontSize: '16px', fill: '#ffffff'
   }).setOrigin(0.5).setDepth(2);
 
   startText = this.add.text(config.width / 2, config.height / 2, 'TAP TO START', {
-    fontSize: '28px',
-    fill: '#ffff00'
+    fontSize: '28px', fill: '#ffff00'
   }).setOrigin(0.5).setDepth(2);
 
   this.input.on('pointerdown', () => {
@@ -75,18 +70,16 @@ function create() {
 function startGame() {
   startText.setVisible(false);
   if (restartText) restartText.setVisible(false);
-
   trump.setVisible(true);
   trump.clearTint();
+  trump.body.allowGravity = true;
   trump.setPosition(100, 300);
   trump.setVelocity(0);
-  trump.body.allowGravity = true;
-
-  score = 0;
   gameOver = false;
-  pipes.clear(true, true);
+  score = 0;
   scoreText.setText('Score: 0');
   highScoreText.setText('High: ' + highScore);
+  pipes.clear(true, true);
 
   if (music) music.stop();
   music = this.sound.add('music', { loop: true, volume: 0.2 });
@@ -112,7 +105,7 @@ function flap() {
 }
 
 function addPipe() {
-  const gap = config.height / 6.5; // tighter visual and real gap
+  const gap = config.height / 7.5;
   const y = Phaser.Math.Between(150, config.height - 150);
 
   const topPipe = pipes.create(config.width, y - gap, 'pipe').setOrigin(0, 1);
@@ -124,8 +117,6 @@ function addPipe() {
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-
-    // Tight hitbox that matches the scaled visual
     pipe.body.setSize(pipe.displayWidth * 0.9, pipe.displayHeight * 0.8);
     pipe.setDepth(1);
   });
@@ -145,7 +136,6 @@ function update() {
       pipe.passed = true;
       score += 1;
       scoreText.setText('Score: ' + score);
-
       if (score > highScore) {
         highScore = score;
         highScoreText.setText('High: ' + highScore);
@@ -162,8 +152,7 @@ function hitPipe() {
   trump.setTint(0xff0000);
 
   restartText = this.add.text(config.width / 2, config.height / 2 + 50, 'CLICK TO TRY AGAIN', {
-    fontSize: '20px',
-    fill: '#ff0000'
+    fontSize: '20px', fill: '#ff0000'
   }).setOrigin(0.5).setDepth(2);
 
   if (pipeTimer) pipeTimer.remove();
