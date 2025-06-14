@@ -34,7 +34,8 @@ function preload() {
 function create() {
   const spriteScale = config.height / 600 * 0.07;
 
-  trump = this.physics.add.sprite(100, config.height / 2, 'trump').setScale(spriteScale);
+  trump = this.physics.add.sprite(config.width * 0.2, config.height / 2, 'trump').setScale(spriteScale);
+
   trump.body.setSize(trump.width * spriteScale, trump.height * spriteScale);
   trump.setCollideWorldBounds(true);
 
@@ -47,7 +48,11 @@ function create() {
     loop: true
   });
 
-  scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '24px', fill: '#fff' });
+  scoreText = this.add.text(16, config.height * 0.05, 'Score: 0', {
+  fontSize: `${Math.floor(config.height / 30)}px`,
+  fill: '#fff'
+});
+
 
   this.input.on('pointerdown', flap, this);
   cursors = this.input.keyboard.createCursorKeys();
@@ -79,7 +84,8 @@ function addPipe() {
   const minY = 100;
   const maxY = config.height - 100;
   const y = Phaser.Math.Between(minY, maxY);
-  const gap = 150;
+  const gap = config.height / 4; // Adjusts gap to screen height (e.g. 150 on 600px)
+
 
   const topPipe = pipes.create(config.width, y - gap, 'pipe');
   const bottomPipe = pipes.create(config.width, y + gap, 'pipe');
