@@ -14,7 +14,7 @@ const config = {
   scene: { preload, create, update }
 };
 
-let trump, cursors, pipes, scoreText, highScoreText, gameOver = false;
+let trump, cursors, pipes, burgers, scoreText, highScoreText, gameOver = false;
 let score = 0;
 let highScore = 0;
 let startText, restartText, background;
@@ -28,7 +28,8 @@ function preload() {
   this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
   this.load.image('background', 'https://files.catbox.moe/chw14r.png');
   this.load.audio('music', 'https://files.catbox.moe/4eq3qy.mp3');
-  this.load.audio('youreFired', 'https://files.catbox.moe/2v2pm7.mp3');
+  this.load.image('burger', 'https://files.catbox.moe/hwbf07.png');
+  this.load.audio('burp', 'https://files.catbox.moe/5c5st7.mp3');
 }
 
 function create() {
@@ -42,6 +43,7 @@ function create() {
   trump.body.allowGravity = false;
 
   pipes = this.physics.add.group();
+  burgers = this.physics.add.group();
 
   scoreText = this.add.text(config.width / 2, 20, 'Score: 0', {
     fontSize: '20px', fill: '#fff'
@@ -67,6 +69,7 @@ function create() {
 
   cursors = this.input.keyboard.createCursorKeys();
   this.physics.add.collider(trump, pipes, hitPipe, null, this);
+  this.physics.add.overlap(trump, burgers, collectBurger, null, this);
 }
 
 function startGame() {
@@ -123,6 +126,14 @@ function addPipe() {
     pipe.body.setOffset(-pipe.displayWidth * 0.2, -pipe.displayHeight);
     pipe.setDepth(1);
   });
+
+  // Add cheeseburger between pipes
+  const burgerY = Phaser.Math.Between(y - gap + 50, y + gap - 50);
+  const burger = burgers.create(config.width + 30, burgerY, 'burger').setScale(0.05);
+  burger.setVelocityX(-200);
+  burger.body.allowGravity = false;
+  burger.setDepth(1);
+});
 }
 
 function update() {
@@ -134,19 +145,22 @@ function update() {
     flap();
   }
 
-  // Count score once per pipe pair
-  const pipePairs = {};
-  pipes.getChildren().forEach(pipe => {
-    const key = Math.floor(pipe.x);
-    if (!pipePairs[key]) pipePairs[key] = [];
-    pipePairs[key].push(pipe);
+  burgers.getChildren().forEach(burger => {
+    if (burger.x < -burger.width) {
+      burger.destroy();
+    }
   });
+  if (gameOver) return;
 
-  Object.values(pipePairs).forEach(pair => {
-    const firstPipe = pair[0];
-    if (!firstPipe.passed && firstPipe.x + firstPipe.width < trump.x) {
-      firstPipe.passed = true;
-      pair.forEach(p => p.passed = true);
+  background.tilePositionX += 1;
+
+  if (cursors.space && Phaser.Input.Keyboard.JustDown(cursors.space)) {
+    flap();
+  }
+
+  pipes.getChildren().forEach(pipe => {
+    if (!pipe.passed && pipe.x + pipe.displayWidth / 2 < trump.x) {
+      pipe.passed = true;
       score += 1;
       scoreText.setText('Score: ' + score);
       if (score > highScore) {
@@ -163,11 +177,21 @@ function hitPipe() {
   gameOver = true;
   this.physics.pause();
   trump.setTint(0xff0000);
-  this.sound.play('youreFired');
 
   restartText = this.add.text(config.width / 2, config.height / 2 + 50, 'CLICK TO TRY AGAIN', {
     fontSize: '20px', fill: '#ff0000'
   }).setOrigin(0.5).setDepth(2);
 
   if (pipeTimer) pipeTimer.remove();
+}
+
+function collectBurger(trump, burger) {
+  burger.destroy();
+  score += 10;
+  scoreText.setText('Score: ' + score);
+  this.sound.play('burp');
+  if (score > highScore) {
+    highScore = score;
+    highScoreText.setText('High: ' + highScore);
+  }
 }
