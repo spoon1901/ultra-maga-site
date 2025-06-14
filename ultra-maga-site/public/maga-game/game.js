@@ -5,7 +5,7 @@ const config = {
   height: 600,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: false }
+    arcade: { gravity: { y: 600 }, debug: true }
   },
   scale: {
     mode: Phaser.Scale.FIT,
@@ -118,8 +118,8 @@ function addPipe() {
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.body.setSize(pipe.displayWidth * 1.5, pipe.displayHeight * 6.5);
-    pipe.body.setOffset(-pipe.displayWidth * 0.2, -pipe.displayHeight);
+    pipe.body.setSize(pipe.displayWidth * 1.3, pipe.displayHeight * 2);
+    pipe.body.setOffset(-pipe.displayWidth * 0.15, -pipe.displayHeight);
     pipe.setDepth(1);
   });
 }
@@ -134,7 +134,7 @@ function update() {
   }
 
   pipes.getChildren().forEach(pipe => {
-    if (!pipe.passed && pipe.x + pipe.width < trump.x) {
+    if (!pipe.passed && pipe.x + pipe.displayWidth / 2 < trump.x) {
       pipe.passed = true;
       score += 1;
       scoreText.setText('Score: ' + score);
@@ -159,4 +159,3 @@ function hitPipe() {
 
   if (pipeTimer) pipeTimer.remove();
 }
-
