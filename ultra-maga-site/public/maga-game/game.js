@@ -28,7 +28,9 @@ function preload() {
 }
 
 function create() {
-  trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.2);
+  trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.12);
+trump.body.setSize(trump.width * 0.12, trump.height * 0.12);
+
   trump.setCollideWorldBounds(true);
 
   pipes = this.physics.add.group();
