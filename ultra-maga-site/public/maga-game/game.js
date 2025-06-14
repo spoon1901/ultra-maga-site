@@ -79,7 +79,10 @@ function flap() {
 function addPipe() {
   const minY = 100;
 const maxY = config.height - 100;
+const minY = 100;
+const maxY = config.height - 100;
 const y = Phaser.Math.Between(minY, maxY);
+
 
   const gap = 150;
 
