@@ -18,8 +18,8 @@ const config = {
 };
 
 let trump, cursors, pipes, score = 0, scoreText, gameOver = false;
-let bg, bg2;
-let startText, restartText, music;
+let bg;
+let startText, restartText, music, gameStarted = false;
 
 const game = new Phaser.Game(config);
 
@@ -37,7 +37,7 @@ function create() {
   bg = this.add.tileSprite(0, 0, screenWidth, screenHeight, 'bg').setOrigin(0).setScrollFactor(0);
 
   trump = this.physics.add.sprite(100, screenHeight / 2, 'trump').setScale(0.07);
-  trump.body.setSize(trump.width * 0.8, trump.height * 0.8);
+  trump.body.setSize(trump.width * 0.6, trump.height * 0.6, true);
   trump.setCollideWorldBounds(true);
   trump.setVisible(false);
 
@@ -61,7 +61,7 @@ function create() {
   cursors = this.input.keyboard.createCursorKeys();
 
   this.input.on('pointerdown', () => {
-    if (!trump.visible && !gameOver) {
+    if (!gameStarted) {
       startGame.call(this);
     } else if (gameOver) {
       this.scene.restart();
@@ -77,9 +77,11 @@ function create() {
 }
 
 function startGame() {
+  gameStarted = true;
   trump.setVisible(true);
   scoreText.setVisible(true);
   startText.setVisible(false);
+  restartText.setVisible(false);
   gameOver = false;
   score = 0;
   scoreText.setText('Score: 0');
@@ -129,7 +131,7 @@ function addPipe() {
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.body.setSize(pipe.width * 0.9, pipe.height * 1.0);
+    pipe.body.setSize(pipe.width * 0.8, pipe.height * 1.0, true);
   });
 }
 
