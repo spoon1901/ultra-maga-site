@@ -118,7 +118,7 @@ function addPipe() {
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.body.setSize(pipe.displayWidth * 2.0, pipe.displayHeight * 6.5);
+    pipe.body.setSize(pipe.displayWidth * 1.5, pipe.displayHeight * 6.5);
     pipe.body.setOffset(-pipe.displayWidth * 0.2, -pipe.displayHeight);
     pipe.setDepth(1);
   });
