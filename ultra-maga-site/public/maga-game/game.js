@@ -1,4 +1,4 @@
-// ULTRA $MAGA Flappy Trump Game
+// ULTRA $MAGA Flappy Trump Game 
 const config = {
   type: Phaser.AUTO,
   width: 400,
