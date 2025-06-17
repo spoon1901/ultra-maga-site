@@ -31,6 +31,7 @@ function preload() {
   this.load.image('burger', 'https://files.catbox.moe/hwbf07.png');
   this.load.audio('burp', 'https://files.catbox.moe/5c5st7.mp3');
   this.load.audio('fired', 'https://files.catbox.moe/2v2pm7.mp3');
+  this.load.image('fraudcast', 'https://files.catbox.moe/9g3p2j.png'); // new banner
 }
 
 function create() {
@@ -115,30 +116,41 @@ function addPipe() {
   const gap = config.height / 17;
   const y = Phaser.Math.Between(150, config.height - 150);
 
-  const topPipe = pipes.create(config.width, y - gap, 'pipe').setOrigin(0, 1);
-  const bottomPipe = pipes.create(config.width, y + gap, 'pipe').setOrigin(0, 0);
+  // Randomly select either 'pipe' or 'fraudcast'
+  const obstacleType = Phaser.Math.Between(0, 1) === 0 ? 'pipe' : 'fraudcast';
+
+  const topPipe = pipes.create(config.width, y - gap, obstacleType).setOrigin(0, 1);
+  const bottomPipe = pipes.create(config.width, y + gap, obstacleType).setOrigin(0, 0);
 
   [topPipe, bottomPipe].forEach(pipe => {
-    pipe.setScale(0.15);
+    if (obstacleType === 'fraudcast') {
+      pipe.setScale(0.18);
+      pipe.body.setSize(pipe.displayWidth * 1.2, pipe.displayHeight * 5.5);
+    } else {
+      pipe.setScale(0.15);
+      pipe.body.setSize(pipe.displayWidth * 1.5, pipe.displayHeight * 6.5);
+    }
+
     pipe.setVelocityX(-200);
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.body.setSize(pipe.displayWidth * 1.5, pipe.displayHeight * 6.5);
     pipe.body.setOffset(-pipe.displayWidth * 0.2, -pipe.displayHeight);
     pipe.setDepth(1);
   });
 
+  // Keep your burger logic the same
   if (Phaser.Math.Between(0, 9) === 0) { // 10% chance
     const burgerY = Phaser.Math.Between(y - gap + 30, y + gap - 30);
     const burger = burgers.create(config.width + 30, burgerY, 'burger').setScale(0.07);
     burger.setVelocityX(-200);
     burger.body.allowGravity = false;
-    burger.body.setSize(burger.displayWidth * 9, burger.displayHeight * 9); // tripled size
+    burger.body.setSize(burger.displayWidth * 9, burger.displayHeight * 9);
     burger.body.setOffset(-burger.displayWidth * 2.25, -burger.displayHeight * 2.25);
     burger.setDepth(1);
   }
 }
+
 
 function update() {
   if (gameOver) return;
