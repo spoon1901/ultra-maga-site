@@ -5,7 +5,7 @@ const config = {
   height: 600,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: false }
+    arcade: { gravity: { y: 600 }, debug: true }
   },
   scale: {
     mode: Phaser.Scale.FIT,
@@ -90,7 +90,7 @@ function startGame() {
   burgers.clear(true, true);
 
   if (music) music.stop();
-  music = this.sound.add('music', { loop: true, volume: 0.2 });
+  music = this.sound.add('music', { loop: true, volume: 0.3 });
   music.play();
 
   if (pipeTimer) pipeTimer.remove();
