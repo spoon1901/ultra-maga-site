@@ -88,7 +88,7 @@ GameScene.prototype.create = function () {
   this.trump.body.allowGravity = false;
 
   // 🔥 Corrected Trump hitbox
-  this.trump.body.setSize(this.trump.displayWidth * 0.55, this.trump.displayHeight * 0.6);
+  this.trump.body.setSize(this.trump.displayWidth * 0.8, this.trump.displayHeight * 0.8);
   this.trump.body.setOffset(this.trump.displayWidth * 0.22, this.trump.displayHeight * 0.22);
 
   this.pipes = this.physics.add.group();
