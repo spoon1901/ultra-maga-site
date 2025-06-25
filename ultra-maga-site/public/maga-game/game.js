@@ -88,7 +88,7 @@ LeaderboardScene.prototype.create = function () {
 function GameScene() {}
 
 GameScene.prototype.preload = function () {
-  this.load.image('trump', 'https://files.catbox.moe/7wbrf6.png');
+  this.load.image('trump', 'https://files.catbox.moe/7wbrf6.png'); // ✅ Updated Trump sprite
   this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
   this.load.image('background', 'https://files.catbox.moe/chw14r.png');
   this.load.audio('music', 'https://files.catbox.moe/4eq3qy.mp3');
@@ -115,8 +115,8 @@ GameScene.prototype.create = function () {
   this.pipes = this.physics.add.group();
   this.burgers = this.physics.add.group();
 
-  // ✔️ Score & High Score Font Fixed
-  this.scoreText = this.add.text(200, 20, 'Score: 0', {
+  // ✔️ Score Font Fix
+  this.scoreText = this.add.text(200, 28, 'Score: 0', {
     fontSize: '20px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
@@ -124,9 +124,10 @@ GameScene.prototype.create = function () {
   })
     .setOrigin(0.5)
     .setStroke('#000000', 4)
+    .setPadding(0, 10, 0, 0)
     .setDepth(3);
 
-  this.highScoreText = this.add.text(200, 60, 'High: ' + highScore, {
+  this.highScoreText = this.add.text(200, 65, 'High: ' + highScore, {
     fontSize: '16px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
@@ -134,9 +135,10 @@ GameScene.prototype.create = function () {
   })
     .setOrigin(0.5)
     .setStroke('#000000', 4)
+    .setPadding(0, 10, 0, 0)
     .setDepth(3);
 
-  // ✔️ Tap to Start Font Fixed
+  // ✔️ Tap to Start Font Fix
   this.startText = this.add.text(200, 300, 'TAP TO START', {
     fontSize: '12px',
     fill: '#ffff00',
