@@ -4,7 +4,7 @@ window.config = {
   height: 600,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: false }
+    arcade: { gravity: { y: 600 }, debug: true }
   },
   scale: {
     mode: Phaser.Scale.FIT,
