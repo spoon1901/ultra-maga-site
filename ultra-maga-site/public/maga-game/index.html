@@ -38,7 +38,7 @@
   const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
     authDomain: "flappytrump.firebaseapp.com",
-    databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
+    databaseURL: "https://flappytrump-default-rtdb.firebaseio.com", <!-- 🔥 confirm your DB URL -->
     projectId: "flappytrump",
     storageBucket: "flappytrump.appspot.com",
     messagingSenderId: "513580021078",
@@ -51,21 +51,6 @@
 
   const xumm = new Xumm('e9f38278-c0a2-45a3-903c-833adb7dc8e5');
   window.walletAddress = null;
-
-  const config = {
-    type: Phaser.AUTO,
-    width: 400,
-    height: 600,
-    physics: {
-      default: 'arcade',
-      arcade: { gravity: { y: 600 }, debug: false }
-    },
-    scale: {
-      mode: Phaser.Scale.FIT,
-      autoCenter: Phaser.Scale.CENTER_BOTH
-    },
-    scene: [LeaderboardScene, GameScene]
-  };
 
   async function loginWithWallet() {
     try {
@@ -93,7 +78,7 @@
       script.src = "game.js";
       script.onload = () => {
         console.log('✅ game.js loaded, starting Phaser...');
-        new Phaser.Game(config);
+        new Phaser.Game(window.config);
       };
       document.body.appendChild(script);
 
