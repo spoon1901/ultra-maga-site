@@ -1,3 +1,18 @@
+window.config = {
+  type: Phaser.AUTO,
+  width: 400,
+  height: 600,
+  physics: {
+    default: 'arcade',
+    arcade: { gravity: { y: 600 }, debug: false }
+  },
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
+  },
+  scene: [LeaderboardScene, GameScene]
+};
+
 let highScore = 0;
 
 function LeaderboardScene() {}
@@ -7,8 +22,6 @@ LeaderboardScene.prototype.preload = function () {
 };
 
 LeaderboardScene.prototype.create = function () {
-  const scene = this;
-
   this.add.tileSprite(0, 0, 400, 600, 'background').setOrigin(0);
 
   this.add.text(200, 30, 'Ultra $MAGA Leaderboard', { fontSize: '20px', fill: '#ffff00' }).setOrigin(0.5);
