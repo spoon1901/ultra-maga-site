@@ -1,5 +1,3 @@
-// ULTRA $MAGA Flappy Trump with Global Leaderboard
-
 const config = {
   type: Phaser.AUTO,
   width: 400,
@@ -15,12 +13,10 @@ const config = {
   scene: [LeaderboardScene, GameScene]
 };
 
-let game = new Phaser.Game(config);
+const game = new Phaser.Game(config);
 
-let walletAddress = window.walletAddress || null;
 let highScore = 0;
 
-// Leaderboard Scene
 function LeaderboardScene() {}
 
 LeaderboardScene.prototype.preload = function () {
@@ -36,7 +32,7 @@ LeaderboardScene.prototype.create = function () {
     fontSize: '20px', fill: '#ffff00'
   }).setOrigin(0.5);
 
-  this.add.text(config.width / 2, 60, `Wallet: ${walletAddress}`, {
+  this.add.text(config.width / 2, 60, `Wallet: ${window.walletAddress}`, {
     fontSize: '12px', fill: '#ffffff'
   }).setOrigin(0.5);
 
@@ -62,13 +58,11 @@ LeaderboardScene.prototype.create = function () {
       this.scene.start('GameScene');
     });
 
-  // Load your high score
   window.getHighScore((scoreFromDB) => {
     highScore = scoreFromDB || 0;
     yourScoreText.setText('Your High Score: ' + highScore);
   });
 
-  // Load Global Leaderboard
   window.db.ref('users').once('value').then((snapshot) => {
     const data = snapshot.val() || {};
     const leaderboardArray = Object.keys(data).map(wallet => ({
@@ -88,7 +82,6 @@ LeaderboardScene.prototype.create = function () {
   });
 };
 
-// Game Scene
 function GameScene() {}
 
 GameScene.prototype.preload = function () {
@@ -103,8 +96,6 @@ GameScene.prototype.preload = function () {
 };
 
 GameScene.prototype.create = function () {
-  const scene = this;
-
   this.gameOver = false;
   this.score = 0;
 
