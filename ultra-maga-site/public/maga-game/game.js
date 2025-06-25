@@ -4,7 +4,7 @@ window.config = {
   height: 600,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: true }
+    arcade: { gravity: { y: 600 }, debug: false }
   },
   scale: {
     mode: Phaser.Scale.FIT,
@@ -26,11 +26,11 @@ LeaderboardScene.prototype.create = function () {
 
   this.add.tileSprite(0, 0, 400, 600, 'background').setOrigin(0);
 
-  this.add.text(200, 30, 'Ultra $MAGA Leaderboard', { fontSize: '20px', fill: '#ffff00' }).setOrigin(0.5);
-  this.add.text(200, 60, `Wallet: ${window.walletAddress}`, { fontSize: '12px', fill: '#ffffff' }).setOrigin(0.5);
+  this.add.text(200, 30, 'Ultra $MAGA Leaderboard', { fontSize: '14px', fill: '#ffff00', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
+  this.add.text(200, 60, `Wallet: ${window.walletAddress}`, { fontSize: '8px', fill: '#ffffff', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
 
-  const yourScoreText = this.add.text(200, 85, 'Your High Score: ...', { fontSize: '14px', fill: '#ffffff' }).setOrigin(0.5);
-  const leaderboardText = this.add.text(200, 130, 'Loading...', { fontSize: '14px', fill: '#ffffff' }).setOrigin(0.5);
+  const yourScoreText = this.add.text(200, 85, 'Your High Score: ...', { fontSize: '10px', fill: '#ffffff', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
+  const leaderboardText = this.add.text(200, 130, 'Loading...', { fontSize: '10px', fill: '#ffffff', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
 
   window.getHighScore((scoreFromDB) => {
     highScore = scoreFromDB || 0;
@@ -53,15 +53,19 @@ LeaderboardScene.prototype.create = function () {
 
     leaderboardText.setText(display || 'No scores yet.');
 
-    const startButton = this.add.text(200, 520, '▶️ Start Game', {
-      fontSize: '24px', fill: '#00ff00', backgroundColor: '#000'
+    const startButton = this.add.text(200, 520, 'START GAME', {
+      fontSize: '12px',
+      fill: '#ffffff',
+      fontFamily: '"Press Start 2P"',
+      fontStyle: 'bold'
     })
-    .setOrigin(0.5)
-    .setPadding(10)
-    .setInteractive({ useHandCursor: true })
-    .on('pointerdown', () => {
-      this.scene.start('GameScene');
-    });
+      .setOrigin(0.5)
+      .setPadding(10)
+      .setStroke('#000000', 4)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => {
+        this.scene.start('GameScene');
+      });
   });
 };
 
@@ -97,10 +101,10 @@ GameScene.prototype.create = function () {
   this.pipes = this.physics.add.group();
   this.burgers = this.physics.add.group();
 
-  this.scoreText = this.add.text(200, 20, 'Score: 0', { fontSize: '20px', fill: '#fff' }).setOrigin(0.5);
-  this.highScoreText = this.add.text(200, 50, 'High: ' + highScore, { fontSize: '16px', fill: '#ffffff' }).setOrigin(0.5);
+  this.scoreText = this.add.text(200, 20, 'Score: 0', { fontSize: '10px', fill: '#ffffff', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
+  this.highScoreText = this.add.text(200, 50, 'High: ' + highScore, { fontSize: '8px', fill: '#ffffff', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
 
-  this.startText = this.add.text(200, 300, 'TAP TO START', { fontSize: '28px', fill: '#ffff00' }).setOrigin(0.5);
+  this.startText = this.add.text(200, 300, 'TAP TO START', { fontSize: '12px', fill: '#ffff00', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
 
   this.input.on('pointerdown', () => {
     if (!this.trump.visible && !this.gameOver) {
@@ -234,17 +238,29 @@ GameScene.prototype.hitPipe = function () {
   this.trump.setTint(0xff0000);
   this.sound.play('fired', { volume: 0.5 });
 
-  this.restartText = this.add.text(200, 350, '▶️ CLICK TO TRY AGAIN', { fontSize: '20px', fill: '#ff0000' })
+  this.restartText = this.add.text(200, 350, 'CLICK TO TRY AGAIN', {
+    fontSize: '10px',
+    fill: '#ffffff',
+    fontFamily: '"Press Start 2P"',
+    fontStyle: 'bold'
+  })
     .setOrigin(0.5)
     .setDepth(2)
+    .setStroke('#000000', 4)
     .setInteractive({ useHandCursor: true })
     .on('pointerdown', () => {
       this.restartGame();
     });
 
-  this.leaderboardButton = this.add.text(200, 400, '🏆 RETURN TO LEADERBOARD', { fontSize: '16px', fill: '#00ffff' })
+  this.leaderboardButton = this.add.text(200, 400, 'RETURN TO LEADERBOARD', {
+    fontSize: '10px',
+    fill: '#ffffff',
+    fontFamily: '"Press Start 2P"',
+    fontStyle: 'bold'
+  })
     .setOrigin(0.5)
     .setDepth(2)
+    .setStroke('#000000', 4)
     .setInteractive({ useHandCursor: true })
     .on('pointerdown', () => {
       this.scene.start('LeaderboardScene');
