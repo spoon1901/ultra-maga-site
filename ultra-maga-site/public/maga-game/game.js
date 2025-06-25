@@ -115,26 +115,28 @@ GameScene.prototype.create = function () {
   this.pipes = this.physics.add.group();
   this.burgers = this.physics.add.group();
 
+  // ✔️ Score & High Score Font Fixed
   this.scoreText = this.add.text(200, 20, 'Score: 0', {
-    fontSize: '30px',
+    fontSize: '20px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
     fontStyle: 'bold'
   })
     .setOrigin(0.5)
-    .setStroke('#000000', 6)
+    .setStroke('#000000', 4)
     .setDepth(3);
 
   this.highScoreText = this.add.text(200, 60, 'High: ' + highScore, {
-    fontSize: '24px',
+    fontSize: '16px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
     fontStyle: 'bold'
   })
     .setOrigin(0.5)
-    .setStroke('#000000', 6)
+    .setStroke('#000000', 4)
     .setDepth(3);
 
+  // ✔️ Tap to Start Font Fixed
   this.startText = this.add.text(200, 300, 'TAP TO START', {
     fontSize: '12px',
     fill: '#ffff00',
