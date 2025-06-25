@@ -4,7 +4,7 @@ window.config = {
   height: 600,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: true }
+    arcade: { gravity: { y: 600 }, debug: true } // ✅ Turn off debug when done
   },
   scale: {
     mode: Phaser.Scale.FIT,
@@ -87,6 +87,10 @@ GameScene.prototype.create = function () {
   this.trump.setVisible(false);
   this.trump.body.allowGravity = false;
 
+  // 🔥 Corrected Trump hitbox
+  this.trump.body.setSize(this.trump.displayWidth * 0.55, this.trump.displayHeight * 0.6);
+  this.trump.body.setOffset(this.trump.displayWidth * 0.22, this.trump.displayHeight * 0.22);
+
   this.pipes = this.physics.add.group();
   this.burgers = this.physics.add.group();
 
@@ -154,7 +158,7 @@ GameScene.prototype.flap = function () {
 };
 
 GameScene.prototype.addPipe = function () {
-  const gap = 95; // ✅ Tight gap, back to the original preferred size
+  const gap = 95;
   const y = Phaser.Math.Between(180, 420);
 
   const obstacleType = Phaser.Math.Between(0, 1) === 0 ? 'pipe' : 'fraudcast';
