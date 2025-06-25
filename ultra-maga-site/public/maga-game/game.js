@@ -48,6 +48,7 @@ LeaderboardScene.prototype.create = function () {
     fontFamily: '"Press Start 2P"'
   }).setOrigin(0.5);
 
+  // ✅ Correct: Fetch leaderboard immediately
   window.getHighScore((scoreFromDB) => {
     highScore = scoreFromDB || 0;
     yourScoreText.setText('Your High Score: ' + highScore);
@@ -68,27 +69,30 @@ LeaderboardScene.prototype.create = function () {
     ).join('\n');
 
     leaderboardText.setText(display || 'No scores yet.');
-
-    const startButton = this.add.text(200, 520, 'START GAME', {
-      fontSize: '12px',
-      fill: '#ffffff',
-      fontFamily: '"Press Start 2P"',
-      fontStyle: 'bold'
-    })
-      .setOrigin(0.5)
-      .setPadding(10)
-      .setStroke('#000000', 4)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => {
-        this.scene.start('GameScene');
-      });
   });
+
+  const startButton = this.add.text(200, 520, 'START GAME', {
+    fontSize: '12px',
+    fill: '#ffffff',
+    fontFamily: '"Press Start 2P"',
+    fontStyle: 'bold'
+  })
+    .setOrigin(0.5)
+    .setPadding(10)
+    .setStroke('#000000', 4)
+    .setInteractive({ useHandCursor: true })
+    .on('pointerdown', () => {
+      this.scene.start('GameScene');
+    });
 };
+
+// ✅ Added update function to prevent scene crash
+LeaderboardScene.prototype.update = function () {};
 
 function GameScene() {}
 
 GameScene.prototype.preload = function () {
-  this.load.image('trump', 'https://files.catbox.moe/7wbrf6.png'); // ✅ Updated Trump sprite
+  this.load.image('trump', 'https://files.catbox.moe/7wbrf6.png');
   this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
   this.load.image('background', 'https://files.catbox.moe/chw14r.png');
   this.load.audio('music', 'https://files.catbox.moe/4eq3qy.mp3');
@@ -115,7 +119,6 @@ GameScene.prototype.create = function () {
   this.pipes = this.physics.add.group();
   this.burgers = this.physics.add.group();
 
-  // ✔️ Score Font Fix
   this.scoreText = this.add.text(200, 28, 'Score: 0', {
     fontSize: '20px',
     fill: '#ffffff',
@@ -138,7 +141,6 @@ GameScene.prototype.create = function () {
     .setPadding(0, 10, 0, 0)
     .setDepth(3);
 
-  // ✔️ Tap to Start Font Fix
   this.startText = this.add.text(200, 300, 'TAP TO START', {
     fontSize: '12px',
     fill: '#ffff00',
@@ -275,6 +277,11 @@ GameScene.prototype.update = function () {
 
 GameScene.prototype.hitPipe = function () {
   if (this.gameOver) return;
+
+  if (this.score > highScore) {
+    highScore = this.score;
+    window.updateHighScore(highScore);
+  }
 
   this.gameOver = true;
   this.physics.pause();
