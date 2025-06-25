@@ -1,4 +1,5 @@
 // ULTRA $MAGA Flappy Trump Game 
+
 const config = {
   type: Phaser.AUTO,
   width: 400,
@@ -31,10 +32,15 @@ function preload() {
   this.load.image('burger', 'https://files.catbox.moe/hwbf07.png');
   this.load.audio('burp', 'https://files.catbox.moe/5c5st7.mp3');
   this.load.audio('fired', 'https://files.catbox.moe/2v2pm7.mp3');
-  this.load.image('fraudcast', 'https://files.catbox.moe/9g3p2j.png'); // new banner
+  this.load.image('fraudcast', 'https://files.catbox.moe/9g3p2j.png');
 }
 
 function create() {
+  if (!window.walletAddress) {
+    alert('Please login with XAMAN wallet first!');
+    return;
+  }
+
   background = this.add.tileSprite(0, 0, config.width, config.height, 'background').setOrigin(0);
 
   trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.07);
@@ -72,6 +78,11 @@ function create() {
   cursors = this.input.keyboard.createCursorKeys();
   this.physics.add.collider(trump, pipes, hitPipe, null, this);
   this.physics.add.overlap(trump, burgers, collectBurger, null, this);
+
+  window.getHighScore((scoreFromDB) => {
+    highScore = scoreFromDB || 0;
+    highScoreText.setText('High: ' + highScore);
+  });
 }
 
 function startGame() {
@@ -116,7 +127,6 @@ function addPipe() {
   const gap = config.height / 17;
   const y = Phaser.Math.Between(150, config.height - 150);
 
-  // Randomly select either 'pipe' or 'fraudcast'
   const obstacleType = Phaser.Math.Between(0, 1) === 0 ? 'pipe' : 'fraudcast';
 
   const topPipe = pipes.create(config.width, y - gap, obstacleType).setOrigin(0, 1);
@@ -139,8 +149,7 @@ function addPipe() {
     pipe.setDepth(1);
   });
 
-  // Keep your burger logic the same
-  if (Phaser.Math.Between(0, 9) === 0) { // 10% chance
+  if (Phaser.Math.Between(0, 9) === 0) {
     const burgerY = Phaser.Math.Between(y - gap + 30, y + gap - 30);
     const burger = burgers.create(config.width + 30, burgerY, 'burger').setScale(0.07);
     burger.setVelocityX(-200);
@@ -150,7 +159,6 @@ function addPipe() {
     burger.setDepth(1);
   }
 }
-
 
 function update() {
   if (gameOver) return;
@@ -175,6 +183,7 @@ function update() {
       if (score > highScore) {
         highScore = score;
         highScoreText.setText('High: ' + highScore);
+        window.updateHighScore(highScore);
       }
     }
   });
@@ -203,5 +212,6 @@ function collectBurger(trump, burger) {
   if (score > highScore) {
     highScore = score;
     highScoreText.setText('High: ' + highScore);
+    window.updateHighScore(highScore);
   }
 }
