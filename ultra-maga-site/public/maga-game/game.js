@@ -88,7 +88,7 @@ LeaderboardScene.prototype.create = function () {
 function GameScene() {}
 
 GameScene.prototype.preload = function () {
-  this.load.image('trump', 'https://files.catbox.moe/kbcy6t.png');
+  this.load.image('trump', 'https://files.catbox.moe/7wbrf6.png');
   this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
   this.load.image('background', 'https://files.catbox.moe/chw14r.png');
   this.load.audio('music', 'https://files.catbox.moe/4eq3qy.mp3');
