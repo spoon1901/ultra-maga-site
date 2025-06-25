@@ -101,10 +101,26 @@ GameScene.prototype.create = function () {
   this.pipes = this.physics.add.group();
   this.burgers = this.physics.add.group();
 
-  this.scoreText = this.add.text(200, 20, 'Score: 0', { fontSize: '10px', fill: '#ffffff', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
-  this.highScoreText = this.add.text(200, 50, 'High: ' + highScore, { fontSize: '8px', fill: '#ffffff', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
+  this.scoreText = this.add.text(200, 20, 'Score: 0', { 
+    fontSize: '10px', 
+    fill: '#ffffff', 
+    fontFamily: '"Press Start 2P"', 
+    fontStyle: 'bold' 
+  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
 
-  this.startText = this.add.text(200, 300, 'TAP TO START', { fontSize: '12px', fill: '#ffff00', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
+  this.highScoreText = this.add.text(200, 50, 'High: ' + highScore, { 
+    fontSize: '8px', 
+    fill: '#ffffff', 
+    fontFamily: '"Press Start 2P"', 
+    fontStyle: 'bold' 
+  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
+
+  this.startText = this.add.text(200, 300, 'TAP TO START', { 
+    fontSize: '12px', 
+    fill: '#ffff00', 
+    fontFamily: '"Press Start 2P"', 
+    fontStyle: 'bold' 
+  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
 
   this.input.on('pointerdown', () => {
     if (!this.trump.visible && !this.gameOver) {
@@ -187,7 +203,7 @@ GameScene.prototype.addPipe = function () {
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.setDepth(10);
+    pipe.setDepth(1);
 
     pipe.body.setOffset(-pipe.displayWidth * 0.2, -pipe.displayHeight);
   });
@@ -197,7 +213,7 @@ GameScene.prototype.addPipe = function () {
     const burger = this.burgers.create(430, burgerY, 'burger').setScale(0.07);
     burger.setVelocityX(-200);
     burger.body.allowGravity = false;
-    burger.setDepth(15);
+    burger.setDepth(1);
   }
 };
 
@@ -245,7 +261,7 @@ GameScene.prototype.hitPipe = function () {
     fontStyle: 'bold'
   })
     .setOrigin(0.5)
-    .setDepth(2)
+    .setDepth(5)
     .setStroke('#000000', 4)
     .setInteractive({ useHandCursor: true })
     .on('pointerdown', () => {
@@ -259,7 +275,7 @@ GameScene.prototype.hitPipe = function () {
     fontStyle: 'bold'
   })
     .setOrigin(0.5)
-    .setDepth(2)
+    .setDepth(5)
     .setStroke('#000000', 4)
     .setInteractive({ useHandCursor: true })
     .on('pointerdown', () => {
