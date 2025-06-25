@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Flappy Trump - $MAGA</title>
 
+  <!-- Game Dependencies -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
   <script src="https://xumm.app/assets/cdn/xumm.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
@@ -35,6 +36,7 @@
   </div>
 
 <script>
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
     authDomain: "flappytrump.firebaseapp.com",
@@ -52,7 +54,7 @@
   const xumm = new Xumm('e9f38278-c0a2-45a3-903c-833adb7dc8e5');
   window.walletAddress = null;
 
-  // ✅ Move config here so it's globally accessible
+  // Game Config must be global
   const config = {
     type: Phaser.AUTO,
     width: 400,
@@ -92,6 +94,7 @@
       const script = document.createElement('script');
       script.src = "game.js";
       script.onload = () => {
+        console.log('✅ game.js loaded, starting Phaser...');
         new Phaser.Game(config);
       };
       document.body.appendChild(script);
