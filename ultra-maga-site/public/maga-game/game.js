@@ -4,7 +4,7 @@ window.config = {
   height: 600,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: true }
+    arcade: { gravity: { y: 600 }, debug: false }
   },
   scale: {
     mode: Phaser.Scale.FIT,
@@ -22,17 +22,16 @@ LeaderboardScene.prototype.preload = function () {
 };
 
 LeaderboardScene.prototype.create = function () {
+  console.log('✅ LeaderboardScene loaded');
+
   this.add.tileSprite(0, 0, 400, 600, 'background').setOrigin(0);
 
   this.add.text(200, 30, 'Ultra $MAGA Leaderboard', { fontSize: '20px', fill: '#ffff00' }).setOrigin(0.5);
-
   this.add.text(200, 60, `Wallet: ${window.walletAddress}`, { fontSize: '12px', fill: '#ffffff' }).setOrigin(0.5);
 
   const yourScoreText = this.add.text(200, 85, 'Your High Score: ...', { fontSize: '14px', fill: '#ffffff' }).setOrigin(0.5);
-
   const leaderboardText = this.add.text(200, 130, 'Loading...', { fontSize: '14px', fill: '#ffffff' }).setOrigin(0.5);
 
-  // ✅ Fetch leaderboard and THEN show Start button
   window.getHighScore((scoreFromDB) => {
     highScore = scoreFromDB || 0;
     yourScoreText.setText('Your High Score: ' + highScore);
@@ -46,7 +45,6 @@ LeaderboardScene.prototype.create = function () {
     }));
 
     leaderboardArray.sort((a, b) => b.score - a.score);
-
     const top5 = leaderboardArray.slice(0, 5);
 
     const display = top5.map((entry, index) =>
@@ -55,14 +53,15 @@ LeaderboardScene.prototype.create = function () {
 
     leaderboardText.setText(display || 'No scores yet.');
 
-    // ✅ Now show Start button
-    const startButton = this.add.text(200, 520, '▶️ Start Game', { fontSize: '24px', fill: '#00ff00', backgroundColor: '#000' })
-      .setOrigin(0.5)
-      .setPadding(10)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => {
-        this.scene.start('GameScene');
-      });
+    const startButton = this.add.text(200, 520, '▶️ Start Game', {
+      fontSize: '24px', fill: '#00ff00', backgroundColor: '#000'
+    })
+    .setOrigin(0.5)
+    .setPadding(10)
+    .setInteractive({ useHandCursor: true })
+    .on('pointerdown', () => {
+      this.scene.start('GameScene');
+    });
   });
 };
 
@@ -80,6 +79,8 @@ GameScene.prototype.preload = function () {
 };
 
 GameScene.prototype.create = function () {
+  console.log('✅ GameScene loaded');
+
   this.gameOver = false;
   this.score = 0;
 
@@ -123,6 +124,7 @@ GameScene.prototype.create = function () {
 
 GameScene.prototype.startGame = function () {
   if (this.restartText) this.restartText.setVisible(false);
+  if (this.leaderboardButton) this.leaderboardButton.setVisible(false);
   this.startText.setVisible(false);
   this.trump.setVisible(true);
   this.trump.clearTint();
@@ -160,7 +162,7 @@ GameScene.prototype.flap = function () {
 };
 
 GameScene.prototype.addPipe = function () {
-  const gap = 45;
+  const gap = 95;
   const y = Phaser.Math.Between(180, 420);
 
   const obstacleType = Phaser.Math.Between(0, 1) === 0 ? 'pipe' : 'fraudcast';
@@ -232,7 +234,21 @@ GameScene.prototype.hitPipe = function () {
   this.trump.setTint(0xff0000);
   this.sound.play('fired', { volume: 0.5 });
 
-  this.restartText = this.add.text(200, 350, 'CLICK TO TRY AGAIN', { fontSize: '20px', fill: '#ff0000' }).setOrigin(0.5).setDepth(2);
+  this.restartText = this.add.text(200, 350, '▶️ CLICK TO TRY AGAIN', { fontSize: '20px', fill: '#ff0000' })
+    .setOrigin(0.5)
+    .setDepth(2)
+    .setInteractive({ useHandCursor: true })
+    .on('pointerdown', () => {
+      this.restartGame();
+    });
+
+  this.leaderboardButton = this.add.text(200, 400, '🏆 RETURN TO LEADERBOARD', { fontSize: '16px', fill: '#00ffff' })
+    .setOrigin(0.5)
+    .setDepth(2)
+    .setInteractive({ useHandCursor: true })
+    .on('pointerdown', () => {
+      this.scene.start('LeaderboardScene');
+    });
 
   if (this.pipeTimer) this.pipeTimer.remove();
 };
