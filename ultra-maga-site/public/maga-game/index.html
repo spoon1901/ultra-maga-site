@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Flappy Trump - $MAGA</title>
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
-  <script src="https://unpkg.com/xumm-sdk/dist/xumm.min.js"></script>
 
-  <!-- Firebase SDKs (Compat Versions for CDN) -->
+  <!-- Phaser -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+
+  <!-- XAMAN SDK (Fixed) -->
+  <script src="https://xumm.app/assets/cdn/xumm.min.js"></script>
+
+  <!-- Firebase SDKs (Compat Versions for Browser) -->
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-database-compat.js"></script>
 
@@ -27,6 +31,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <div id="loginArea">
@@ -51,7 +56,7 @@
   const database = firebase.database();
   window.db = database;
 
-  // XAMAN (XUMM) Wallet Login
+  // Initialize XAMAN (XUMM) SDK
   const xumm = new Xumm('e9f38278-c0a2-45a3-903c-833adb7dc8e5');
   window.walletAddress = null;
 
@@ -76,7 +81,7 @@
         window.highScoreRef.set(newScore);
       };
 
-      // Load game only after wallet login
+      // Load game after login
       const script = document.createElement('script');
       script.src = "game.js";
       document.body.appendChild(script);
