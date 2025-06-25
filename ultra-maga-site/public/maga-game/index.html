@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Flappy Trump</title>
+  <title>Flappy Trump - $MAGA</title>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
   <script src="https://unpkg.com/xumm-sdk/dist/xumm.min.js"></script>
   <style>
@@ -34,7 +34,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
-    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
       authDomain: "flappytrump.firebaseapp.com",
@@ -49,7 +48,6 @@
     const database = getDatabase(app);
     window.db = database;
 
-    // XAMAN Wallet Login
     const xumm = new Xumm('e9f38278-c0a2-45a3-903c-833adb7dc8e5');
     window.walletAddress = null;
 
@@ -61,10 +59,8 @@
 
         document.getElementById('walletDisplay').innerText = `Wallet: ${wallet}`;
 
-        // Set Firebase ref for this wallet
         window.highScoreRef = ref(database, `users/${wallet}/highscore`);
 
-        // Function to read high score
         window.getHighScore = (callback) => {
           onValue(window.highScoreRef, (snapshot) => {
             const data = snapshot.val();
@@ -72,12 +68,10 @@
           });
         };
 
-        // Function to update high score
         window.updateHighScore = (newScore) => {
           set(window.highScoreRef, newScore);
         };
 
-        // Start game only after wallet login
         const script = document.createElement('script');
         script.src = "game.js";
         document.body.appendChild(script);
