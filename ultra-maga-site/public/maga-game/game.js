@@ -4,7 +4,7 @@ window.config = {
   height: 600,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: true } // ✅ Turn off debug when done
+    arcade: { gravity: { y: 600 }, debug: true }
   },
   scale: {
     mode: Phaser.Scale.FIT,
@@ -25,20 +25,14 @@ LeaderboardScene.prototype.create = function () {
   this.add.tileSprite(0, 0, 400, 600, 'background').setOrigin(0);
 
   this.add.text(200, 30, 'Ultra $MAGA Leaderboard', { fontSize: '20px', fill: '#ffff00' }).setOrigin(0.5);
+
   this.add.text(200, 60, `Wallet: ${window.walletAddress}`, { fontSize: '12px', fill: '#ffffff' }).setOrigin(0.5);
 
   const yourScoreText = this.add.text(200, 85, 'Your High Score: ...', { fontSize: '14px', fill: '#ffffff' }).setOrigin(0.5);
 
   const leaderboardText = this.add.text(200, 130, 'Loading...', { fontSize: '14px', fill: '#ffffff' }).setOrigin(0.5);
 
-  const startButton = this.add.text(200, 520, '▶️ Start Game', { fontSize: '24px', fill: '#00ff00', backgroundColor: '#000' })
-    .setOrigin(0.5)
-    .setPadding(10)
-    .setInteractive({ useHandCursor: true })
-    .on('pointerdown', () => {
-      this.scene.start('GameScene');
-    });
-
+  // ✅ Fetch leaderboard and THEN show Start button
   window.getHighScore((scoreFromDB) => {
     highScore = scoreFromDB || 0;
     yourScoreText.setText('Your High Score: ' + highScore);
@@ -60,6 +54,15 @@ LeaderboardScene.prototype.create = function () {
     ).join('\n');
 
     leaderboardText.setText(display || 'No scores yet.');
+
+    // ✅ Now show Start button
+    const startButton = this.add.text(200, 520, '▶️ Start Game', { fontSize: '24px', fill: '#00ff00', backgroundColor: '#000' })
+      .setOrigin(0.5)
+      .setPadding(10)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => {
+        this.scene.start('GameScene');
+      });
   });
 };
 
@@ -87,7 +90,6 @@ GameScene.prototype.create = function () {
   this.trump.setVisible(false);
   this.trump.body.allowGravity = false;
 
-  // 🔥 Corrected Trump hitbox
   this.trump.body.setSize(this.trump.displayWidth * 0.8, this.trump.displayHeight * 0.8);
   this.trump.body.setOffset(this.trump.displayWidth * 0.22, this.trump.displayHeight * 0.22);
 
