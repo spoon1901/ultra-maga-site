@@ -4,20 +4,37 @@
   <meta charset="UTF-8">
   <title>Flappy Trump</title>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+  <script src="https://unpkg.com/xumm-sdk/dist/xumm.min.js"></script>
   <style>
-    body { margin: 0; background: #000; }
+    body { margin: 0; background: #000; color: white; text-align: center; }
     canvas { display: block; margin: auto; }
+    #loginArea { margin: 10px; }
+    button {
+      padding: 10px 20px;
+      background-color: #ff4747;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #d63b3b;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Firebase SDKs -->
+  <div id="loginArea">
+    <button onclick="loginWithWallet()">Login with XAMAN Wallet</button>
+    <p id="walletDisplay">Wallet: Not Connected</p>
+  </div>
+
+  <!-- Firebase SDK -->
   <script type="module">
-    // Import Firebase functions
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
-    // Firebase configuration
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
       authDomain: "flappytrump.firebaseapp.com",
@@ -28,30 +45,49 @@
       appId: "1:513580021078:web:caacd9c4a55acee33712f7"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
-
-    // Make database accessible to the game
     window.db = database;
-    window.highScoreRef = ref(database, 'highscore');
 
-    // Function to read high score
-    window.getHighScore = (callback) => {
-      onValue(window.highScoreRef, (snapshot) => {
-        const data = snapshot.val();
-        callback(data);
-      });
-    };
+    // XAMAN Wallet Login
+    const xumm = new Xumm('e9f38278-c0a2-45a3-903c-833adb7dc8e5');
+    window.walletAddress = null;
 
-    // Function to update high score
-    window.updateHighScore = (newScore) => {
-      set(window.highScoreRef, newScore);
-    };
+    async function loginWithWallet() {
+      try {
+        const state = await xumm.authorize();
+        const wallet = state.me.sub;
+        window.walletAddress = wallet;
+
+        document.getElementById('walletDisplay').innerText = `Wallet: ${wallet}`;
+
+        // Set Firebase ref for this wallet
+        window.highScoreRef = ref(database, `users/${wallet}/highscore`);
+
+        // Function to read high score
+        window.getHighScore = (callback) => {
+          onValue(window.highScoreRef, (snapshot) => {
+            const data = snapshot.val();
+            callback(data);
+          });
+        };
+
+        // Function to update high score
+        window.updateHighScore = (newScore) => {
+          set(window.highScoreRef, newScore);
+        };
+
+        // Start game only after wallet login
+        const script = document.createElement('script');
+        script.src = "game.js";
+        document.body.appendChild(script);
+
+      } catch (error) {
+        console.error('Wallet login failed:', error);
+        alert('Wallet login failed. Please try again.');
+      }
+    }
   </script>
-
-  <!-- Game Script -->
-  <script src="game.js"></script>
 
 </body>
 </html>
