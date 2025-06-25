@@ -163,8 +163,8 @@ GameScene.prototype.addPipe = function () {
 
   const obstacleType = Phaser.Math.Between(0, 1) === 0 ? 'pipe' : 'fraudcast';
 
-  const topPipe = this.pipes.create(400, y - gap, obstacleType).setOrigin(0, 1);
-  const bottomPipe = this.pipes.create(400, y + gap, obstacleType).setOrigin(0, 0);
+  const topPipe = this.pipes.create(200, y - gap, obstacleType).setOrigin(0, 1);
+  const bottomPipe = this.pipes.create(200, y + gap, obstacleType).setOrigin(0, 0);
 
   [topPipe, bottomPipe].forEach(pipe => {
     if (obstacleType === 'fraudcast') {
