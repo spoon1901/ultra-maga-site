@@ -25,7 +25,6 @@ LeaderboardScene.prototype.create = function () {
   this.add.tileSprite(0, 0, 400, 600, 'background').setOrigin(0);
 
   this.add.text(200, 30, 'Ultra $MAGA Leaderboard', { fontSize: '20px', fill: '#ffff00' }).setOrigin(0.5);
-
   this.add.text(200, 60, `Wallet: ${window.walletAddress}`, { fontSize: '12px', fill: '#ffffff' }).setOrigin(0.5);
 
   const yourScoreText = this.add.text(200, 85, 'Your High Score: ...', { fontSize: '14px', fill: '#ffffff' }).setOrigin(0.5);
@@ -155,8 +154,8 @@ GameScene.prototype.flap = function () {
 };
 
 GameScene.prototype.addPipe = function () {
-  const gap = 120;
-  const y = Phaser.Math.Between(150, 450);
+  const gap = 95; // ✅ Tight gap, back to the original preferred size
+  const y = Phaser.Math.Between(180, 420);
 
   const obstacleType = Phaser.Math.Between(0, 1) === 0 ? 'pipe' : 'fraudcast';
 
