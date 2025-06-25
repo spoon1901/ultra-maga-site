@@ -13,7 +13,7 @@ const config = {
   scene: [LeaderboardScene, GameScene]
 };
 
-const game = new Phaser.Game(config);
+
 
 let highScore = 0;
 
