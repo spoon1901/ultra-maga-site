@@ -22,15 +22,31 @@ LeaderboardScene.prototype.preload = function () {
 };
 
 LeaderboardScene.prototype.create = function () {
-  console.log('✅ LeaderboardScene loaded');
-
   this.add.tileSprite(0, 0, 400, 600, 'background').setOrigin(0);
 
-  this.add.text(200, 30, 'Ultra $MAGA Leaderboard', { fontSize: '14px', fill: '#ffff00', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
-  this.add.text(200, 60, `Wallet: ${window.walletAddress}`, { fontSize: '8px', fill: '#ffffff', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
+  this.add.text(200, 30, 'Ultra $MAGA Leaderboard', {
+    fontSize: '14px',
+    fill: '#ffff00',
+    fontFamily: '"Press Start 2P"'
+  }).setOrigin(0.5);
 
-  const yourScoreText = this.add.text(200, 85, 'Your High Score: ...', { fontSize: '10px', fill: '#ffffff', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
-  const leaderboardText = this.add.text(200, 130, 'Loading...', { fontSize: '10px', fill: '#ffffff', fontFamily: '"Press Start 2P"' }).setOrigin(0.5);
+  this.add.text(200, 60, `Wallet: ${window.walletAddress}`, {
+    fontSize: '8px',
+    fill: '#ffffff',
+    fontFamily: '"Press Start 2P"'
+  }).setOrigin(0.5);
+
+  const yourScoreText = this.add.text(200, 85, 'Your High Score: ...', {
+    fontSize: '10px',
+    fill: '#ffffff',
+    fontFamily: '"Press Start 2P"'
+  }).setOrigin(0.5);
+
+  const leaderboardText = this.add.text(200, 130, 'Loading...', {
+    fontSize: '10px',
+    fill: '#ffffff',
+    fontFamily: '"Press Start 2P"'
+  }).setOrigin(0.5);
 
   window.getHighScore((scoreFromDB) => {
     highScore = scoreFromDB || 0;
@@ -83,8 +99,6 @@ GameScene.prototype.preload = function () {
 };
 
 GameScene.prototype.create = function () {
-  console.log('✅ GameScene loaded');
-
   this.gameOver = false;
   this.score = 0;
 
@@ -101,26 +115,35 @@ GameScene.prototype.create = function () {
   this.pipes = this.physics.add.group();
   this.burgers = this.physics.add.group();
 
-  this.scoreText = this.add.text(200, 20, 'Score: 0', { 
-    fontSize: '10px', 
-    fill: '#ffffff', 
-    fontFamily: '"Press Start 2P"', 
-    fontStyle: 'bold' 
-  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
+  this.scoreText = this.add.text(200, 20, 'Score: 0', {
+    fontSize: '30px',
+    fill: '#ffffff',
+    fontFamily: '"Press Start 2P"',
+    fontStyle: 'bold'
+  })
+    .setOrigin(0.5)
+    .setStroke('#000000', 6)
+    .setDepth(3);
 
-  this.highScoreText = this.add.text(200, 50, 'High: ' + highScore, { 
-    fontSize: '8px', 
-    fill: '#ffffff', 
-    fontFamily: '"Press Start 2P"', 
-    fontStyle: 'bold' 
-  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
+  this.highScoreText = this.add.text(200, 60, 'High: ' + highScore, {
+    fontSize: '24px',
+    fill: '#ffffff',
+    fontFamily: '"Press Start 2P"',
+    fontStyle: 'bold'
+  })
+    .setOrigin(0.5)
+    .setStroke('#000000', 6)
+    .setDepth(3);
 
-  this.startText = this.add.text(200, 300, 'TAP TO START', { 
-    fontSize: '12px', 
-    fill: '#ffff00', 
-    fontFamily: '"Press Start 2P"', 
-    fontStyle: 'bold' 
-  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
+  this.startText = this.add.text(200, 300, 'TAP TO START', {
+    fontSize: '12px',
+    fill: '#ffff00',
+    fontFamily: '"Press Start 2P"',
+    fontStyle: 'bold'
+  })
+    .setOrigin(0.5)
+    .setStroke('#000000', 4)
+    .setDepth(3);
 
   this.input.on('pointerdown', () => {
     if (!this.trump.visible && !this.gameOver) {
