@@ -1,16 +1,12 @@
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <title>Flappy Trump - $MAGA</title>
 
-  <!-- Phaser -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
-
-  <!-- XAMAN SDK -->
   <script src="https://xumm.app/assets/cdn/xumm.min.js"></script>
-
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-database-compat.js"></script>
 
@@ -80,6 +76,9 @@
 
       const script = document.createElement('script');
       script.src = "game.js";
+      script.onload = () => {
+        new Phaser.Game(config);
+      };
       document.body.appendChild(script);
 
     } catch (error) {
