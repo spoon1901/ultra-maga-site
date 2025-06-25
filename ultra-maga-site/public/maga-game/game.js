@@ -1,20 +1,3 @@
-const config = {
-  type: Phaser.AUTO,
-  width: 400,
-  height: 600,
-  physics: {
-    default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: false }
-  },
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
-  },
-  scene: [LeaderboardScene, GameScene]
-};
-
-
-
 let highScore = 0;
 
 function LeaderboardScene() {}
@@ -26,31 +9,17 @@ LeaderboardScene.prototype.preload = function () {
 LeaderboardScene.prototype.create = function () {
   const scene = this;
 
-  this.add.tileSprite(0, 0, config.width, config.height, 'background').setOrigin(0);
+  this.add.tileSprite(0, 0, 400, 600, 'background').setOrigin(0);
 
-  this.add.text(config.width / 2, 30, 'Ultra $MAGA Leaderboard', {
-    fontSize: '20px', fill: '#ffff00'
-  }).setOrigin(0.5);
+  this.add.text(200, 30, 'Ultra $MAGA Leaderboard', { fontSize: '20px', fill: '#ffff00' }).setOrigin(0.5);
 
-  this.add.text(config.width / 2, 60, `Wallet: ${window.walletAddress}`, {
-    fontSize: '12px', fill: '#ffffff'
-  }).setOrigin(0.5);
+  this.add.text(200, 60, `Wallet: ${window.walletAddress}`, { fontSize: '12px', fill: '#ffffff' }).setOrigin(0.5);
 
-  const yourScoreText = this.add.text(config.width / 2, 85, 'Your High Score: ...', {
-    fontSize: '14px', fill: '#ffffff'
-  }).setOrigin(0.5);
+  const yourScoreText = this.add.text(200, 85, 'Your High Score: ...', { fontSize: '14px', fill: '#ffffff' }).setOrigin(0.5);
 
-  const leaderboardTitle = this.add.text(config.width / 2, 110, '🏆 Top Scores 🏆', {
-    fontSize: '16px', fill: '#ffffff'
-  }).setOrigin(0.5);
+  const leaderboardText = this.add.text(200, 130, 'Loading...', { fontSize: '14px', fill: '#ffffff' }).setOrigin(0.5);
 
-  const leaderboardText = this.add.text(config.width / 2, 130, 'Loading...', {
-    fontSize: '14px', fill: '#ffffff'
-  }).setOrigin(0.5);
-
-  const startButton = this.add.text(config.width / 2, config.height - 80, '▶️ Start Game', {
-    fontSize: '24px', fill: '#00ff00', backgroundColor: '#000'
-  })
+  const startButton = this.add.text(200, 520, '▶️ Start Game', { fontSize: '24px', fill: '#00ff00', backgroundColor: '#000' })
     .setOrigin(0.5)
     .setPadding(10)
     .setInteractive({ useHandCursor: true })
@@ -99,11 +68,9 @@ GameScene.prototype.create = function () {
   this.gameOver = false;
   this.score = 0;
 
-  this.background = this.add.tileSprite(0, 0, config.width, config.height, 'background').setOrigin(0);
+  this.background = this.add.tileSprite(0, 0, 400, 600, 'background').setOrigin(0);
 
   this.trump = this.physics.add.sprite(100, 300, 'trump').setScale(0.07);
-  this.trump.body.setSize(this.trump.displayWidth * 1.4, this.trump.displayHeight * 1.4);
-  this.trump.body.setOffset(-this.trump.displayWidth * 0.2, -this.trump.displayHeight * 0.2);
   this.trump.setCollideWorldBounds(true);
   this.trump.setVisible(false);
   this.trump.body.allowGravity = false;
@@ -111,17 +78,10 @@ GameScene.prototype.create = function () {
   this.pipes = this.physics.add.group();
   this.burgers = this.physics.add.group();
 
-  this.scoreText = this.add.text(config.width / 2, 20, 'Score: 0', {
-    fontSize: '20px', fill: '#fff'
-  }).setOrigin(0.5).setDepth(2);
+  this.scoreText = this.add.text(200, 20, 'Score: 0', { fontSize: '20px', fill: '#fff' }).setOrigin(0.5);
+  this.highScoreText = this.add.text(200, 50, 'High: ' + highScore, { fontSize: '16px', fill: '#ffffff' }).setOrigin(0.5);
 
-  this.highScoreText = this.add.text(config.width / 2, 50, 'High: ' + highScore, {
-    fontSize: '16px', fill: '#ffffff'
-  }).setOrigin(0.5).setDepth(2);
-
-  this.startText = this.add.text(config.width / 2, config.height / 2, 'TAP TO START', {
-    fontSize: '28px', fill: '#ffff00'
-  }).setOrigin(0.5).setDepth(2);
+  this.startText = this.add.text(200, 300, 'TAP TO START', { fontSize: '28px', fill: '#ffff00' }).setOrigin(0.5);
 
   this.input.on('pointerdown', () => {
     if (!this.trump.visible && !this.gameOver) {
@@ -182,38 +142,27 @@ GameScene.prototype.flap = function () {
 };
 
 GameScene.prototype.addPipe = function () {
-  const gap = config.height / 17;
-  const y = Phaser.Math.Between(150, config.height - 150);
+  const gap = 600 / 17;
+  const y = Phaser.Math.Between(150, 450);
 
   const obstacleType = Phaser.Math.Between(0, 1) === 0 ? 'pipe' : 'fraudcast';
 
-  const topPipe = this.pipes.create(config.width, y - gap, obstacleType).setOrigin(0, 1);
-  const bottomPipe = this.pipes.create(config.width, y + gap, obstacleType).setOrigin(0, 0);
+  const topPipe = this.pipes.create(400, y - gap, obstacleType).setOrigin(0, 1);
+  const bottomPipe = this.pipes.create(400, y + gap, obstacleType).setOrigin(0, 0);
 
   [topPipe, bottomPipe].forEach(pipe => {
-    if (obstacleType === 'fraudcast') {
-      pipe.setScale(0.18);
-      pipe.body.setSize(pipe.displayWidth * 1.2, pipe.displayHeight * 5.5);
-    } else {
-      pipe.setScale(0.15);
-      pipe.body.setSize(pipe.displayWidth * 1.5, pipe.displayHeight * 6.5);
-    }
-
     pipe.setVelocityX(-200);
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.body.setOffset(-pipe.displayWidth * 0.2, -pipe.displayHeight);
     pipe.setDepth(1);
   });
 
   if (Phaser.Math.Between(0, 9) === 0) {
     const burgerY = Phaser.Math.Between(y - gap + 30, y + gap - 30);
-    const burger = this.burgers.create(config.width + 30, burgerY, 'burger').setScale(0.07);
+    const burger = this.burgers.create(430, burgerY, 'burger').setScale(0.07);
     burger.setVelocityX(-200);
     burger.body.allowGravity = false;
-    burger.body.setSize(burger.displayWidth * 9, burger.displayHeight * 9);
-    burger.body.setOffset(-burger.displayWidth * 2.25, -burger.displayHeight * 2.25);
     burger.setDepth(1);
   }
 };
@@ -255,9 +204,7 @@ GameScene.prototype.hitPipe = function () {
   this.trump.setTint(0xff0000);
   this.sound.play('fired', { volume: 0.5 });
 
-  this.restartText = this.add.text(config.width / 2, config.height / 2 + 50, 'CLICK TO TRY AGAIN', {
-    fontSize: '20px', fill: '#ff0000'
-  }).setOrigin(0.5).setDepth(2);
+  this.restartText = this.add.text(200, 350, 'CLICK TO TRY AGAIN', { fontSize: '20px', fill: '#ff0000' }).setOrigin(0.5).setDepth(2);
 
   if (this.pipeTimer) this.pipeTimer.remove();
 };
