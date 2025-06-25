@@ -155,8 +155,8 @@ GameScene.prototype.flap = function () {
 };
 
 GameScene.prototype.addPipe = function () {
-  const gap = 600 / 17;
-  const y = Phaser.Math.Between(150, 450);
+  const gap = 150;
+  const y = Phaser.Math.Between(180, 420);
 
   const obstacleType = Phaser.Math.Between(0, 1) === 0 ? 'pipe' : 'fraudcast';
 
@@ -164,11 +164,20 @@ GameScene.prototype.addPipe = function () {
   const bottomPipe = this.pipes.create(400, y + gap, obstacleType).setOrigin(0, 0);
 
   [topPipe, bottomPipe].forEach(pipe => {
+    if (obstacleType === 'fraudcast') {
+      pipe.setScale(0.3);
+    } else {
+      pipe.setScale(0.25);
+    }
+
     pipe.setVelocityX(-200);
     pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.setDepth(1);
+    pipe.setDepth(10);
+
+    pipe.body.setSize(pipe.displayWidth, pipe.displayHeight);
+    pipe.body.setOffset(0, 0);
   });
 
   if (Phaser.Math.Between(0, 9) === 0) {
@@ -176,7 +185,7 @@ GameScene.prototype.addPipe = function () {
     const burger = this.burgers.create(430, burgerY, 'burger').setScale(0.07);
     burger.setVelocityX(-200);
     burger.body.allowGravity = false;
-    burger.setDepth(1);
+    burger.setDepth(15);
   }
 };
 
