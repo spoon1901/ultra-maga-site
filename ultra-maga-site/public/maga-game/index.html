@@ -7,10 +7,10 @@
   <!-- Phaser -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
 
-  <!-- XAMAN SDK (Fixed) -->
+  <!-- XAMAN SDK -->
   <script src="https://xumm.app/assets/cdn/xumm.min.js"></script>
 
-  <!-- Firebase SDKs (Compat Versions for Browser) -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-database-compat.js"></script>
 
@@ -40,7 +40,6 @@
   </div>
 
 <script>
-  // Firebase Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
     authDomain: "flappytrump.firebaseapp.com",
@@ -51,12 +50,10 @@
     appId: "1:513580021078:web:caacd9c4a55acee33712f7"
   };
 
-  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
   window.db = database;
 
-  // Initialize XAMAN (XUMM) SDK
   const xumm = new Xumm('e9f38278-c0a2-45a3-903c-833adb7dc8e5');
   window.walletAddress = null;
 
@@ -81,7 +78,6 @@
         window.highScoreRef.set(newScore);
       };
 
-      // Load game after login
       const script = document.createElement('script');
       script.src = "game.js";
       document.body.appendChild(script);
