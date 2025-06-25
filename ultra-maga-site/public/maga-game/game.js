@@ -162,7 +162,7 @@ GameScene.prototype.flap = function () {
 };
 
 GameScene.prototype.addPipe = function () {
-  const gap = 95;
+  const gap = 45;
   const y = Phaser.Math.Between(180, 420);
 
   const obstacleType = Phaser.Math.Between(0, 1) === 0 ? 'pipe' : 'fraudcast';
