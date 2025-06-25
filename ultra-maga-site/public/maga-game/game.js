@@ -158,13 +158,13 @@ GameScene.prototype.flap = function () {
 };
 
 GameScene.prototype.addPipe = function () {
-  const gap = 95;
+  const gap = 45;
   const y = Phaser.Math.Between(180, 420);
 
   const obstacleType = Phaser.Math.Between(0, 1) === 0 ? 'pipe' : 'fraudcast';
 
-  const topPipe = this.pipes.create(200, y - gap, obstacleType).setOrigin(0, 1);
-  const bottomPipe = this.pipes.create(200, y + gap, obstacleType).setOrigin(0, 0);
+  const topPipe = this.pipes.create(400, y - gap, obstacleType).setOrigin(0, 1);
+  const bottomPipe = this.pipes.create(400, y + gap, obstacleType).setOrigin(0, 0);
 
   [topPipe, bottomPipe].forEach(pipe => {
     if (obstacleType === 'fraudcast') {
