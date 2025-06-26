@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Flappy Trump - $MAGA</title>
+
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-database-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
     body { margin: 0; background: #000; color: white; text-align: center; }
@@ -14,14 +14,14 @@
     #loginArea { margin: 10px; }
     button {
       padding: 10px 20px;
-      background-color: #ff4747;
+      background-color: #1da1f2;
       border: none;
       color: white;
       cursor: pointer;
       font-size: 16px;
     }
     button:hover {
-      background-color: #d63b3b;
+      background-color: #0d8ddb;
     }
   </style>
 </head>
@@ -30,64 +30,62 @@
 
   <div id="loginArea">
     <button onclick="loginWithTwitter()">Login with X (Twitter)</button>
-    <p id="walletDisplay">Not Connected</p>
+    <p id="walletDisplay">Wallet: Not Connected</p>
   </div>
 
 <script>
-  // ✅ Firebase Config
+  // Firebase config
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-    projectId: "YOUR_PROJECT",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
+    authDomain: "flappytrump.firebaseapp.com",
+    databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
+    projectId: "flappytrump",
+    storageBucket: "flappytrump.appspot.com",
+    messagingSenderId: "513580021078",
+    appId: "1:513580021078:web:caacd9c4a55acee33712f7"
   };
+
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
   window.db = database;
 
-  const clientId = 'MHhnbzlNLXc4ZW11bE9MOWg4b0Y6MTpjaQ';
-  const redirectUri = 'https://ultramagaxrpl.com/maga-game/auth-callback.html';
+  const backendURL = "https://YOUR-BACKEND-URL.com";  // Replace with your hosted Node server
 
-  // ✅ Twitter Login
-  function loginWithTwitter() {
-    const state = Math.random().toString(36).substring(7);
-    const codeVerifier = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
-    const codeChallenge = btoa(codeVerifier).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  async function loginWithTwitter() {
+    const codeVerifier = generateRandomString(64);
+    const codeChallenge = await pkceChallengeFromVerifier(codeVerifier);
+    sessionStorage.setItem('code_verifier', codeVerifier);
 
-    localStorage.setItem('twitter_code_verifier', codeVerifier);
-    localStorage.setItem('twitter_state', state);
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: 'MHhnbzlNLXc4ZW11bE9MOWg4b0Y6MTpjaQ', // Your client ID
+      redirect_uri: 'https://www.ultramagaxrpl.com/maga-game/auth-callback.html',
+      scope: 'tweet.read users.read offline.access',
+      state: 'state',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256'
+    });
 
-    const url = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=tweet.read%20users.read%20offline.access&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=plain`;
-
-    window.location.href = url;
+    window.location.href = `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
   }
 
-  if (localStorage.getItem('twitterId')) {
-    const twitterId = localStorage.getItem('twitterId');
-    window.twitterId = twitterId;
-    document.getElementById('walletDisplay').innerText = `Logged in as: ${twitterId}`;
-    document.getElementById('loginArea').style.display = 'none';
+  function generateRandomString(length) {
+    const array = new Uint32Array(length);
+    window.crypto.getRandomValues(array);
+    return Array.from(array, dec => ('0' + dec.toString(16)).slice(-2)).join('');
+  }
 
-    window.highScoreRef = database.ref(`users/twitter/${twitterId}/highscore`);
-    window.getHighScore = (callback) => {
-      window.highScoreRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        callback(data);
-      });
-    };
-    window.updateHighScore = (newScore) => {
-      window.highScoreRef.set(newScore);
-    };
+  async function sha256(plain) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(plain);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return new Uint8Array(hash);
+  }
 
-    const script = document.createElement('script');
-    script.src = "game.js";
-    script.onload = () => {
-      new Phaser.Game(window.config);
-    };
-    document.body.appendChild(script);
+  async function pkceChallengeFromVerifier(v) {
+    const hashed = await sha256(v);
+    return btoa(String.fromCharCode(...hashed))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
 </script>
 
