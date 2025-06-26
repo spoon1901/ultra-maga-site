@@ -5,40 +5,50 @@
   <title>Twitter Auth Callback</title>
 </head>
 <body style="background: #000; color: white;">
-  <h2>Authenticating...</h2>
+  <h2>Authenticating with Twitter...</h2>
 
 <script>
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
-  const codeVerifier = sessionStorage.getItem('code_verifier');
+const params = new URLSearchParams(window.location.search);
+const code = params.get('code');
+const state = params.get('state');
+const codeVerifier = sessionStorage.getItem('code_verifier');
 
-  if (code && codeVerifier) {
-    fetch(`https://YOUR-BACKEND-URL.com/auth/twitter?code=${code}&code_verifier=${codeVerifier}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.user) {
-          const userId = data.user.id;
-          const username = data.user.username;
-          const profileImage = data.user.profile_image_url || '';
+const BACKEND_URL = 'https://www.ultramagaxrpl.com/maga-game/api/twitter';
 
-          localStorage.setItem('twitter_user_id', userId);
-          localStorage.setItem('twitter_username', username);
-          localStorage.setItem('twitter_profile', profileImage);
+if (code && codeVerifier) {
+  fetch(BACKEND_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, codeVerifier })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.user) {
+        const userId = data.user.id;
+        const username = data.user.username;
+        const profileImage = data.user.profile_image_url || '';
 
-          window.location.href = "/maga-game/"; // back to game
-        } else {
-          alert('Twitter login failed.');
-          window.location.href = "/maga-game/";
-        }
-      })
-      .catch(() => {
-        alert('Login error.');
-        window.location.href = "/maga-game/";
-      });
-  } else {
-    alert('Missing login info.');
-    window.location.href = "/maga-game/";
-  }
+        // Save user info to local storage
+        localStorage.setItem('twitter_user_id', userId);
+        localStorage.setItem('twitter_username', username);
+        localStorage.setItem('twitter_profile', profileImage);
+
+        // Redirect back to game
+        window.location.href = '/maga-game/';
+      } else {
+        alert('Twitter login failed.');
+        window.location.href = '/maga-game/';
+      }
+    })
+    .catch(err => {
+      console.error('Error:', err);
+      alert('Login error.');
+      window.location.href = '/maga-game/';
+    });
+} else {
+  alert('Missing login info.');
+  window.location.href = '/maga-game/';
+}
 </script>
 
 </body>
