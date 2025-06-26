@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { code, codeVerifier } = req.body;
+  const { code } = req.body;
 
   if (!code) {
     return res.status(400).json({ error: 'Missing code' });
@@ -14,7 +14,6 @@ export default async function handler(req, res) {
   const redirectUri = 'https://ultramagaxrpl.com/maga-game/auth-callback.html';
 
   try {
-    // Exchange code for tokens
     const tokenResponse = await fetch('https://api.twitter.com/2/oauth2/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -22,8 +21,7 @@ export default async function handler(req, res) {
         code,
         grant_type: 'authorization_code',
         client_id: clientId,
-        redirect_uri: redirectUri,
-        code_verifier: codeVerifier || 'challenge' // if using PKCE in the future
+        redirect_uri: redirectUri
       })
     });
 
@@ -33,7 +31,6 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Token exchange failed', details: tokenData });
     }
 
-    // Fetch user info
     const userResponse = await fetch('https://api.twitter.com/2/users/me', {
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`
