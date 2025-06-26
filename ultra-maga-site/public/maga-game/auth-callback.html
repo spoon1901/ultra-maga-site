@@ -1,55 +1,37 @@
+<!-- auth-callback.html -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <title>Twitter Auth Callback</title>
 </head>
-<body style="background: #000; color: white;">
-  <h2>Authenticating with Twitter...</h2>
+<body>
+  <h2>Authenticating...</h2>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const state = urlParams.get('state');
 
-<script>
-const params = new URLSearchParams(window.location.search);
-const code = params.get('code');
-const state = params.get('state');
-const codeVerifier = sessionStorage.getItem('code_verifier');
-
-const BACKEND_URL = 'https://www.ultramagaxrpl.com/maga-game/api/twitter';
-
-if (code && codeVerifier) {
-  fetch(BACKEND_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code, codeVerifier })
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.user) {
-        const userId = data.user.id;
-        const username = data.user.username;
-        const profileImage = data.user.profile_image_url || '';
-
-        // Save user info to local storage
-        localStorage.setItem('twitter_user_id', userId);
-        localStorage.setItem('twitter_username', username);
-        localStorage.setItem('twitter_profile', profileImage);
-
-        // Redirect back to game
-        window.location.href = '/maga-game/';
-      } else {
-        alert('Twitter login failed.');
-        window.location.href = '/maga-game/';
-      }
-    })
-    .catch(err => {
-      console.error('Error:', err);
-      alert('Login error.');
+    if (code) {
+      fetch('/maga-game/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, state })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          localStorage.setItem('twitterUser', JSON.stringify(data.user));
+          window.location.href = '/maga-game/';
+        } else {
+          alert('Twitter login failed.');
+          window.location.href = '/maga-game/';
+        }
+      });
+    } else {
+      alert('No code found.');
       window.location.href = '/maga-game/';
-    });
-} else {
-  alert('Missing login info.');
-  window.location.href = '/maga-game/';
-}
-</script>
-
+    }
+  </script>
 </body>
 </html>
