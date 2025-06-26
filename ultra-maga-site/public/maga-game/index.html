@@ -1,109 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Flappy Trump - $MAGA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-database-compat.js"></script>
-  
-  <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: white;
-      text-align: center;
-    }
-    canvas {
-      display: block;
-      margin: auto;
-    }
-    #loginArea {
-      margin: 10px;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #1da1f2;
-      border: none;
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #0d8ddb;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flappy Trump Login</title>
 </head>
 
-<body>
+<body style="background-color:black; color:white; text-align:center;">
 
-  <div id="loginArea">
-    <button onclick="loginWithTwitter()">Login with X (Twitter)</button>
-    <p id="walletDisplay">Not Connected</p>
-  </div>
+  <h1>Welcome to Flappy Trump</h1>
+  <button onclick="loginWithTwitter()" style="padding: 10px 20px; font-size: 16px;">
+    Login with X (Twitter)
+  </button>
 
-<script>
-  // ✅ Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
-    authDomain: "flappytrump.firebaseapp.com",
-    databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
-    projectId: "flappytrump",
-    storageBucket: "flappytrump.appspot.com",
-    messagingSenderId: "513580021078",
-    appId: "1:513580021078:web:caacd9c4a55acee33712f7"
-  };
+  <p id="walletDisplay">Not Connected</p>
 
-  firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
-  window.db = database;
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-  const clientId = 'MHhnbzlNLXc4ZW11bE9MOWg4b0Y6MTpjaQ'; // ✅ Your Twitter App Client ID
-  const redirectUri = 'https://ultramagaxrpl.com/maga-game/auth-callback.html'; // ✅ Must match Twitter App settings
-
-  window.userHandle = null;
-  window.userId = null;
-
-  async function loginWithTwitter() {
-    const authUrl = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=tweet.read users.read offline.access&state=state&code_challenge=challenge&code_challenge_method=plain`;
-    window.location.href = authUrl;
-  }
-
-  function onLoginComplete(userHandle, userId) {
-    window.userHandle = userHandle;
-    window.userId = userId;
-    document.getElementById('walletDisplay').innerText = `Logged in: @${userHandle}`;
-    document.getElementById('loginArea').style.display = 'none';
-
-    window.highScoreRef = database.ref(`users/${userId}/highscore`);
-
-    window.getHighScore = (callback) => {
-      window.highScoreRef.once('value', (snapshot) => {
-        const data = snapshot.val();
-        callback(data);
-      });
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "flappytrump.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID",
+      databaseURL: "https://flappytrump-default-rtdb.firebaseio.com"
     };
 
-    window.updateHighScore = (newScore) => {
-      window.highScoreRef.set(newScore);
-    };
+    firebase.initializeApp(firebaseConfig);
 
-    const script = document.createElement('script');
-    script.src = "game.js";
-    script.onload = () => {
-      console.log('✅ game.js loaded...');
-      new Phaser.Game(window.config);
-    };
-    document.body.appendChild(script);
-  }
+    const auth = firebase.auth();
+    const provider = new firebase.auth.TwitterAuthProvider();
+    const db = firebase.database();
 
-  // ✅ Auto-login if already authenticated
-  const userData = JSON.parse(localStorage.getItem('twitterUser'));
-  if (userData) {
-    onLoginComplete(userData.username, userData.id);
-  }
-</script>
-
+    function loginWithTwitter() {
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          const user = result.user;
+          localStorage.setItem('twitterUser', JSON.stringify({
+            uid: user.uid,
+            name: user.displayName,
+            photo: user.photoURL,
+            handle: user.reloadUserInfo.screenName
+          }));
+          window.location.href = '/maga-game/';
+        })
+        .catch((error) => {
+          console.error('Login failed:', error);
+          alert('Twitter login failed.');
+        });
+    }
+  </script>
 </body>
 </html>
