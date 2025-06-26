@@ -7,6 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-database-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
     body { margin: 0; background: #000; color: white; text-align: center; }
@@ -30,11 +31,11 @@
 
   <div id="loginArea">
     <button onclick="loginWithTwitter()">Login with X (Twitter)</button>
-    <p id="walletDisplay">Wallet: Not Connected</p>
+    <p id="walletDisplay">Not Connected</p>
   </div>
 
 <script>
-  // Firebase config
+  // ✅ Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
     authDomain: "flappytrump.firebaseapp.com",
@@ -49,8 +50,10 @@
   const database = firebase.database();
   window.db = database;
 
-  const backendURL = "https://YOUR-BACKEND-URL.com";  // Replace with your hosted Node server
+  const clientId = 'MHhnbzlNLXc4ZW11bE9MOWg4b0Y6MTpjaQ';
+  const redirectUri = 'https://www.ultramagaxrpl.com/maga-game/auth-callback.html';
 
+  // 🔥 Twitter Login
   async function loginWithTwitter() {
     const codeVerifier = generateRandomString(64);
     const codeChallenge = await pkceChallengeFromVerifier(codeVerifier);
@@ -58,8 +61,8 @@
 
     const params = new URLSearchParams({
       response_type: 'code',
-      client_id: 'MHhnbzlNLXc4ZW11bE9MOWg4b0Y6MTpjaQ', // Your client ID
-      redirect_uri: 'https://www.ultramagaxrpl.com/maga-game/auth-callback.html',
+      client_id: clientId,
+      redirect_uri: redirectUri,
       scope: 'tweet.read users.read offline.access',
       state: 'state',
       code_challenge: codeChallenge,
@@ -69,12 +72,14 @@
     window.location.href = `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
   }
 
+  // ✅ Generate Random String for PKCE
   function generateRandomString(length) {
     const array = new Uint32Array(length);
     window.crypto.getRandomValues(array);
     return Array.from(array, dec => ('0' + dec.toString(16)).slice(-2)).join('');
   }
 
+  // ✅ Create PKCE Challenge from Verifier
   async function sha256(plain) {
     const encoder = new TextEncoder();
     const data = encoder.encode(plain);
@@ -86,6 +91,39 @@
     const hashed = await sha256(v);
     return btoa(String.fromCharCode(...hashed))
       .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
+  // ✅ Check if Already Logged In
+  const userId = localStorage.getItem('twitter_user_id');
+  const username = localStorage.getItem('twitter_username');
+  const profile = localStorage.getItem('twitter_profile');
+
+  if (userId) {
+    window.walletAddress = userId;
+
+    document.getElementById('walletDisplay').innerText = 
+      username ? `Logged in as @${username}` : `User ID: ${userId}`;
+
+    document.getElementById('loginArea').style.display = 'none';
+
+    window.highScoreRef = database.ref(`users/${userId}/highscore`);
+    window.getHighScore = (callback) => {
+      window.highScoreRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        callback(data);
+      });
+    };
+    window.updateHighScore = (newScore) => {
+      window.highScoreRef.set(newScore);
+    };
+
+    const script = document.createElement('script');
+    script.src = "game.js";
+    script.onload = () => {
+      console.log('✅ Game started with Twitter login');
+      new Phaser.Game(window.config);
+    };
+    document.body.appendChild(script);
   }
 </script>
 
