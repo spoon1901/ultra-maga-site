@@ -1,17 +1,3 @@
-// ✅ Scene declarations with keys
-function LeaderboardScene() {
-  Phaser.Scene.call(this, { key: 'LeaderboardScene' });
-}
-LeaderboardScene.prototype = Object.create(Phaser.Scene.prototype);
-LeaderboardScene.prototype.constructor = LeaderboardScene;
-
-function GameScene() {
-  Phaser.Scene.call(this, { key: 'GameScene' });
-}
-GameScene.prototype = Object.create(Phaser.Scene.prototype);
-GameScene.prototype.constructor = GameScene;
-
-// ✅ Phaser config
 window.config = {
   type: Phaser.AUTO,
   width: 400,
@@ -29,6 +15,8 @@ window.config = {
 
 let highScore = 0;
 
+function LeaderboardScene() {}
+
 LeaderboardScene.prototype.preload = function () {
   this.load.image('background', 'https://files.catbox.moe/chw14r.png');
 };
@@ -39,44 +27,52 @@ LeaderboardScene.prototype.create = function () {
   this.add.text(200, 30, 'Ultra $MAGA Leaderboard', {
     fontSize: '14px',
     fill: '#ffff00',
-    fontFamily: '"Press Start 2P"'
-  }).setOrigin(0.5).setStroke('#000000', 4);
+    fontFamily: '"Press Start 2P"',
+    stroke: '#000000',
+    strokeThickness: 4
+  }).setOrigin(0.5);
 
-  this.add.text(200, 60, `Wallet: ${window.walletAddress}`, {
+  this.add.text(200, 60, `User: ${window.twitterId}`, {
     fontSize: '8px',
     fill: '#ffffff',
-    fontFamily: '"Press Start 2P"'
-  }).setOrigin(0.5).setStroke('#000000', 4);
+    fontFamily: '"Press Start 2P"',
+    stroke: '#000000',
+    strokeThickness: 3
+  }).setOrigin(0.5);
 
   const yourScoreText = this.add.text(200, 85, 'Your High Score: ...', {
     fontSize: '10px',
     fill: '#ffffff',
-    fontFamily: '"Press Start 2P"'
-  }).setOrigin(0.5).setStroke('#000000', 4);
+    fontFamily: '"Press Start 2P"',
+    stroke: '#000000',
+    strokeThickness: 3
+  }).setOrigin(0.5);
 
   const leaderboardText = this.add.text(200, 130, 'Loading...', {
     fontSize: '10px',
     fill: '#ffffff',
-    fontFamily: '"Press Start 2P"'
-  }).setOrigin(0.5).setStroke('#000000', 4);
+    fontFamily: '"Press Start 2P"',
+    stroke: '#000000',
+    strokeThickness: 3
+  }).setOrigin(0.5);
 
   window.getHighScore((scoreFromDB) => {
     highScore = scoreFromDB || 0;
     yourScoreText.setText('Your High Score: ' + highScore);
   });
 
-  window.db.ref('users').once('value').then((snapshot) => {
+  window.db.ref('users/twitter').once('value').then((snapshot) => {
     const data = snapshot.val() || {};
-    const leaderboardArray = Object.keys(data).map(wallet => ({
-      wallet,
-      score: data[wallet].highscore || 0
+    const leaderboardArray = Object.keys(data).map(id => ({
+      id,
+      score: data[id].highscore || 0
     }));
 
     leaderboardArray.sort((a, b) => b.score - a.score);
     const top5 = leaderboardArray.slice(0, 5);
 
     const display = top5.map((entry, index) =>
-      `${index + 1}. ${entry.wallet.slice(0, 5)}...${entry.wallet.slice(-4)} — ${entry.score}`
+      `${index + 1}. ${entry.id.slice(0, 5)}...${entry.id.slice(-4)} — ${entry.score}`
     ).join('\n');
 
     leaderboardText.setText(display || 'No scores yet.');
@@ -85,11 +81,10 @@ LeaderboardScene.prototype.create = function () {
       fontSize: '12px',
       fill: '#ffffff',
       fontFamily: '"Press Start 2P"',
-      fontStyle: 'bold'
+      stroke: '#000000',
+      strokeThickness: 4
     })
       .setOrigin(0.5)
-      .setPadding(10)
-      .setStroke('#000000', 4)
       .setInteractive({ useHandCursor: true })
       .on('pointerdown', () => {
         this.scene.start('GameScene');
@@ -97,7 +92,7 @@ LeaderboardScene.prototype.create = function () {
   });
 };
 
-LeaderboardScene.prototype.update = function () {};
+function GameScene() {}
 
 GameScene.prototype.preload = function () {
   this.load.image('trump', 'https://files.catbox.moe/7wbrf6.png');
@@ -131,22 +126,25 @@ GameScene.prototype.create = function () {
     fontSize: '20px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
-    fontStyle: 'bold'
-  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
+    stroke: '#000000',
+    strokeThickness: 4
+  }).setOrigin(0.5);
 
   this.highScoreText = this.add.text(200, 65, 'High: ' + highScore, {
     fontSize: '16px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
-    fontStyle: 'bold'
-  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
+    stroke: '#000000',
+    strokeThickness: 4
+  }).setOrigin(0.5);
 
   this.startText = this.add.text(200, 300, 'TAP TO START', {
     fontSize: '12px',
     fill: '#ffff00',
     fontFamily: '"Press Start 2P"',
-    fontStyle: 'bold'
-  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
+    stroke: '#000000',
+    strokeThickness: 4
+  }).setOrigin(0.5);
 
   this.input.on('pointerdown', () => {
     if (!this.trump.visible && !this.gameOver) {
@@ -284,11 +282,11 @@ GameScene.prototype.hitPipe = function () {
     fontSize: '10px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
-    fontStyle: 'bold'
+    stroke: '#000000',
+    strokeThickness: 4
   })
     .setOrigin(0.5)
     .setDepth(5)
-    .setStroke('#000000', 4)
     .setInteractive({ useHandCursor: true })
     .on('pointerdown', () => {
       this.restartGame();
@@ -298,11 +296,11 @@ GameScene.prototype.hitPipe = function () {
     fontSize: '10px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
-    fontStyle: 'bold'
+    stroke: '#000000',
+    strokeThickness: 4
   })
     .setOrigin(0.5)
     .setDepth(5)
-    .setStroke('#000000', 4)
     .setInteractive({ useHandCursor: true })
     .on('pointerdown', () => {
       this.scene.start('LeaderboardScene');
