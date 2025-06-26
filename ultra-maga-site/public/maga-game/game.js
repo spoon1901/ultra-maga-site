@@ -1,3 +1,17 @@
+// ✅ Declare scenes with keys
+function LeaderboardScene() {
+  Phaser.Scene.call(this, { key: 'LeaderboardScene' });
+}
+LeaderboardScene.prototype = Object.create(Phaser.Scene.prototype);
+LeaderboardScene.prototype.constructor = LeaderboardScene;
+
+function GameScene() {
+  Phaser.Scene.call(this, { key: 'GameScene' });
+}
+GameScene.prototype = Object.create(Phaser.Scene.prototype);
+GameScene.prototype.constructor = GameScene;
+
+// ✅ Phaser config
 window.config = {
   type: Phaser.AUTO,
   width: 400,
@@ -15,8 +29,7 @@ window.config = {
 
 let highScore = 0;
 
-function LeaderboardScene() {}
-
+// ✅ Leaderboard Scene
 LeaderboardScene.prototype.preload = function () {
   this.load.image('background', 'https://files.catbox.moe/chw14r.png');
 };
@@ -48,7 +61,6 @@ LeaderboardScene.prototype.create = function () {
     fontFamily: '"Press Start 2P"'
   }).setOrigin(0.5);
 
-  // ✅ Correct: Fetch leaderboard immediately
   window.getHighScore((scoreFromDB) => {
     highScore = scoreFromDB || 0;
     yourScoreText.setText('Your High Score: ' + highScore);
@@ -69,28 +81,24 @@ LeaderboardScene.prototype.create = function () {
     ).join('\n');
 
     leaderboardText.setText(display || 'No scores yet.');
-  });
 
-  const startButton = this.add.text(200, 520, 'START GAME', {
-    fontSize: '12px',
-    fill: '#ffffff',
-    fontFamily: '"Press Start 2P"',
-    fontStyle: 'bold'
-  })
-    .setOrigin(0.5)
-    .setPadding(10)
-    .setStroke('#000000', 4)
-    .setInteractive({ useHandCursor: true })
-    .on('pointerdown', () => {
-      this.scene.start('GameScene');
-    });
+    const startButton = this.add.text(200, 520, 'START GAME', {
+      fontSize: '12px',
+      fill: '#ffffff',
+      fontFamily: '"Press Start 2P"',
+      fontStyle: 'bold'
+    })
+      .setOrigin(0.5)
+      .setPadding(10)
+      .setStroke('#000000', 4)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => {
+        this.scene.start('GameScene');
+      });
+  });
 };
 
-// ✅ Added update function to prevent scene crash
-LeaderboardScene.prototype.update = function () {};
-
-function GameScene() {}
-
+// ✅ Game Scene
 GameScene.prototype.preload = function () {
   this.load.image('trump', 'https://files.catbox.moe/7wbrf6.png');
   this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
@@ -124,32 +132,21 @@ GameScene.prototype.create = function () {
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
     fontStyle: 'bold'
-  })
-    .setOrigin(0.5)
-    .setStroke('#000000', 4)
-    .setPadding(0, 10, 0, 0)
-    .setDepth(3);
+  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
 
   this.highScoreText = this.add.text(200, 65, 'High: ' + highScore, {
     fontSize: '16px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
     fontStyle: 'bold'
-  })
-    .setOrigin(0.5)
-    .setStroke('#000000', 4)
-    .setPadding(0, 10, 0, 0)
-    .setDepth(3);
+  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
 
   this.startText = this.add.text(200, 300, 'TAP TO START', {
     fontSize: '12px',
     fill: '#ffff00',
     fontFamily: '"Press Start 2P"',
     fontStyle: 'bold'
-  })
-    .setOrigin(0.5)
-    .setStroke('#000000', 4)
-    .setDepth(3);
+  }).setOrigin(0.5).setStroke('#000000', 4).setDepth(3);
 
   this.input.on('pointerdown', () => {
     if (!this.trump.visible && !this.gameOver) {
@@ -277,11 +274,6 @@ GameScene.prototype.update = function () {
 
 GameScene.prototype.hitPipe = function () {
   if (this.gameOver) return;
-
-  if (this.score > highScore) {
-    highScore = this.score;
-    window.updateHighScore(highScore);
-  }
 
   this.gameOver = true;
   this.physics.pause();
