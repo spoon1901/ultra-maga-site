@@ -66,7 +66,7 @@
   window.userId = null;
 
   async function loginWithTwitter() {
-    const authUrl = `https://twitter.com/i/oauth2/authorize?response_type=token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=tweet.read users.read&state=state&code_challenge=challenge&code_challenge_method=plain`;
+    const authUrl = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=tweet.read users.read offline.access&state=state&code_challenge=challenge&code_challenge_method=plain`;
     window.location.href = authUrl;
   }
 
@@ -96,6 +96,12 @@
       new Phaser.Game(window.config);
     };
     document.body.appendChild(script);
+  }
+
+  // ✅ Auto-login if already authenticated
+  const userData = JSON.parse(localStorage.getItem('twitterUser'));
+  if (userData) {
+    onLoginComplete(userData.username, userData.id);
   }
 </script>
 
