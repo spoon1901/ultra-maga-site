@@ -1,4 +1,4 @@
-// ✅ Firebase High Score Functions
+// ✅ Firebase High Score Functions 
 const user = JSON.parse(localStorage.getItem('twitterUser'));
 
 if (!user) {
