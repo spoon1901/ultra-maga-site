@@ -15,6 +15,8 @@ window.config = {
 
 let highScore = 0;
 
+window.walletAddress = localStorage.getItem('twitter_user_id') || null;
+
 function LeaderboardScene() {}
 
 LeaderboardScene.prototype.preload = function () {
@@ -32,7 +34,7 @@ LeaderboardScene.prototype.create = function () {
     strokeThickness: 4
   }).setOrigin(0.5);
 
-  this.add.text(200, 60, `User: ${window.twitterId}`, {
+  this.add.text(200, 60, `User: ${window.walletAddress}`, {
     fontSize: '8px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
@@ -61,18 +63,18 @@ LeaderboardScene.prototype.create = function () {
     yourScoreText.setText('Your High Score: ' + highScore);
   });
 
-  window.db.ref('users/twitter').once('value').then((snapshot) => {
+  window.db.ref('users').once('value').then((snapshot) => {
     const data = snapshot.val() || {};
-    const leaderboardArray = Object.keys(data).map(id => ({
-      id,
-      score: data[id].highscore || 0
+    const leaderboardArray = Object.keys(data).map(wallet => ({
+      wallet,
+      score: data[wallet].highscore || 0
     }));
 
     leaderboardArray.sort((a, b) => b.score - a.score);
     const top5 = leaderboardArray.slice(0, 5);
 
     const display = top5.map((entry, index) =>
-      `${index + 1}. ${entry.id.slice(0, 5)}...${entry.id.slice(-4)} — ${entry.score}`
+      `${index + 1}. ${entry.wallet.slice(0, 5)}...${entry.wallet.slice(-4)} — ${entry.score}`
     ).join('\n');
 
     leaderboardText.setText(display || 'No scores yet.');
@@ -115,7 +117,6 @@ GameScene.prototype.create = function () {
   this.trump.setCollideWorldBounds(true);
   this.trump.setVisible(false);
   this.trump.body.allowGravity = false;
-
   this.trump.body.setSize(this.trump.displayWidth * 0.8, this.trump.displayHeight * 0.8);
   this.trump.body.setOffset(this.trump.displayWidth * 0.22, this.trump.displayHeight * 0.22);
 
@@ -128,7 +129,7 @@ GameScene.prototype.create = function () {
     fontFamily: '"Press Start 2P"',
     stroke: '#000000',
     strokeThickness: 4
-  }).setOrigin(0.5);
+  }).setOrigin(0.5).setDepth(3);
 
   this.highScoreText = this.add.text(200, 65, 'High: ' + highScore, {
     fontSize: '16px',
@@ -136,7 +137,7 @@ GameScene.prototype.create = function () {
     fontFamily: '"Press Start 2P"',
     stroke: '#000000',
     strokeThickness: 4
-  }).setOrigin(0.5);
+  }).setOrigin(0.5).setDepth(3);
 
   this.startText = this.add.text(200, 300, 'TAP TO START', {
     fontSize: '12px',
@@ -144,7 +145,7 @@ GameScene.prototype.create = function () {
     fontFamily: '"Press Start 2P"',
     stroke: '#000000',
     strokeThickness: 4
-  }).setOrigin(0.5);
+  }).setOrigin(0.5).setDepth(3);
 
   this.input.on('pointerdown', () => {
     if (!this.trump.visible && !this.gameOver) {
@@ -228,7 +229,6 @@ GameScene.prototype.addPipe = function () {
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
     pipe.setDepth(1);
-
     pipe.body.setOffset(-pipe.displayWidth * 0.2, -pipe.displayHeight);
   });
 
@@ -284,9 +284,7 @@ GameScene.prototype.hitPipe = function () {
     fontFamily: '"Press Start 2P"',
     stroke: '#000000',
     strokeThickness: 4
-  })
-    .setOrigin(0.5)
-    .setDepth(5)
+  }).setOrigin(0.5).setDepth(5)
     .setInteractive({ useHandCursor: true })
     .on('pointerdown', () => {
       this.restartGame();
@@ -298,9 +296,7 @@ GameScene.prototype.hitPipe = function () {
     fontFamily: '"Press Start 2P"',
     stroke: '#000000',
     strokeThickness: 4
-  })
-    .setOrigin(0.5)
-    .setDepth(5)
+  }).setOrigin(0.5).setDepth(5)
     .setInteractive({ useHandCursor: true })
     .on('pointerdown', () => {
       this.scene.start('LeaderboardScene');
