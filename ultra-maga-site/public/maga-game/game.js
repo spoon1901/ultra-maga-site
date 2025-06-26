@@ -15,8 +15,6 @@ window.config = {
 
 let highScore = 0;
 
-window.walletAddress = localStorage.getItem('twitter_user_id') || null;
-
 function LeaderboardScene() {}
 
 LeaderboardScene.prototype.preload = function () {
@@ -30,32 +28,26 @@ LeaderboardScene.prototype.create = function () {
     fontSize: '14px',
     fill: '#ffff00',
     fontFamily: '"Press Start 2P"',
-    stroke: '#000000',
+    stroke: '#000',
     strokeThickness: 4
   }).setOrigin(0.5);
 
-  this.add.text(200, 60, `User: ${window.walletAddress}`, {
+  this.add.text(200, 60, `User: @${window.userHandle}`, {
     fontSize: '8px',
     fill: '#ffffff',
-    fontFamily: '"Press Start 2P"',
-    stroke: '#000000',
-    strokeThickness: 3
+    fontFamily: '"Press Start 2P"'
   }).setOrigin(0.5);
 
   const yourScoreText = this.add.text(200, 85, 'Your High Score: ...', {
     fontSize: '10px',
     fill: '#ffffff',
-    fontFamily: '"Press Start 2P"',
-    stroke: '#000000',
-    strokeThickness: 3
+    fontFamily: '"Press Start 2P"'
   }).setOrigin(0.5);
 
   const leaderboardText = this.add.text(200, 130, 'Loading...', {
     fontSize: '10px',
     fill: '#ffffff',
-    fontFamily: '"Press Start 2P"',
-    stroke: '#000000',
-    strokeThickness: 3
+    fontFamily: '"Press Start 2P"'
   }).setOrigin(0.5);
 
   window.getHighScore((scoreFromDB) => {
@@ -65,16 +57,16 @@ LeaderboardScene.prototype.create = function () {
 
   window.db.ref('users').once('value').then((snapshot) => {
     const data = snapshot.val() || {};
-    const leaderboardArray = Object.keys(data).map(wallet => ({
-      wallet,
-      score: data[wallet].highscore || 0
+    const leaderboardArray = Object.keys(data).map(id => ({
+      id,
+      score: data[id].highscore || 0
     }));
 
     leaderboardArray.sort((a, b) => b.score - a.score);
     const top5 = leaderboardArray.slice(0, 5);
 
     const display = top5.map((entry, index) =>
-      `${index + 1}. ${entry.wallet.slice(0, 5)}...${entry.wallet.slice(-4)} — ${entry.score}`
+      `${index + 1}. ${entry.id.slice(0, 5)}...${entry.id.slice(-4)} — ${entry.score}`
     ).join('\n');
 
     leaderboardText.setText(display || 'No scores yet.');
@@ -117,6 +109,7 @@ GameScene.prototype.create = function () {
   this.trump.setCollideWorldBounds(true);
   this.trump.setVisible(false);
   this.trump.body.allowGravity = false;
+
   this.trump.body.setSize(this.trump.displayWidth * 0.8, this.trump.displayHeight * 0.8);
   this.trump.body.setOffset(this.trump.displayWidth * 0.22, this.trump.displayHeight * 0.22);
 
@@ -284,8 +277,7 @@ GameScene.prototype.hitPipe = function () {
     fontFamily: '"Press Start 2P"',
     stroke: '#000000',
     strokeThickness: 4
-  }).setOrigin(0.5).setDepth(5)
-    .setInteractive({ useHandCursor: true })
+  }).setOrigin(0.5).setDepth(5).setInteractive({ useHandCursor: true })
     .on('pointerdown', () => {
       this.restartGame();
     });
@@ -296,8 +288,7 @@ GameScene.prototype.hitPipe = function () {
     fontFamily: '"Press Start 2P"',
     stroke: '#000000',
     strokeThickness: 4
-  }).setOrigin(0.5).setDepth(5)
-    .setInteractive({ useHandCursor: true })
+  }).setOrigin(0.5).setDepth(5).setInteractive({ useHandCursor: true })
     .on('pointerdown', () => {
       this.scene.start('LeaderboardScene');
     });
