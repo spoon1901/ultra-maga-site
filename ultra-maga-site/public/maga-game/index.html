@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
   <meta charset="UTF-8">
   <title>Flappy Trump - $MAGA</title>
-
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
-  <script src="https://xumm.app/assets/cdn/xumm.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-database-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
     body { margin: 0; background: #000; color: white; text-align: center; }
@@ -32,62 +29,65 @@
 <body>
 
   <div id="loginArea">
-    <button onclick="loginWithWallet()">Login with XAMAN Wallet</button>
-    <p id="walletDisplay">Wallet: Not Connected</p>
+    <button onclick="loginWithTwitter()">Login with X (Twitter)</button>
+    <p id="walletDisplay">Not Connected</p>
   </div>
 
 <script>
+  // ✅ Firebase Config
   const firebaseConfig = {
-    apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
-    authDomain: "flappytrump.firebaseapp.com",
-    databaseURL: "https://flappytrump-default-rtdb.firebaseio.com", // 🔥 confirm your DB URL -->
-    projectId: "flappytrump",
-    storageBucket: "flappytrump.appspot.com",
-    messagingSenderId: "513580021078",
-    appId: "1:513580021078:web:caacd9c4a55acee33712f7"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
   };
-
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
   window.db = database;
 
-  const xumm = new Xumm('e9f38278-c0a2-45a3-903c-833adb7dc8e5');
-  window.walletAddress = null;
+  const clientId = 'YOUR_TWITTER_CLIENT_ID';
+  const redirectUri = 'https://ultramagaxrpl.com/maga-game/auth-callback.html';
 
-  async function loginWithWallet() {
-    try {
-      const state = await xumm.authorize();
-      const wallet = state.me.sub;
-      window.walletAddress = wallet;
+  // ✅ Twitter Login
+  function loginWithTwitter() {
+    const state = Math.random().toString(36).substring(7);
+    const codeVerifier = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+    const codeChallenge = btoa(codeVerifier).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 
-      document.getElementById('walletDisplay').innerText = `Wallet: ${wallet}`;
-      document.getElementById('loginArea').style.display = 'none';
+    localStorage.setItem('twitter_code_verifier', codeVerifier);
+    localStorage.setItem('twitter_state', state);
 
-      window.highScoreRef = database.ref(`users/${wallet}/highscore`);
+    const url = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=tweet.read%20users.read%20offline.access&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=plain`;
 
-      window.getHighScore = (callback) => {
-        window.highScoreRef.on('value', (snapshot) => {
-          const data = snapshot.val();
-          callback(data);
-        });
-      };
+    window.location.href = url;
+  }
 
-      window.updateHighScore = (newScore) => {
-        window.highScoreRef.set(newScore);
-      };
+  if (localStorage.getItem('twitterId')) {
+    const twitterId = localStorage.getItem('twitterId');
+    window.twitterId = twitterId;
+    document.getElementById('walletDisplay').innerText = `Logged in as: ${twitterId}`;
+    document.getElementById('loginArea').style.display = 'none';
 
-      const script = document.createElement('script');
-      script.src = "game.js";
-      script.onload = () => {
-        console.log('✅ game.js loaded, starting Phaser...');
-        new Phaser.Game(window.config);
-      };
-      document.body.appendChild(script);
+    window.highScoreRef = database.ref(`users/twitter/${twitterId}/highscore`);
+    window.getHighScore = (callback) => {
+      window.highScoreRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        callback(data);
+      });
+    };
+    window.updateHighScore = (newScore) => {
+      window.highScoreRef.set(newScore);
+    };
 
-    } catch (error) {
-      console.error('Wallet login failed:', error);
-      alert('Wallet login failed. Please try again.');
-    }
+    const script = document.createElement('script');
+    script.src = "game.js";
+    script.onload = () => {
+      new Phaser.Game(window.config);
+    };
+    document.body.appendChild(script);
   }
 </script>
 
