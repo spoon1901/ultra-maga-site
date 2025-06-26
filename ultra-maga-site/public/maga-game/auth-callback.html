@@ -1,51 +1,45 @@
 <!DOCTYPE html>
 <html>
-<head><title>Twitter Auth</title></head>
-<body>
+<head>
+  <meta charset="UTF-8">
+  <title>Twitter Auth Callback</title>
+</head>
+<body style="background: #000; color: white;">
+  <h2>Authenticating...</h2>
+
 <script>
-const params = new URLSearchParams(window.location.search);
-const code = params.get('code');
-const state = params.get('state');
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const codeVerifier = sessionStorage.getItem('code_verifier');
 
-const savedState = localStorage.getItem('twitter_state');
-const codeVerifier = localStorage.getItem('twitter_code_verifier');
+  if (code && codeVerifier) {
+    fetch(`https://YOUR-BACKEND-URL.com/auth/twitter?code=${code}&code_verifier=${codeVerifier}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) {
+          const userId = data.user.id;
+          const username = data.user.username;
+          const profileImage = data.user.profile_image_url || '';
 
-if (state !== savedState) {
-  alert("State mismatch.");
-  throw new Error("State mismatch.");
-}
+          localStorage.setItem('twitter_user_id', userId);
+          localStorage.setItem('twitter_username', username);
+          localStorage.setItem('twitter_profile', profileImage);
 
-fetch('https://api.twitter.com/2/oauth2/token', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Authorization': 'Basic ' + btoa('MHhnbzlNLXc4ZW11bE9MOWg4b0Y6MTpjaQ:w3NBZqJNhSQd9Lg4o0Hc_NIjOBGuLhfyCkYnIVDqRQnIFlPM6g')
-  },
-  body: new URLSearchParams({
-    grant_type: 'authorization_code',
-    code: code,
-    redirect_uri: 'https://ultramagaxrpl.com/maga-game/auth-callback.html',
-    code_verifier: codeVerifier
-  })
-})
-.then(res => res.json())
-.then(token => {
-  return fetch('https://api.twitter.com/2/users/me', {
-    headers: {
-      Authorization: `Bearer ${token.access_token}`
-    }
-  });
-})
-.then(res => res.json())
-.then(data => {
-  const twitterId = data.data.id;
-  localStorage.setItem('twitterId', twitterId);
-  window.location.href = '/maga-game/';
-})
-.catch(err => {
-  console.error(err);
-  alert('Twitter login failed.');
-});
+          window.location.href = "/maga-game/"; // back to game
+        } else {
+          alert('Twitter login failed.');
+          window.location.href = "/maga-game/";
+        }
+      })
+      .catch(() => {
+        alert('Login error.');
+        window.location.href = "/maga-game/";
+      });
+  } else {
+    alert('Missing login info.');
+    window.location.href = "/maga-game/";
+  }
 </script>
+
 </body>
 </html>
