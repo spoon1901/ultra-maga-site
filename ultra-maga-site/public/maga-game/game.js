@@ -1,3 +1,23 @@
+// ✅ Firebase High Score Functions
+const user = JSON.parse(localStorage.getItem('twitterUser'));
+
+if (!user) {
+  window.location.href = '/'; // Redirect to login if not authenticated
+}
+
+window.getHighScore = (callback) => {
+  firebase.database().ref('users/' + user.uid + '/highscore')
+    .once('value')
+    .then(snapshot => {
+      const score = snapshot.val() || 0;
+      callback(score);
+    });
+};
+
+window.updateHighScore = (newScore) => {
+  firebase.database().ref('users/' + user.uid + '/highscore').set(newScore);
+};
+
 window.config = {
   type: Phaser.AUTO,
   width: 400,
@@ -32,7 +52,7 @@ LeaderboardScene.prototype.create = function () {
     strokeThickness: 4
   }).setOrigin(0.5);
 
-  this.add.text(200, 60, `User: @${window.userHandle}`, {
+  this.add.text(200, 60, `User: @${user.handle}`, {
     fontSize: '8px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"'
@@ -55,7 +75,7 @@ LeaderboardScene.prototype.create = function () {
     yourScoreText.setText('Your High Score: ' + highScore);
   });
 
-  window.db.ref('users').once('value').then((snapshot) => {
+  firebase.database().ref('users').once('value').then((snapshot) => {
     const data = snapshot.val() || {};
     const leaderboardArray = Object.keys(data).map(id => ({
       id,
@@ -109,7 +129,6 @@ GameScene.prototype.create = function () {
   this.trump.setCollideWorldBounds(true);
   this.trump.setVisible(false);
   this.trump.body.allowGravity = false;
-
   this.trump.body.setSize(this.trump.displayWidth * 0.8, this.trump.displayHeight * 0.8);
   this.trump.body.setOffset(this.trump.displayWidth * 0.22, this.trump.displayHeight * 0.22);
 
