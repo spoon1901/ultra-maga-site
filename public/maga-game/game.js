@@ -1,4 +1,5 @@
 
+// Game Config
 const config = {
     type: Phaser.AUTO,
     width: 400,
@@ -15,10 +16,8 @@ const config = {
 };
 
 window.config = config;
-new Phaser.Game(config);
 
-let highScore = 0;
-
+// Leaderboard Scene
 function LeaderboardScene() {}
 
 LeaderboardScene.prototype.preload = function () {
@@ -56,7 +55,8 @@ LeaderboardScene.prototype.create = function () {
 
     const userRef = window.db.ref('users/' + window.userId);
     userRef.once('value').then(snapshot => {
-        highScore = snapshot.val()?.highscore || 0;
+        const data = snapshot.val();
+        highScore = data?.highscore || 0;
         yourScoreText.setText('Your High Score: ' + highScore);
     });
 
@@ -89,6 +89,7 @@ LeaderboardScene.prototype.create = function () {
     .on('pointerdown', () => this.scene.start('GameScene'));
 };
 
+// Game Scene
 function GameScene() {}
 
 GameScene.prototype.preload = function () {
@@ -96,7 +97,7 @@ GameScene.prototype.preload = function () {
     this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
     this.load.image('background', 'https://files.catbox.moe/chw14r.png');
 
-    this.load.audio('flap', 'https://files.catbox.moe/3q8vaf.mp3');
+    this.load.audio('flap', 'https://files.catbox.moe/2oly9t.mp3');
     this.load.audio('hit', 'https://files.catbox.moe/2v2pm7.mp3');
     this.load.audio('score', 'https://files.catbox.moe/5c5st7.mp3');
     this.load.audio('music', 'https://files.catbox.moe/4eq3qy.mp3');
@@ -182,7 +183,7 @@ GameScene.prototype.startGame = function () {
 GameScene.prototype.addPipe = function () {
     const gap = 150;
     const y = Phaser.Math.Between(200, 400);
-    const pipeScale = 0.4;
+    const pipeScale = 0.35;
 
     const topPipe = this.pipes.create(400, y - gap, 'pipe')
         .setOrigin(0, 1)
@@ -215,7 +216,6 @@ GameScene.prototype.update = function () {
             pipe.passed = true;
             this.score += 1;
             this.scoreText.setText('Score: ' + this.score);
-            this.sound.play('score');
             if (this.score > highScore) {
                 highScore = this.score;
                 this.highScoreText.setText('High: ' + highScore);
