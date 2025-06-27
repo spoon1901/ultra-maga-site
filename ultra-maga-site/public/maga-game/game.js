@@ -1,36 +1,20 @@
-// ✅ Firebase High Score Functions 
-const user = JSON.parse(localStorage.getItem('twitterUser'));
+window.onload = function () {
+  const config = {
+    type: Phaser.AUTO,
+    width: 400,
+    height: 600,
+    physics: {
+      default: 'arcade',
+      arcade: { gravity: { y: 600 }, debug: false }
+    },
+    scale: {
+      mode: Phaser.Scale.FIT,
+      autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+    scene: [LeaderboardScene, GameScene]
+  };
 
-if (!user) {
-  window.location.href = '/'; // Redirect to login if not authenticated
-}
-
-window.getHighScore = (callback) => {
-  firebase.database().ref('users/' + user.uid + '/highscore')
-    .once('value')
-    .then(snapshot => {
-      const score = snapshot.val() || 0;
-      callback(score);
-    });
-};
-
-window.updateHighScore = (newScore) => {
-  firebase.database().ref('users/' + user.uid + '/highscore').set(newScore);
-};
-
-window.config = {
-  type: Phaser.AUTO,
-  width: 400,
-  height: 600,
-  physics: {
-    default: 'arcade',
-    arcade: { gravity: { y: 600 }, debug: false }
-  },
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
-  },
-  scene: [LeaderboardScene, GameScene]
+  const game = new Phaser.Game(config);
 };
 
 let highScore = 0;
@@ -52,8 +36,8 @@ LeaderboardScene.prototype.create = function () {
     strokeThickness: 4
   }).setOrigin(0.5);
 
-  this.add.text(200, 60, `User: @${user.handle}`, {
-    fontSize: '8px',
+  this.add.text(200, 60, `User: ${window.userHandle || 'Not Logged In'}`, {
+    fontSize: '10px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"'
   }).setOrigin(0.5);
@@ -70,40 +54,50 @@ LeaderboardScene.prototype.create = function () {
     fontFamily: '"Press Start 2P"'
   }).setOrigin(0.5);
 
-  window.getHighScore((scoreFromDB) => {
-    highScore = scoreFromDB || 0;
+  // Load high score
+  window.db.ref('users/' + window.userHandle).once('value').then(snapshot => {
+    highScore = snapshot.val()?.highscore || 0;
     yourScoreText.setText('Your High Score: ' + highScore);
   });
 
-  firebase.database().ref('users').once('value').then((snapshot) => {
+  // Load leaderboard
+  window.db.ref('users').once('value').then(snapshot => {
     const data = snapshot.val() || {};
-    const leaderboardArray = Object.keys(data).map(id => ({
-      id,
-      score: data[id].highscore || 0
-    }));
+    const leaderboard = Object.entries(data)
+      .map(([id, val]) => ({ id, score: val.highscore || 0 }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
 
-    leaderboardArray.sort((a, b) => b.score - a.score);
-    const top5 = leaderboardArray.slice(0, 5);
-
-    const display = top5.map((entry, index) =>
-      `${index + 1}. ${entry.id.slice(0, 5)}...${entry.id.slice(-4)} — ${entry.score}`
-    ).join('\n');
+    const display = leaderboard
+      .map((entry, index) => `${index + 1}. ${entry.id.slice(0, 5)}...${entry.id.slice(-4)} — ${entry.score}`)
+      .join('\n');
 
     leaderboardText.setText(display || 'No scores yet.');
-
-    const startButton = this.add.text(200, 520, 'START GAME', {
-      fontSize: '12px',
-      fill: '#ffffff',
-      fontFamily: '"Press Start 2P"',
-      stroke: '#000000',
-      strokeThickness: 4
-    })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => {
-        this.scene.start('GameScene');
-      });
   });
+
+  // Login button
+  this.add.text(200, 520, 'LOGIN WITH X', {
+    fontSize: '12px',
+    fill: '#1DA1F2',
+    fontFamily: '"Press Start 2P"',
+    stroke: '#000',
+    strokeThickness: 4
+  })
+    .setOrigin(0.5)
+    .setInteractive({ useHandCursor: true })
+    .on('pointerdown', () => window.loginWithTwitter());
+
+  // Start button
+  this.add.text(200, 550, 'START GAME', {
+    fontSize: '12px',
+    fill: '#ffffff',
+    fontFamily: '"Press Start 2P"',
+    stroke: '#000',
+    strokeThickness: 4
+  })
+    .setOrigin(0.5)
+    .setInteractive({ useHandCursor: true })
+    .on('pointerdown', () => this.scene.start('GameScene'));
 };
 
 function GameScene() {}
@@ -112,11 +106,6 @@ GameScene.prototype.preload = function () {
   this.load.image('trump', 'https://files.catbox.moe/7wbrf6.png');
   this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
   this.load.image('background', 'https://files.catbox.moe/chw14r.png');
-  this.load.audio('music', 'https://files.catbox.moe/4eq3qy.mp3');
-  this.load.image('burger', 'https://files.catbox.moe/hwbf07.png');
-  this.load.audio('burp', 'https://files.catbox.moe/5c5st7.mp3');
-  this.load.audio('fired', 'https://files.catbox.moe/2v2pm7.mp3');
-  this.load.image('fraudcast', 'https://files.catbox.moe/9g3p2j.png');
 };
 
 GameScene.prototype.create = function () {
@@ -129,59 +118,49 @@ GameScene.prototype.create = function () {
   this.trump.setCollideWorldBounds(true);
   this.trump.setVisible(false);
   this.trump.body.allowGravity = false;
-  this.trump.body.setSize(this.trump.displayWidth * 0.8, this.trump.displayHeight * 0.8);
-  this.trump.body.setOffset(this.trump.displayWidth * 0.22, this.trump.displayHeight * 0.22);
 
   this.pipes = this.physics.add.group();
-  this.burgers = this.physics.add.group();
 
   this.scoreText = this.add.text(200, 28, 'Score: 0', {
     fontSize: '20px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
-    stroke: '#000000',
+    stroke: '#000',
     strokeThickness: 4
-  }).setOrigin(0.5).setDepth(3);
+  }).setOrigin(0.5);
 
   this.highScoreText = this.add.text(200, 65, 'High: ' + highScore, {
     fontSize: '16px',
     fill: '#ffffff',
     fontFamily: '"Press Start 2P"',
-    stroke: '#000000',
+    stroke: '#000',
     strokeThickness: 4
-  }).setOrigin(0.5).setDepth(3);
+  }).setOrigin(0.5);
 
   this.startText = this.add.text(200, 300, 'TAP TO START', {
     fontSize: '12px',
     fill: '#ffff00',
     fontFamily: '"Press Start 2P"',
-    stroke: '#000000',
+    stroke: '#000',
     strokeThickness: 4
-  }).setOrigin(0.5).setDepth(3);
+  }).setOrigin(0.5);
 
   this.input.on('pointerdown', () => {
     if (!this.trump.visible && !this.gameOver) {
       this.startGame();
     } else if (this.gameOver) {
-      this.restartGame();
+      this.scene.start('LeaderboardScene');
     } else {
       this.flap();
     }
   });
 
-  this.cursors = this.input.keyboard.createCursorKeys();
   this.physics.add.collider(this.trump, this.pipes, () => this.hitPipe());
-  this.physics.add.overlap(this.trump, this.burgers, (trump, burger) => this.collectBurger(burger));
 
-  window.getHighScore((scoreFromDB) => {
-    highScore = scoreFromDB || 0;
-    this.highScoreText.setText('High: ' + highScore);
-  });
+  this.cursors = this.input.keyboard.createCursorKeys();
 };
 
 GameScene.prototype.startGame = function () {
-  if (this.restartText) this.restartText.setVisible(false);
-  if (this.leaderboardButton) this.leaderboardButton.setVisible(false);
   this.startText.setVisible(false);
   this.trump.setVisible(true);
   this.trump.clearTint();
@@ -191,15 +170,8 @@ GameScene.prototype.startGame = function () {
   this.gameOver = false;
   this.score = 0;
   this.scoreText.setText('Score: 0');
-  this.highScoreText.setText('High: ' + highScore);
   this.pipes.clear(true, true);
-  this.burgers.clear(true, true);
 
-  if (this.music) this.music.stop();
-  this.music = this.sound.add('music', { loop: true, volume: 0.3 });
-  this.music.play();
-
-  if (this.pipeTimer) this.pipeTimer.remove();
   this.pipeTimer = this.time.addEvent({
     delay: 1500,
     callback: () => this.addPipe(),
@@ -210,47 +182,18 @@ GameScene.prototype.startGame = function () {
   this.physics.resume();
 };
 
-GameScene.prototype.restartGame = function () {
-  this.startGame();
-};
-
-GameScene.prototype.flap = function () {
-  this.trump.setVelocityY(-300);
-};
-
 GameScene.prototype.addPipe = function () {
-  const gap = 45;
-  const y = Phaser.Math.Between(180, 420);
+  const gap = 150;
+  const y = Phaser.Math.Between(200, 400);
 
-  const obstacleType = Phaser.Math.Between(0, 1) === 0 ? 'pipe' : 'fraudcast';
-
-  const topPipe = this.pipes.create(400, y - gap, obstacleType).setOrigin(0, 1);
-  const bottomPipe = this.pipes.create(400, y + gap, obstacleType).setOrigin(0, 0);
+  const topPipe = this.pipes.create(400, y - gap, 'pipe').setOrigin(0, 1);
+  const bottomPipe = this.pipes.create(400, y + gap, 'pipe').setOrigin(0, 0);
 
   [topPipe, bottomPipe].forEach(pipe => {
-    if (obstacleType === 'fraudcast') {
-      pipe.setScale(0.18);
-      pipe.body.setSize(pipe.displayWidth * 1.2, pipe.displayHeight * 5.5);
-    } else {
-      pipe.setScale(0.15);
-      pipe.body.setSize(pipe.displayWidth * 1.5, pipe.displayHeight * 6.5);
-    }
-
     pipe.setVelocityX(-200);
-    pipe.passed = false;
     pipe.body.allowGravity = false;
     pipe.setImmovable(true);
-    pipe.setDepth(1);
-    pipe.body.setOffset(-pipe.displayWidth * 0.2, -pipe.displayHeight);
   });
-
-  if (Phaser.Math.Between(0, 9) === 0) {
-    const burgerY = Phaser.Math.Between(y - gap + 30, y + gap - 30);
-    const burger = this.burgers.create(430, burgerY, 'burger').setScale(0.07);
-    burger.setVelocityX(-200);
-    burger.body.allowGravity = false;
-    burger.setDepth(1);
-  }
 };
 
 GameScene.prototype.update = function () {
@@ -258,15 +201,9 @@ GameScene.prototype.update = function () {
 
   this.background.tilePositionX += 1;
 
-  if (this.cursors.space && Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
+  if (this.cursors.space.isDown) {
     this.flap();
   }
-
-  this.burgers.getChildren().forEach(burger => {
-    if (burger.x < -burger.width) {
-      burger.destroy();
-    }
-  });
 
   this.pipes.getChildren().forEach(pipe => {
     if (!pipe.passed && pipe.x + pipe.displayWidth / 2 < this.trump.x) {
@@ -276,10 +213,14 @@ GameScene.prototype.update = function () {
       if (this.score > highScore) {
         highScore = this.score;
         this.highScoreText.setText('High: ' + highScore);
-        window.updateHighScore(highScore);
+        window.db.ref('users/' + window.userHandle).set({ highscore: highScore });
       }
     }
   });
+};
+
+GameScene.prototype.flap = function () {
+  this.trump.setVelocityY(-300);
 };
 
 GameScene.prototype.hitPipe = function () {
@@ -288,41 +229,6 @@ GameScene.prototype.hitPipe = function () {
   this.gameOver = true;
   this.physics.pause();
   this.trump.setTint(0xff0000);
-  this.sound.play('fired', { volume: 0.5 });
-
-  this.restartText = this.add.text(200, 350, 'CLICK TO TRY AGAIN', {
-    fontSize: '10px',
-    fill: '#ffffff',
-    fontFamily: '"Press Start 2P"',
-    stroke: '#000000',
-    strokeThickness: 4
-  }).setOrigin(0.5).setDepth(5).setInteractive({ useHandCursor: true })
-    .on('pointerdown', () => {
-      this.restartGame();
-    });
-
-  this.leaderboardButton = this.add.text(200, 400, 'RETURN TO LEADERBOARD', {
-    fontSize: '10px',
-    fill: '#ffffff',
-    fontFamily: '"Press Start 2P"',
-    stroke: '#000000',
-    strokeThickness: 4
-  }).setOrigin(0.5).setDepth(5).setInteractive({ useHandCursor: true })
-    .on('pointerdown', () => {
-      this.scene.start('LeaderboardScene');
-    });
 
   if (this.pipeTimer) this.pipeTimer.remove();
-};
-
-GameScene.prototype.collectBurger = function (burger) {
-  burger.destroy();
-  this.score += 10;
-  this.scoreText.setText('Score: ' + this.score);
-  this.sound.play('burp', { volume: 0.5 });
-  if (this.score > highScore) {
-    highScore = this.score;
-    this.highScoreText.setText('High: ' + highScore);
-    window.updateHighScore(highScore);
-  }
 };
