@@ -1,12 +1,12 @@
 {
   "rewrites": [
-    { "source": "/maga-game", "destination": "/public/maga-game/index.html" },
-    { "source": "/maga-game/", "destination": "/public/maga-game/index.html" },
-    { "source": "/maga-game/game.js", "destination": "/public/maga-game/game.js" },
-    { "source": "/maga-game/auth-callback.html", "destination": "/public/maga-game/auth-callback.html" },
-    { "source": "/maga-game/privacy.html", "destination": "/public/maga-game/privacy.html" },
-    { "source": "/maga-game/terms.html", "destination": "/public/maga-game/terms.html" }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+    {
+      "source": "/maga-game",
+      "destination": "/maga-game/index.html"
+    },
+    {
+      "source": "/maga-game/:match*",
+      "destination": "/maga-game/:match*"
+    }
+  ]
 }
