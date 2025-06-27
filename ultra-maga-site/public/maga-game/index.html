@@ -1,56 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <title>Flappy Trump - $MAGA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <style>
-    body { 
-      margin: 0; 
-      background: black; 
-      color: white; 
-      text-align: center; 
-      font-family: 'Press Start 2P', monospace;
-    }
-    canvas {
-      display: block;
-      margin: auto;
-    }
-    #loginArea {
-      margin-top: 20px;
-    }
+    body { margin: 0; background: #000; color: white; text-align: center; }
+    canvas { display: block; margin: auto; }
     button {
       padding: 10px 20px;
-      background-color: #1DA1F2;
+      background-color: #1da1f2;
       border: none;
       color: white;
       cursor: pointer;
-      font-size: 14px;
-      border-radius: 5px;
+      font-size: 16px;
     }
     button:hover {
-      background-color: #0c85d0;
+      background-color: #0d8ddb;
     }
   </style>
 </head>
-
 <body>
 
-  <div id="loginArea">
-    <button onclick="login()">Login with X (Twitter)</button>
-    <p id="walletDisplay">Not Connected</p>
-  </div>
+<div id="loginArea">
+  <button onclick="loginWithTwitter()">Login with Twitter</button>
+  <p id="userDisplay">Not Connected</p>
+</div>
 
 <script>
-  // Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
     authDomain: "flappytrump.firebaseapp.com",
@@ -62,48 +42,43 @@
   };
 
   firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
   const auth = firebase.auth();
+  const database = firebase.database();
 
-  window.db = db;
-  window.userID = null;
+  window.db = database;
   window.userHandle = null;
 
-  function login() {
+  function loginWithTwitter() {
     const provider = new firebase.auth.TwitterAuthProvider();
     auth.signInWithPopup(provider)
       .then((result) => {
         const user = result.user;
-        window.userID = user.uid;
-        window.userHandle = user.reloadUserInfo.screenName || user.displayName;
-
-        document.getElementById('walletDisplay').innerText = `Logged in as @${window.userHandle}`;
+        window.userId = user.uid;
+        window.userHandle = user.reloadUserInfo.screenName;
+        document.getElementById('userDisplay').innerText = `User: @${window.userHandle}`;
         document.getElementById('loginArea').style.display = 'none';
 
-        window.highScoreRef = db.ref(`users/${window.userID}/highscore`);
-
+        window.highScoreRef = database.ref(`users/${window.userId}/highscore`);
         window.getHighScore = (callback) => {
           window.highScoreRef.on('value', (snapshot) => {
             const data = snapshot.val();
             callback(data);
           });
         };
-
         window.updateHighScore = (newScore) => {
           window.highScoreRef.set(newScore);
         };
 
         const script = document.createElement('script');
-        script.src = 'game.js';
+        script.src = "game.js";
         script.onload = () => {
-          console.log('Game loaded');
           new Phaser.Game(window.config);
         };
         document.body.appendChild(script);
       })
       .catch((error) => {
-        console.error('Login failed:', error);
-        alert('Twitter login failed.');
+        console.error("Login failed:", error);
+        alert("Twitter login failed.");
       });
   }
 </script>
