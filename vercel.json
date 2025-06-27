@@ -1,12 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/maga-game",
-      "destination": "/maga-game/index.html"
+      "source": "/flappytrump",
+      "destination": "/flappytrump/index.html"
     },
     {
-      "source": "/maga-game/:match*",
-      "destination": "/maga-game/:match*"
+      "source": "/flappytrump/:match*",
+      "destination": "/flappytrump/:match*"
     }
   ]
 }
