@@ -14,7 +14,7 @@ window.onload = function () {
     scene: [LeaderboardScene, GameScene]
   };
 
-  const game = new Phaser.Game(config);
+  window.config = config;
 };
 
 let highScore = 0;
@@ -54,40 +54,28 @@ LeaderboardScene.prototype.create = function () {
     fontFamily: '"Press Start 2P"'
   }).setOrigin(0.5);
 
-  // Load high score 
-  window.db.ref('users/' + window.userHandle).once('value').then(snapshot => {
+  window.db.ref('users/' + window.userId).once('value').then(snapshot => {
     highScore = snapshot.val()?.highscore || 0;
     yourScoreText.setText('Your High Score: ' + highScore);
   });
 
-  // Load leaderboard
   window.db.ref('users').once('value').then(snapshot => {
     const data = snapshot.val() || {};
     const leaderboard = Object.entries(data)
-      .map(([id, val]) => ({ id, score: val.highscore || 0 }))
+      .map(([id, val]) => ({
+        name: val.handle || id.slice(0, 5) + '...' + id.slice(-4),
+        score: val.highscore || 0
+      }))
       .sort((a, b) => b.score - a.score)
       .slice(0, 5);
 
     const display = leaderboard
-      .map((entry, index) => `${index + 1}. ${entry.id.slice(0, 5)}...${entry.id.slice(-4)} — ${entry.score}`)
+      .map((entry, index) => `${index + 1}. ${entry.name} — ${entry.score}`)
       .join('\n');
 
     leaderboardText.setText(display || 'No scores yet.');
   });
 
-  // Login button
-  this.add.text(200, 520, 'LOGIN WITH X', {
-    fontSize: '12px',
-    fill: '#1DA1F2',
-    fontFamily: '"Press Start 2P"',
-    stroke: '#000',
-    strokeThickness: 4
-  })
-    .setOrigin(0.5)
-    .setInteractive({ useHandCursor: true })
-    .on('pointerdown', () => window.loginWithTwitter());
-
-  // Start button
   this.add.text(200, 550, 'START GAME', {
     fontSize: '12px',
     fill: '#ffffff',
@@ -213,7 +201,7 @@ GameScene.prototype.update = function () {
       if (this.score > highScore) {
         highScore = this.score;
         this.highScoreText.setText('High: ' + highScore);
-        window.db.ref('users/' + window.userHandle).set({ highscore: highScore });
+        window.db.ref('users/' + window.userId).set({ highscore: highScore, handle: window.userHandle });
       }
     }
   });
