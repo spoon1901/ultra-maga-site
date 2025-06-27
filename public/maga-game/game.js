@@ -1,4 +1,5 @@
 
+let highScore = 0; // 🔥 Fixed: Declare highScore globally
 // Game Config
 const config = {
     type: Phaser.AUTO,
