@@ -54,7 +54,7 @@ LeaderboardScene.prototype.create = function () {
     fontFamily: '"Press Start 2P"'
   }).setOrigin(0.5);
 
-  // Load high score
+  // Load high score 
   window.db.ref('users/' + window.userHandle).once('value').then(snapshot => {
     highScore = snapshot.val()?.highscore || 0;
     yourScoreText.setText('Your High Score: ' + highScore);
