@@ -95,6 +95,11 @@ GameScene.prototype.preload = function () {
     this.load.image('trump', 'https://files.catbox.moe/7wbrf6.png');
     this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
     this.load.image('background', 'https://files.catbox.moe/chw14r.png');
+
+    this.load.audio('flap', 'https://files.catbox.moe/3q8vaf.mp3');
+    this.load.audio('hit', 'https://files.catbox.moe/2v2pm7.mp3');
+    this.load.audio('score', 'https://files.catbox.moe/5c5st7.mp3');
+    this.load.audio('music', 'https://files.catbox.moe/4eq3qy.mp3');
 };
 
 GameScene.prototype.create = function () {
@@ -134,6 +139,8 @@ GameScene.prototype.create = function () {
         strokeThickness: 4
     }).setOrigin(0.5);
 
+    this.music = this.sound.add('music', { loop: true, volume: 0.4 });
+
     this.input.on('pointerdown', () => {
         if (!this.trump.visible && !this.gameOver) {
             this.startGame();
@@ -168,15 +175,24 @@ GameScene.prototype.startGame = function () {
         loop: true
     });
 
+    this.music.play();
     this.physics.resume();
 };
 
 GameScene.prototype.addPipe = function () {
     const gap = 150;
     const y = Phaser.Math.Between(200, 400);
+    const pipeScale = 0.4;
 
-    const topPipe = this.pipes.create(400, y - gap, 'pipe').setOrigin(0, 1).setScale(0.5);
-    const bottomPipe = this.pipes.create(400, y + gap, 'pipe').setOrigin(0, 0).setScale(0.5);
+    const topPipe = this.pipes.create(400, y - gap, 'pipe')
+        .setOrigin(0, 1)
+        .setScale(pipeScale)
+        .refreshBody();
+
+    const bottomPipe = this.pipes.create(400, y + gap, 'pipe')
+        .setOrigin(0, 0)
+        .setScale(pipeScale)
+        .refreshBody();
 
     [topPipe, bottomPipe].forEach(pipe => {
         pipe.setVelocityX(-200);
@@ -199,16 +215,20 @@ GameScene.prototype.update = function () {
             pipe.passed = true;
             this.score += 1;
             this.scoreText.setText('Score: ' + this.score);
+            this.sound.play('score');
             if (this.score > highScore) {
                 highScore = this.score;
                 this.highScoreText.setText('High: ' + highScore);
-                window.db.ref('users/' + window.userId).set({ highscore: highScore, handle: window.userHandle });
+                if (window.db) {
+                    window.db.ref('users/' + window.userId).set({ highscore: highScore, handle: window.userHandle });
+                }
             }
         }
     });
 };
 
 GameScene.prototype.flap = function () {
+    this.sound.play('flap');
     this.trump.setVelocityY(-300);
 };
 
@@ -220,4 +240,6 @@ GameScene.prototype.hitPipe = function () {
     this.trump.setTint(0xff0000);
 
     if (this.pipeTimer) this.pipeTimer.remove();
+    this.sound.play('hit');
+    this.music.stop();
 };
