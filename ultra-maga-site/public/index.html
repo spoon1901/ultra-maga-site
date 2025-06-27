@@ -1,18 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Ultra MAGA Website"
-    />
-    <title>Ultra MAGA</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="Ultra MAGA Game">
+  <title>Ultra MAGA Game</title>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <!-- Game Styling -->
+  <style>
+    body {
+      background-color: black;
+      margin: 0;
+      overflow: hidden;
+    }
+    #loginArea {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+    }
+    #walletDisplay {
+      color: white;
+      font-family: sans-serif;
+      margin-top: 5px;
+    }
+    button {
+      padding: 6px 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loginArea">
+    <button onclick="loginWithTwitter()">Login with X (Twitter)</button>
+    <p id="walletDisplay">Not Connected</p>
+  </div>
+
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
+      authDomain: "flappytrump.firebaseapp.com",
+      databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
+      projectId: "flappytrump",
+      storageBucket: "flappytrump.appspot.com",
+      messagingSenderId: "513580021078",
+      appId: "1:513580021078:web:caacd9c4a55acee33712f7"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+    window.db = database;
+
+    // Login Function
+    function loginWithTwitter() {
+      const provider = new firebase.auth.TwitterAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          const user = result.user;
+          document.getElementById('walletDisplay').innerText = `@${user.displayName}`;
+          localStorage.setItem('twitterUser', JSON.stringify(user));
+          startGame();
+        })
+        .catch((error) => {
+          console.error(error);
+          alert('Twitter login failed.');
+        });
+    }
+
+    function startGame() {
+      document.getElementById('loginArea').style.display = 'none';
+      const script = document.createElement('script');
+      script.src = 'game.js';
+      document.body.appendChild(script);
+    }
+
+    // Auto login check
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById('walletDisplay').innerText = `@${user.displayName}`;
+        startGame();
+      }
+    });
+  </script>
+
+</body>
 </html>
