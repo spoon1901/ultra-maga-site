@@ -5,8 +5,8 @@
       "destination": "/public/maga-game/index.html"
     },
     {
-      "source": "/maga-game/(.*)",
-      "destination": "/public/maga-game/$1"
+      "source": "/maga-game/:match*",
+      "destination": "/public/maga-game/:match*"
     }
   ]
 }
