@@ -175,8 +175,8 @@ GameScene.prototype.addPipe = function () {
     const gap = 150;
     const y = Phaser.Math.Between(200, 400);
 
-    const topPipe = this.pipes.create(400, y - gap, 'pipe').setOrigin(0, 1);
-    const bottomPipe = this.pipes.create(400, y + gap, 'pipe').setOrigin(0, 0);
+    const topPipe = this.pipes.create(400, y - gap, 'pipe').setOrigin(0, 1).setScale(0.5);
+    const bottomPipe = this.pipes.create(400, y + gap, 'pipe').setOrigin(0, 0).setScale(0.5);
 
     [topPipe, bottomPipe].forEach(pipe => {
         pipe.setVelocityX(-200);
