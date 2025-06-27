@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/maga-game",
+      "destination": "/maga-game/index.html"
+    },
+    {
+      "source": "/maga-game/:match*",
+      "destination": "/maga-game/:match*"
+    }
+  ]
+}
