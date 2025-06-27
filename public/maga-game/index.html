@@ -1,86 +1,88 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Flappy Trump - $MAGA</title>
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-  <style>
-    body { margin: 0; background: #000; color: white; text-align: center; }
-    canvas { display: block; margin: auto; }
-    button {
-      padding: 10px 20px;
-      background-color: #1da1f2;
-      border: none;
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #0d8ddb;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Flappy Trump - $MAGA</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <style>
+        body { margin: 0; background: #000; color: white; text-align: center; }
+        canvas { display: block; margin: auto; }
+        button {
+            padding: 10px 20px;
+            background-color: #1da1f2;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0d8ddb;
+        }
+    </style>
 </head>
 <body>
 
 <div id="loginArea">
-  <button onclick="loginWithTwitter()">Login with Twitter</button>
-  <p id="userDisplay">Not Connected</p>
+    <button onclick="loginWithTwitter()">Login with X (Twitter)</button>
+    <p id="userDisplay">Not Connected</p>
 </div>
 
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
-    authDomain: "flappytrump.firebaseapp.com",
-    databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
-    projectId: "flappytrump",
-    storageBucket: "flappytrump.appspot.com",
-    messagingSenderId: "513580021078",
-    appId: "1:513580021078:web:caacd9c4a55acee33712f7"
-  };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
+        authDomain: "flappytrump.firebaseapp.com",
+        databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
+        projectId: "flappytrump",
+        storageBucket: "flappytrump.firebasestorage.app",
+        messagingSenderId: "513580021078",
+        appId: "1:513580021078:web:caacd9c4a55acee33712f7"
+    };
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const database = firebase.database();
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
 
-  window.db = database;
-  window.userHandle = null;
+    window.db = database;
+    window.userHandle = null;
 
-  function loginWithTwitter() {
-    const provider = new firebase.auth.TwitterAuthProvider();
-    auth.signInWithPopup(provider)
-      .then((result) => {
-        const user = result.user;
-        window.userId = user.uid;
-        window.userHandle = user.reloadUserInfo.screenName;
-        document.getElementById('userDisplay').innerText = `User: @${window.userHandle}`;
-        document.getElementById('loginArea').style.display = 'none';
+    function loginWithTwitter() {
+        const provider = new firebase.auth.TwitterAuthProvider();
+        auth.signInWithPopup(provider)
+        .then((result) => {
+            const user = result.user;
+            const twitterProfile = result.additionalUserInfo?.profile;
+            window.userId = user.uid;
+            window.userHandle = twitterProfile?.screen_name || user.displayName || "Unknown";
 
-        window.highScoreRef = database.ref(`users/${window.userId}/highscore`);
-        window.getHighScore = (callback) => {
-          window.highScoreRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            callback(data);
-          });
-        };
-        window.updateHighScore = (newScore) => {
-          window.highScoreRef.set(newScore);
-        };
+            document.getElementById('userDisplay').innerText = `User: @${window.userHandle}`;
+            document.getElementById('loginArea').style.display = 'none';
 
-        const script = document.createElement('script');
-        script.src = "game.js";
-        script.onload = () => {
-          new Phaser.Game(window.config);
-        };
-        document.body.appendChild(script);
-      })
-      .catch((error) => {
-        console.error("Login failed:", error);
-        alert("Twitter login failed.");
-      });
-  }
+            window.highScoreRef = database.ref(`users/${window.userId}/highscore`);
+            window.getHighScore = (callback) => {
+                window.highScoreRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    callback(data);
+                });
+            };
+            window.updateHighScore = (newScore) => {
+                window.highScoreRef.set(newScore);
+            };
+
+            const script = document.createElement('script');
+            script.src = "game.js";
+            script.onload = () => {
+                new Phaser.Game(window.config);
+            };
+            document.body.appendChild(script);
+        })
+        .catch((error) => {
+            console.error("Login failed:", error);
+            alert("Twitter login failed.");
+        });
+    }
 </script>
 
 </body>
