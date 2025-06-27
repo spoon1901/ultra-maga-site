@@ -2,47 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Flappy Trump - $MAGA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Firebase -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-  <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: white;
-      text-align: center;
-      font-family: 'Press Start 2P', sans-serif;
-    }
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
+  <style>
+    body { 
+      margin: 0; 
+      background: black; 
+      color: white; 
+      text-align: center; 
+      font-family: 'Press Start 2P', monospace;
+    }
     canvas {
       display: block;
       margin: auto;
     }
-
     #loginArea {
-      margin: 30px;
+      margin-top: 20px;
     }
-
     button {
       padding: 10px 20px;
-      background-color: #ff4747;
+      background-color: #1DA1F2;
       border: none;
       color: white;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
+      border-radius: 5px;
     }
-
     button:hover {
-      background-color: #d63b3b;
-    }
-
-    #walletDisplay {
-      margin-top: 10px;
+      background-color: #0c85d0;
     }
   </style>
 </head>
@@ -50,67 +45,66 @@
 <body>
 
   <div id="loginArea">
-    <h1>Welcome to Flappy Trump</h1>
-    <button onclick="loginWithTwitter()">Login with X (Twitter)</button>
+    <button onclick="login()">Login with X (Twitter)</button>
     <p id="walletDisplay">Not Connected</p>
   </div>
 
-  <div id="gameArea" style="display: none;">
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
-    <script src="game.js"></script>
-  </div>
-
 <script>
-  // ✅ Firebase Config
+  // Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
     authDomain: "flappytrump.firebaseapp.com",
     databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
     projectId: "flappytrump",
-    storageBucket: "flappytrump.firebasestorage.app",
+    storageBucket: "flappytrump.appspot.com",
     messagingSenderId: "513580021078",
     appId: "1:513580021078:web:caacd9c4a55acee33712f7"
   };
 
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const provider = new firebase.auth.TwitterAuthProvider();
   const db = firebase.database();
+  const auth = firebase.auth();
 
-  // ✅ Login Function
-  function loginWithTwitter() {
+  window.db = db;
+  window.userID = null;
+  window.userHandle = null;
+
+  function login() {
+    const provider = new firebase.auth.TwitterAuthProvider();
     auth.signInWithPopup(provider)
       .then((result) => {
         const user = result.user;
-        const handle = user.reloadUserInfo.screenName;
+        window.userID = user.uid;
+        window.userHandle = user.reloadUserInfo.screenName || user.displayName;
 
-        localStorage.setItem('twitterUser', JSON.stringify({
-          uid: user.uid,
-          name: user.displayName,
-          photo: user.photoURL,
-          handle: handle
-        }));
-
-        document.getElementById('walletDisplay').innerText = `Logged in as @${handle}`;
+        document.getElementById('walletDisplay').innerText = `Logged in as @${window.userHandle}`;
         document.getElementById('loginArea').style.display = 'none';
-        document.getElementById('gameArea').style.display = 'block';
 
-        // ✅ Load game after login
-        new Phaser.Game(window.config);
+        window.highScoreRef = db.ref(`users/${window.userID}/highscore`);
+
+        window.getHighScore = (callback) => {
+          window.highScoreRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            callback(data);
+          });
+        };
+
+        window.updateHighScore = (newScore) => {
+          window.highScoreRef.set(newScore);
+        };
+
+        const script = document.createElement('script');
+        script.src = 'game.js';
+        script.onload = () => {
+          console.log('Game loaded');
+          new Phaser.Game(window.config);
+        };
+        document.body.appendChild(script);
       })
       .catch((error) => {
         console.error('Login failed:', error);
         alert('Twitter login failed.');
       });
-  }
-
-  // ✅ Auto Check Login
-  const savedUser = JSON.parse(localStorage.getItem('twitterUser'));
-  if (savedUser) {
-    document.getElementById('walletDisplay').innerText = `Logged in as @${savedUser.handle}`;
-    document.getElementById('loginArea').style.display = 'none';
-    document.getElementById('gameArea').style.display = 'block';
-    new Phaser.Game(window.config);
   }
 </script>
 
