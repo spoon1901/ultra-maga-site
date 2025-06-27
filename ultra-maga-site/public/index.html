@@ -1,51 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#000000">
-  <meta name="description" content="Ultra MAGA Game">
-  <title>Ultra MAGA Game</title>
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-
-  <!-- Game Styling -->
-  <style>
-    body {
-      background-color: black;
-      margin: 0;
-      overflow: hidden;
-    }
-    #loginArea {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      z-index: 10;
-    }
-    #walletDisplay {
-      color: white;
-      font-family: sans-serif;
-      margin-top: 5px;
-    }
-    button {
-      padding: 6px 10px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-  </style>
+  <title>Flappy Trump</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+  <div id="game-container"></div>
 
-  <div id="loginArea">
-    <button onclick="loginWithTwitter()">Login with X (Twitter)</button>
-    <p id="walletDisplay">Not Connected</p>
-  </div>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
   <script>
-    // Firebase Config
+    // Your Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
       authDomain: "flappytrump.firebaseapp.com",
@@ -57,42 +26,30 @@
     };
 
     // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+    const app = firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const database = firebase.database();
-    window.db = database;
+    const db = firebase.database();
 
-    // Login Function
-    function loginWithTwitter() {
+    // Twitter Login
+    async function loginWithTwitter() {
       const provider = new firebase.auth.TwitterAuthProvider();
-      auth.signInWithPopup(provider)
-        .then((result) => {
-          const user = result.user;
-          document.getElementById('walletDisplay').innerText = `@${user.displayName}`;
-          localStorage.setItem('twitterUser', JSON.stringify(user));
-          startGame();
-        })
-        .catch((error) => {
-          console.error(error);
-          alert('Twitter login failed.');
-        });
-    }
-
-    function startGame() {
-      document.getElementById('loginArea').style.display = 'none';
-      const script = document.createElement('script');
-      script.src = 'game.js';
-      document.body.appendChild(script);
-    }
-
-    // Auto login check
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById('walletDisplay').innerText = `@${user.displayName}`;
-        startGame();
+      try {
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        window.userHandle = user.reloadUserInfo.screenName;
+        console.log('Logged in as', window.userHandle);
+        window.location.href = '/maga-game/';
+      } catch (error) {
+        alert('Twitter login failed.');
+        console.error('Login failed:', error);
       }
-    });
+    }
+
+    window.db = db;
+    window.loginWithTwitter = loginWithTwitter;
   </script>
 
+  <!-- Game Script -->
+  <script src="game.js"></script>
 </body>
 </html>
