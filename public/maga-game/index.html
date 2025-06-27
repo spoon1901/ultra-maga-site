@@ -45,9 +45,6 @@
     const auth = firebase.auth();
     const database = firebase.database();
 
-    window.db = database;
-    window.userHandle = null;
-
     function loginWithTwitter() {
         const provider = new firebase.auth.TwitterAuthProvider();
         auth.signInWithPopup(provider)
@@ -59,17 +56,6 @@
 
             document.getElementById('userDisplay').innerText = `User: @${window.userHandle}`;
             document.getElementById('loginArea').style.display = 'none';
-
-            window.highScoreRef = database.ref(`users/${window.userId}/highscore`);
-            window.getHighScore = (callback) => {
-                window.highScoreRef.on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    callback(data);
-                });
-            };
-            window.updateHighScore = (newScore) => {
-                window.highScoreRef.set(newScore);
-            };
 
             const script = document.createElement('script');
             script.src = "game.js";
