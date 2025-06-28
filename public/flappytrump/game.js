@@ -222,7 +222,7 @@ GameOverScene.prototype.create = function () {
     logoutBtn.on('pointerdown', () => logout());
     const shareBtn = pixelText(this, 200, 500, 'Share to X', 14).setInteractive();
     shareBtn.on('pointerdown', () => {
-        const shareText = `I scored ${this.finalScore} in #FlappyTrump! 🇺🇸🦅\nCan you beat me?\nPlay 👉 https://flappytrump.com`;
+        const shareText = `I scored ${this.finalScore} in #FlappyTrump! 🇺🇸🦅#UltraMAGA\nCan you beat me?\nPlay 👉 https://flappytrump.ultramagaxrpl.com`;
         const twitterURL = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
         window.open(twitterURL, '_blank');
     });
