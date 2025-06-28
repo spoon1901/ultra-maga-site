@@ -1,20 +1,10 @@
-// ✅ Flappy Trump — Full Game.js with Pixel Font + Stroke + Scrollable Background + Clean Hitboxes 
+// ✅ Full game.js — Flappy Trump with Twitter Login, Leaderboard, Profile Pictures
 
-const firebaseConfig = {
-    apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
-    authDomain: "flappytrump.firebaseapp.com",
-    databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
-    projectId: "flappytrump",
-    storageBucket: "flappytrump.appspot.com",
-    messagingSenderId: "513580021078",
-    appId: "1:513580021078:web:caacd9c4a55acee33712f7"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+// Firebase, Auth, and currentUser are initialized in index.html
 
 let isMuted = false;
 
+// Phaser Game Config
 const config = {
     type: Phaser.AUTO,
     width: 400,
@@ -35,28 +25,7 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-// Helper function for pixel text with stroke
-
-function createMuteIcon(scene) {
-    const icon = scene.add.image(scene.scale.width - 10, 10, isMuted ? 'sound_off' : 'sound_on')
-        .setOrigin(1, 0)
-        .setInteractive()
-        .setScale(1.5);
-
-    icon.on('pointerdown', () => {
-        isMuted = !isMuted;
-        icon.setTexture(isMuted ? 'sound_off' : 'sound_on');
-        if (isMuted) {
-            scene.sound.pauseAll();
-        } else {
-            scene.sound.resumeAll();
-        }
-    });
-
-    return icon;
-}
-
-
+// Helper for pixel text with stroke
 function pixelText(scene, x, y, text, size = 16) {
     return scene.add.text(x, y, text, {
         fontFamily: '"Press Start 2P"',
@@ -74,9 +43,6 @@ function PreloadScene() { Phaser.Scene.call(this, { key: 'PreloadScene' }); }
 PreloadScene.prototype = Object.create(Phaser.Scene.prototype);
 PreloadScene.prototype.constructor = PreloadScene;
 PreloadScene.prototype.preload = function () {
-    this.load.image('sound_on', 'https://files.catbox.moe/plr5pn.png');
-    this.load.image('sound_off', 'https://files.catbox.moe/i3u2ci.png');
-
     this.load.image('background', 'https://files.catbox.moe/chw14r.png');
     this.load.image('pipe', 'https://files.catbox.moe/7mgltx.png');
     this.load.image('burger', 'https://files.catbox.moe/uif031.png');
@@ -91,47 +57,24 @@ PreloadScene.prototype.create = function () {
 };
 
 // Menu Scene
-function MenuScene() {
-    Phaser.Scene.call(this, { key: 'MenuScene' });
-}
+function MenuScene() { Phaser.Scene.call(this, { key: 'MenuScene' }); }
 MenuScene.prototype = Object.create(Phaser.Scene.prototype);
 MenuScene.prototype.constructor = MenuScene;
-
 MenuScene.prototype.create = function() {
-    // Background
     this.bg = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0);
-
-    // Title
     pixelText(this, this.scale.width / 2, 80, 'Flappy Trump', 32);
     pixelText(this, this.scale.width / 2, 120, 'Brought to you', 16);
     pixelText(this, this.scale.width / 2, 140, 'by Ultra $MAGA', 16);
 
-    // Start Button
     const startButton = pixelText(this, this.scale.width / 2, 220, 'Start Game', 24).setInteractive();
-    startButton.on('pointerdown', () => {
-        this.scene.start('GameScene');
-    });
+    startButton.on('pointerdown', () => this.scene.start('GameScene'));
 
-    // Leaderboard Button
     const leaderboardButton = pixelText(this, this.scale.width / 2, 270, 'Leaderboard', 24).setInteractive();
-    leaderboardButton.on('pointerdown', () => {
-        this.scene.start('LeaderboardScene');
-    });
+    leaderboardButton.on('pointerdown', () => this.scene.start('LeaderboardScene'));
 
-    // Optional: Sound toggle button
-    const muteButton = pixelText(this, this.scale.width - 30, 30, isMuted ? '🔇' : '🔊', 18).setInteractive();
-    muteButton.setOrigin(1, 0);
-    muteButton.on('pointerdown', () => {
-        isMuted = !isMuted;
-        muteButton.setText(isMuted ? '🔇' : '🔊');
-        if (isMuted) {
-            this.sound.pauseAll();
-        } else {
-            this.sound.resumeAll();
-        }
-    });
+    const logoutBtn = pixelText(this, 200, 320, 'Logout', 14).setInteractive();
+    logoutBtn.on('pointerdown', () => logout());
 };
-
 MenuScene.prototype.update = function() {
     this.bg.tilePositionX += 0.5;
 };
@@ -174,16 +117,7 @@ GameScene.prototype.create = function () {
 
     this.physics.add.collider(this.trump, this.pipes, this.gameOver, null, this);
     this.physics.add.overlap(this.trump, this.burgers, this.collectBurger, null, this);
-
-    const muteBtn = pixelText(this, 370, 570, isMuted ? '🔇' : '🔊', 12).setInteractive();
-    muteBtn.on('pointerdown', () => {
-        isMuted = !isMuted;
-        muteBtn.setText(isMuted ? '🔇' : '🔊');
-        if (isMuted) this.bgm.pause();
-        else this.bgm.resume();
-    });
 };
-
 GameScene.prototype.spawnPipes = function () {
     const gap = 160;
     const minPipeY = 100;
@@ -206,7 +140,6 @@ GameScene.prototype.spawnPipes = function () {
         burger.body.velocity.x = -200;
     }
 };
-
 GameScene.prototype.update = function () {
     this.bg.tilePositionX += 0.7;
 
@@ -222,19 +155,18 @@ GameScene.prototype.update = function () {
         this.gameOver();
     }
 };
-
 GameScene.prototype.collectBurger = function (trump, burger) {
     if (!isMuted) this.burgerSound.play();
     burger.destroy();
     this.score += 10;
     this.scoreText.setText('Score: ' + this.score);
 };
-
 GameScene.prototype.gameOver = function () {
     if (!isMuted) this.hitSound.play();
     this.bgm.stop();
     this.scene.start('GameOverScene', { score: this.score });
 };
+
 // Game Over Scene
 function GameOverScene() { Phaser.Scene.call(this, { key: 'GameOverScene' }); }
 GameOverScene.prototype = Object.create(Phaser.Scene.prototype);
@@ -248,8 +180,18 @@ GameOverScene.prototype.create = function () {
     pixelText(this, 200, 200, 'Game Over', 18);
     pixelText(this, 200, 250, 'Score: ' + this.finalScore, 14);
 
-    // Save score to Firebase
-    db.ref('scores').push({ score: this.finalScore });
+    const userRef = db.ref('scores/' + currentUser.uid);
+    userRef.once('value')
+        .then(snapshot => {
+            const existing = snapshot.val();
+            if (!existing || this.finalScore > existing.score) {
+                return userRef.set({
+                    username: currentUser.displayName,
+                    photoURL: currentUser.photoURL,
+                    score: this.finalScore
+                });
+            }
+        });
 
     const retryBtn = pixelText(this, 200, 320, 'Retry', 14).setInteractive();
     retryBtn.on('pointerdown', () => this.scene.start('GameScene'));
@@ -257,11 +199,8 @@ GameOverScene.prototype.create = function () {
     const leaderboardBtn = pixelText(this, 200, 380, 'Leaderboard', 14).setInteractive();
     leaderboardBtn.on('pointerdown', () => this.scene.start('LeaderboardScene'));
 
-    const muteBtn = pixelText(this, 370, 570, isMuted ? '🔇' : '🔊', 12).setInteractive();
-    muteBtn.on('pointerdown', () => {
-        isMuted = !isMuted;
-        muteBtn.setText(isMuted ? '🔇' : '🔊');
-    });
+    const logoutBtn = pixelText(this, 200, 440, 'Logout', 14).setInteractive();
+    logoutBtn.on('pointerdown', () => logout());
 };
 
 // Leaderboard Scene
@@ -272,24 +211,42 @@ LeaderboardScene.prototype.create = function () {
     this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
     pixelText(this, 200, 80, 'Leaderboard', 18);
 
-    db.ref('scores').orderByChild('score').limitToLast(5).once('value', snapshot => {
-        const scores = [];
-        snapshot.forEach(data => {
-            scores.push(data.val().score);
+    db.ref('scores').once('value').then(snapshot => {
+        const leaderboard = [];
+        snapshot.forEach(child => {
+            const data = child.val();
+            leaderboard.push({
+                uid: child.key,
+                username: data.username,
+                photoURL: data.photoURL,
+                score: data.score
+            });
         });
-        scores.sort((a, b) => b - a);
 
-        scores.forEach((score, index) => {
-            pixelText(this, 200, 150 + index * 30, (index + 1) + '. ' + score, 14);
+        leaderboard.sort((a, b) => b.score - a.score);
+
+        leaderboard.forEach(entry => {
+            const imgKey = 'pfp_' + entry.uid;
+            this.load.image(imgKey, entry.photoURL);
         });
+
+        this.load.once('complete', () => {
+            leaderboard.forEach((entry, index) => {
+                const y = 150 + index * 60;
+                const imgKey = 'pfp_' + entry.uid;
+
+                this.add.image(80, y, imgKey).setDisplaySize(40, 40);
+                pixelText(this, 200, y, `${entry.username}`, 14);
+                pixelText(this, 350, y, `${entry.score}`, 14);
+            });
+        });
+
+        this.load.start();
     });
 
     const startBtn = pixelText(this, 200, 500, 'Start Game', 14).setInteractive();
     startBtn.on('pointerdown', () => this.scene.start('GameScene'));
 
-    const muteBtn = pixelText(this, 370, 570, isMuted ? '🔇' : '🔊', 12).setInteractive();
-    muteBtn.on('pointerdown', () => {
-        isMuted = !isMuted;
-        muteBtn.setText(isMuted ? '🔇' : '🔊');
-    });
+    const logoutBtn = pixelText(this, 200, 550, 'Logout', 14).setInteractive();
+    logoutBtn.on('pointerdown', () => logout());
 };
