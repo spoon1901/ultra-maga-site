@@ -52,7 +52,7 @@ PreloadScene.prototype.preload = function () {
     this.load.audio('bgm', 'https://files.catbox.moe/4eq3qy.mp3');
     this.load.image('maga', 'https://files.catbox.moe/pzmcm5.png');
     this.load.image('sparkle', 'https://files.catbox.moe/2hm9xw.png');
-    this.load.audio('eagle', 'https://orangefreesounds.com/wp-content/uploads/2021/11/Cinematic-Eagle-Screech.mp3');
+    this.load.audio('eagle', 'https://files.catbox.moe/ksi4ze.mp3');
 
 };
 PreloadScene.prototype.create = function () {
