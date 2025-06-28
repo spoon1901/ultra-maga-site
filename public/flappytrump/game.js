@@ -67,28 +67,51 @@ PreloadScene.prototype.create = function () {
 };
 
 // Menu Scene
-function MenuScene() { Phaser.Scene.call(this, { key: 'MenuScene' }); }
+function MenuScene() {
+    Phaser.Scene.call(this, { key: 'MenuScene' });
+}
 MenuScene.prototype = Object.create(Phaser.Scene.prototype);
 MenuScene.prototype.constructor = MenuScene;
-MenuScene.prototype.create = function () {
-    this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
 
-    pixelText(this, 200, 120, 'Flappy Trump', 18);
-    pixelText(this, 200, 160, 'Brought to you', 10);
-    pixelText(this, 200, 180, 'by Ultra $MAGA', 10);
+MenuScene.prototype.create = function() {
+    // Background
+    this.bg = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0);
 
-    const startBtn = pixelText(this, 200, 260, 'Start Game', 14).setInteractive();
-    startBtn.on('pointerdown', () => this.scene.start('GameScene'));
+    // Title
+    pixelText(this, this.scale.width / 2, 80, 'Flappy Trump', 32);
+    pixelText(this, this.scale.width / 2, 120, 'Brought to you', 16);
+    pixelText(this, this.scale.width / 2, 140, 'by Ultra $MAGA', 16);
 
-    const leaderboardBtn = pixelText(this, 200, 320, 'Leaderboard', 14).setInteractive();
-    leaderboardBtn.on('pointerdown', () => this.scene.start('LeaderboardScene'));
+    // Start Button
+    const startButton = pixelText(this, this.scale.width / 2, 220, 'Start Game', 24).setInteractive();
+    startButton.on('pointerdown', () => {
+        this.scene.start('GameScene');
+    });
 
-    const muteBtn = pixelText(this, 370, 570, isMuted ? '🔇' : '🔊', 12).setInteractive();
-    muteBtn.on('pointerdown', () => {
+    // Leaderboard Button
+    const leaderboardButton = pixelText(this, this.scale.width / 2, 270, 'Leaderboard', 24).setInteractive();
+    leaderboardButton.on('pointerdown', () => {
+        this.scene.start('LeaderboardScene');
+    });
+
+    // Optional: Sound toggle button
+    const muteButton = pixelText(this, this.scale.width - 30, 30, isMuted ? '🔇' : '🔊', 18).setInteractive();
+    muteButton.setOrigin(1, 0);
+    muteButton.on('pointerdown', () => {
         isMuted = !isMuted;
-        muteBtn.setText(isMuted ? '🔇' : '🔊');
+        muteButton.setText(isMuted ? '🔇' : '🔊');
+        if (isMuted) {
+            this.sound.pauseAll();
+        } else {
+            this.sound.resumeAll();
+        }
     });
 };
+
+MenuScene.prototype.update = function() {
+    this.bg.tilePositionX += 0.5;
+};
+
 // Game Scene
 function GameScene() { Phaser.Scene.call(this, { key: 'GameScene' }); }
 GameScene.prototype = Object.create(Phaser.Scene.prototype);
