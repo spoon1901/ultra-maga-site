@@ -1,4 +1,3 @@
-
 const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
     authDomain: "flappytrump.firebaseapp.com",
@@ -31,22 +30,23 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-// Helper for pixel text with stroke
-function pixelText(scene, x, y, text, size=16) {
+function pixelText(scene, x, y, text, size = 16) {
     return scene.add.text(x, y, text, {
         fontFamily: '"Press Start 2P"',
-        fontSize: size + "px",
-        color: "#ffffff",
-        stroke: "#000000",
+        fontSize: `${size}px`,
+        color: '#FFFFFF',
+        stroke: '#000000',
         strokeThickness: 4,
+        align: 'center'
     }).setOrigin(0.5);
 }
 
-// PreloadScene
-function PreloadScene() { Phaser.Scene.call(this, { key: 'PreloadScene' }); }
+function PreloadScene() {
+    Phaser.Scene.call(this, { key: 'PreloadScene' });
+}
 PreloadScene.prototype = Object.create(Phaser.Scene.prototype);
 PreloadScene.prototype.constructor = PreloadScene;
-PreloadScene.prototype.preload = function() {
+PreloadScene.prototype.preload = function () {
     this.load.image('background', 'https://files.catbox.moe/chw14r.png');
     this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
     this.load.image('burger', 'https://files.catbox.moe/hwbf07.png');
@@ -56,13 +56,16 @@ PreloadScene.prototype.preload = function() {
     this.load.audio('burgerSound', 'https://files.catbox.moe/5c5st7.mp3');
     this.load.audio('bgm', 'https://files.catbox.moe/4eq3qy.mp3');
 };
-PreloadScene.prototype.create = function() { this.scene.start('MenuScene'); };
+PreloadScene.prototype.create = function () {
+    this.scene.start('MenuScene');
+};
 
-// MenuScene
-function MenuScene() { Phaser.Scene.call(this, { key: 'MenuScene' }); }
+function MenuScene() {
+    Phaser.Scene.call(this, { key: 'MenuScene' });
+}
 MenuScene.prototype = Object.create(Phaser.Scene.prototype);
 MenuScene.prototype.constructor = MenuScene;
-MenuScene.prototype.create = function() {
+MenuScene.prototype.create = function () {
     this.add.image(200, 300, 'background').setScale(1.1);
     pixelText(this, 200, 120, 'Flappy Trump', 20);
     pixelText(this, 200, 160, 'Brought to you', 12);
@@ -81,11 +84,12 @@ MenuScene.prototype.create = function() {
     });
 };
 
-// GameScene
-function GameScene() { Phaser.Scene.call(this, { key: 'GameScene' }); }
+function GameScene() {
+    Phaser.Scene.call(this, { key: 'GameScene' });
+}
 GameScene.prototype = Object.create(Phaser.Scene.prototype);
 GameScene.prototype.constructor = GameScene;
-GameScene.prototype.create = function() {
+GameScene.prototype.create = function () {
     this.add.image(200, 300, 'background').setScale(1.1);
 
     this.bgm = this.sound.add('bgm', { loop: true, volume: 0.5 });
@@ -95,7 +99,7 @@ GameScene.prototype.create = function() {
     this.hitSound = this.sound.add('hit');
     this.burgerSound = this.sound.add('burgerSound');
 
-    this.bird = this.physics.add.sprite(100, 300, 'bird').setScale(2).setOrigin(0.5);
+    this.bird = this.physics.add.sprite(100, 300, 'bird').setScale(3).setOrigin(0.5);
     this.bird.setCollideWorldBounds(true);
     this.bird.body.gravity.y = 1000;
 
@@ -104,8 +108,8 @@ GameScene.prototype.create = function() {
         if (!isMuted) this.flapSound.play();
     });
 
-    this.pipes = this.physics.add.group();
-    this.burgers = this.physics.add.group();
+    this.pipes = this.physics.add.group({ allowGravity: false });
+    this.burgers = this.physics.add.group({ allowGravity: false });
 
     this.score = 0;
     this.scoreText = pixelText(this, 200, 30, 'Score: 0', 14);
@@ -129,20 +133,23 @@ GameScene.prototype.create = function() {
     });
 };
 
-GameScene.prototype.spawnPipes = function() {
+GameScene.prototype.spawnPipes = function () {
     const gap = 150;
     const y = Phaser.Math.Between(120, 400);
 
-    const topPipe = this.pipes.create(400, y - gap/2 - 320, 'pipe').setOrigin(0, 0).setFlipY(true).setScale(0.5).refreshBody();
-    const bottomPipe = this.pipes.create(400, y + gap/2, 'pipe').setOrigin(0, 0).setScale(0.5).refreshBody();
+    const topPipe = this.pipes.create(400, y - gap / 2 - 320, 'pipe')
+        .setOrigin(0, 0)
+        .setFlipY(true)
+        .setScale(0.5)
+        .refreshBody();
+
+    const bottomPipe = this.pipes.create(400, y + gap / 2, 'pipe')
+        .setOrigin(0, 0)
+        .setScale(0.5)
+        .refreshBody();
 
     topPipe.body.velocity.x = -200;
     bottomPipe.body.velocity.x = -200;
-
-    topPipe.checkWorldBounds = true;
-    bottomPipe.checkWorldBounds = true;
-    topPipe.outOfBoundsKill = true;
-    bottomPipe.outOfBoundsKill = true;
 
     topPipe.scored = false;
 
@@ -152,7 +159,7 @@ GameScene.prototype.spawnPipes = function() {
     }
 };
 
-GameScene.prototype.update = function() {
+GameScene.prototype.update = function () {
     this.pipes.children.iterate(pipe => {
         if (!pipe.scored && pipe.x + pipe.width < this.bird.x) {
             pipe.scored = true;
@@ -166,25 +173,28 @@ GameScene.prototype.update = function() {
     }
 };
 
-GameScene.prototype.collectBurger = function(bird, burger) {
+GameScene.prototype.collectBurger = function (bird, burger) {
     if (!isMuted) this.burgerSound.play();
     burger.destroy();
     this.score += 10;
     this.scoreText.setText('Score: ' + this.score);
 };
 
-GameScene.prototype.gameOver = function() {
+GameScene.prototype.gameOver = function () {
     if (!isMuted) this.hitSound.play();
     this.bgm.stop();
     this.scene.start('GameOverScene', { score: this.score });
 };
 
-// GameOverScene
-function GameOverScene() { Phaser.Scene.call(this, { key: 'GameOverScene' }); }
+function GameOverScene() {
+    Phaser.Scene.call(this, { key: 'GameOverScene' });
+}
 GameOverScene.prototype = Object.create(Phaser.Scene.prototype);
 GameOverScene.prototype.constructor = GameOverScene;
-GameOverScene.prototype.init = function(data) { this.score = data.score; };
-GameOverScene.prototype.create = function() {
+GameOverScene.prototype.init = function (data) {
+    this.score = data.score;
+};
+GameOverScene.prototype.create = function () {
     this.add.image(200, 300, 'background').setScale(1.1);
     pixelText(this, 200, 100, 'Game Over', 20);
     pixelText(this, 200, 160, 'Score: ' + this.score, 14);
@@ -205,11 +215,12 @@ GameOverScene.prototype.create = function() {
     });
 };
 
-// LeaderboardScene
-function LeaderboardScene() { Phaser.Scene.call(this, { key: 'LeaderboardScene' }); }
+function LeaderboardScene() {
+    Phaser.Scene.call(this, { key: 'LeaderboardScene' });
+}
 LeaderboardScene.prototype = Object.create(Phaser.Scene.prototype);
 LeaderboardScene.prototype.constructor = LeaderboardScene;
-LeaderboardScene.prototype.create = function() {
+LeaderboardScene.prototype.create = function () {
     this.add.image(200, 300, 'background').setScale(1.1);
     pixelText(this, 200, 80, 'Leaderboard', 20);
 
