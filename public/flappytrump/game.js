@@ -165,7 +165,7 @@ GameScene.prototype.update = function () {
     this.burgerTime += this.game.loop.delta;
     this.burgers.children.iterate(burger => {
         if (burger) {
-            burger.y += Math.sin(this.burgerTime / 150) * 1.2; // Smooth float
+            burger.y = burger.baseY + Math.sin(this.burgerTime / 400) * 150; // Smooth float
         }
     });
 
