@@ -1,5 +1,5 @@
 
-// ✅ Flappy Trump — Final Build with Scrolling Background and Clean Hitboxes
+// ✅ Flappy Trump — Full Build with Scaling Fixed and All Scenes
 
 const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
@@ -36,13 +36,12 @@ const config = {
 
 const game = new Phaser.Game(config);
 
+////////////////////////////////////////////
+// Preload Scene
 function PreloadScene() { Phaser.Scene.call(this, { key: 'PreloadScene' }); }
 PreloadScene.prototype = Object.create(Phaser.Scene.prototype);
 PreloadScene.prototype.constructor = PreloadScene;
 PreloadScene.prototype.preload = function () {
-    const self = this;
-    this.readyCount = 0;
-
     this.load.image('background', 'https://files.catbox.moe/chw14r.png');
     this.load.image('pipe', 'https://files.catbox.moe/7mgltx.png');
     this.load.image('burger', 'https://files.catbox.moe/uif031.png');
@@ -51,18 +50,20 @@ PreloadScene.prototype.preload = function () {
     this.load.audio('hit', 'https://files.catbox.moe/2v2pm7.mp3');
     this.load.audio('burgerSound', 'https://files.catbox.moe/5c5st7.mp3');
     this.load.audio('bgm', 'https://files.catbox.moe/4eq3qy.mp3');
-
-    this.load.on('complete', () => {
-        self.scene.start('MenuScene');
-    });
+};
+PreloadScene.prototype.create = function () {
+    this.scene.start('MenuScene');
 };
 
+////////////////////////////////////////////
+// Menu Scene
 function MenuScene() { Phaser.Scene.call(this, { key: 'MenuScene' }); }
 MenuScene.prototype = Object.create(Phaser.Scene.prototype);
 MenuScene.prototype.constructor = MenuScene;
 MenuScene.prototype.create = function () {
     this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
-    this.add.text(200, 120, 'Flappy Trump', { fontFamily: 'Arial', fontSize: '24px', color: '#fff' }).setOrigin(0.5);
+
+    this.add.text(200, 120, 'Flappy Trump', { fontSize: '24px', color: '#fff' }).setOrigin(0.5);
     this.add.text(200, 160, 'Brought to you', { fontSize: '14px', color: '#fff' }).setOrigin(0.5);
     this.add.text(200, 180, 'by Ultra $MAGA', { fontSize: '14px', color: '#fff' }).setOrigin(0.5);
 
@@ -71,8 +72,16 @@ MenuScene.prototype.create = function () {
 
     const leaderboardBtn = this.add.text(200, 320, 'Leaderboard', { fontSize: '18px', color: '#fff' }).setOrigin(0.5).setInteractive();
     leaderboardBtn.on('pointerdown', () => this.scene.start('LeaderboardScene'));
+
+    const muteBtn = this.add.text(370, 570, isMuted ? '🔇' : '🔊', { fontSize: '20px', color: '#fff' }).setOrigin(0.5).setInteractive();
+    muteBtn.on('pointerdown', () => {
+        isMuted = !isMuted;
+        muteBtn.setText(isMuted ? '🔇' : '🔊');
+    });
 };
 
+////////////////////////////////////////////
+// Game Scene
 function GameScene() { Phaser.Scene.call(this, { key: 'GameScene' }); }
 GameScene.prototype = Object.create(Phaser.Scene.prototype);
 GameScene.prototype.constructor = GameScene;
@@ -164,6 +173,49 @@ GameScene.prototype.gameOver = function () {
     this.scene.start('GameOverScene', { score: this.score });
 };
 
-// GameOverScene and LeaderboardScene are implemented similarly (not shown for brevity).
-// They include buttons to retry or go to leaderboard, and leaderboard pulls from Firebase.
+////////////////////////////////////////////
+// Game Over Scene
+function GameOverScene() { Phaser.Scene.call(this, { key: 'GameOverScene' }); }
+GameOverScene.prototype = Object.create(Phaser.Scene.prototype);
+GameOverScene.prototype.constructor = GameOverScene;
+GameOverScene.prototype.init = function (data) {
+    this.finalScore = data.score;
+};
+GameOverScene.prototype.create = function () {
+    this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
+    this.add.text(200, 200, 'Game Over', { fontSize: '24px', color: '#fff' }).setOrigin(0.5);
+    this.add.text(200, 250, 'Score: ' + this.finalScore, { fontSize: '18px', color: '#fff' }).setOrigin(0.5);
 
+    db.ref('scores').push({ score: this.finalScore });
+
+    const retryBtn = this.add.text(200, 320, 'Retry', { fontSize: '18px', color: '#fff' }).setOrigin(0.5).setInteractive();
+    retryBtn.on('pointerdown', () => this.scene.start('GameScene'));
+
+    const leaderboardBtn = this.add.text(200, 380, 'Leaderboard', { fontSize: '18px', color: '#fff' }).setOrigin(0.5).setInteractive();
+    leaderboardBtn.on('pointerdown', () => this.scene.start('LeaderboardScene'));
+};
+
+////////////////////////////////////////////
+// Leaderboard Scene
+function LeaderboardScene() { Phaser.Scene.call(this, { key: 'LeaderboardScene' }); }
+LeaderboardScene.prototype = Object.create(Phaser.Scene.prototype);
+LeaderboardScene.prototype.constructor = LeaderboardScene;
+LeaderboardScene.prototype.create = function () {
+    this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
+    this.add.text(200, 80, 'Leaderboard', { fontSize: '24px', color: '#fff' }).setOrigin(0.5);
+
+    db.ref('scores').orderByChild('score').limitToLast(5).once('value', snapshot => {
+        const scores = [];
+        snapshot.forEach(data => {
+            scores.push(data.val().score);
+        });
+        scores.sort((a, b) => b - a);
+
+        scores.forEach((score, index) => {
+            this.add.text(200, 150 + index * 30, (index + 1) + '. ' + score, { fontSize: '18px', color: '#fff' }).setOrigin(0.5);
+        });
+    });
+
+    const startBtn = this.add.text(200, 500, 'Start Game', { fontSize: '18px', color: '#fff' }).setOrigin(0.5).setInteractive();
+    startBtn.on('pointerdown', () => this.scene.start('GameScene'));
+};
