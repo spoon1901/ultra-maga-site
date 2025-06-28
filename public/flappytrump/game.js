@@ -226,24 +226,40 @@ LeaderboardScene.prototype.create = function () {
 
         leaderboard.sort((a, b) => b.score - a.score);
 
+        if (leaderboard.length === 0) {
+            pixelText(this, 200, 300, 'No scores yet!', 14);
+            return;
+        }
+
+        // ✅ Queue image loads if photoURL exists
         leaderboard.forEach(entry => {
             const imgKey = 'pfp_' + entry.uid;
-            this.load.image(imgKey, entry.photoURL);
+            if (entry.photoURL) {
+                this.load.image(imgKey, entry.photoURL);
+            }
         });
 
         this.load.once('complete', () => {
-            if (leaderboard.length === 0) {
-                pixelText(this, 200, 300, 'No scores yet!', 14);
-            } else {
-                leaderboard.forEach((entry, index) => {
-                    const y = 150 + index * 60;
-                    const imgKey = 'pfp_' + entry.uid;
+            leaderboard.forEach((entry, index) => {
+                const y = 150 + index * 60;
+                const imgKey = 'pfp_' + entry.uid;
 
+                // ✅ Draw profile picture if available
+                if (this.textures.exists(imgKey)) {
                     this.add.image(80, y, imgKey).setDisplaySize(40, 40);
-                    pixelText(this, 200, y, `${entry.username}`, 14);
-                    pixelText(this, 350, y, `${entry.score}`, 14);
-                });
-            }
+                } else {
+                    // If image fails, fallback placeholder (simple white circle)
+                    const graphics = this.add.graphics();
+                    graphics.fillStyle(0xffffff, 1);
+                    graphics.fillCircle(80, y, 20);
+                }
+
+                // Username
+                pixelText(this, 200, y, `${entry.username}`, 14);
+
+                // Score
+                pixelText(this, 350, y, `${entry.score}`, 14);
+            });
         });
 
         this.load.start();
@@ -255,3 +271,4 @@ LeaderboardScene.prototype.create = function () {
     const logoutBtn = pixelText(this, 200, 550, 'Logout', 14).setInteractive();
     logoutBtn.on('pointerdown', () => logout());
 };
+
