@@ -113,7 +113,6 @@ GameScene.prototype.create = function () {
 
     this.score = 0;
     this.scoreText = pixelText(this, 200, 30, 'Score: 0', 14);
-    this.burgerTime = 0;
     // ✅ Fetch and display the global high score
     db.ref('scores').once('value').then(snapshot => {
         const leaderboard = [];
@@ -153,22 +152,24 @@ GameScene.prototype.spawnPipes = function () {
 
     const bottomPipe = this.pipes.create(400, bottomPipeY, 'pipe').setOrigin(0, 0);
     bottomPipe.body.velocity.x = -200;
+
+    if (Phaser.Math.Between(0, 9) === 0) {
+    const pipeX = 400;
+    const pipeSpacing = Phaser.Math.Between(200, 300);
+    const nextPipeX = pipeX + pipeSpacing;
+    const burgerX = Phaser.Math.Between(pipeX + 80, nextPipeX - 80);
+    const burgerY = Phaser.Math.Between(80, 520);
+    const burger = this.burgers.create(burgerX, burgerY, 'burger');
+    burger.body.velocity.x = -200;
+}
     bottomPipe.setSize(64, 450).setOffset(0, 0);
 
     if (Phaser.Math.Between(0, 9) === 0) {
-        const burgerY = Phaser.Math.Between(80, 520);
-    const burger = this.burgers.create(400, burgerY, 'burger');
+        const burger = this.burgers.create(400, topPipeY + gap / 2, 'burger');
         burger.body.velocity.x = -200;
     }
 };
 GameScene.prototype.update = function () {
-    this.burgerTime += this.game.loop.delta;
-    this.burgers.children.iterate(burger => {
-        if (burger) {
-            burger.setY(burger.baseY + Math.sin(this.burgerTime / 200) * 3); // Smooth float
-        }
-    });
-
     this.bg.tilePositionX += 0.7;
 
     this.pipes.children.iterate(pipe => {
@@ -178,6 +179,19 @@ GameScene.prototype.update = function () {
             this.scoreText.setText('Score: ' + this.score);
         }
     });
+
+    
+    this.pipes.children.iterate(pipe => {
+        if (pipe.x + pipe.width < 0) {
+            this.pipes.remove(pipe, true, true);
+        }
+    });
+    this.burgers.children.iterate(burger => {
+        if (burger.x + burger.width < 0) {
+            this.burgers.remove(burger, true, true);
+        }
+    });
+
 
     if (this.trump.y > 600 || this.trump.y < 0) {
         this.gameOver();
