@@ -1,3 +1,50 @@
+
+// ✅ Login Scene
+function LoginScene() {
+    Phaser.Scene.call(this, { key: 'LoginScene' });
+}
+LoginScene.prototype = Object.create(Phaser.Scene.prototype);
+LoginScene.prototype.constructor = LoginScene;
+
+LoginScene.prototype.preload = function() {
+    this.load.image('xIcon', 'https://files.catbox.moe/asvbfq.png');
+};
+
+LoginScene.prototype.create = function() {
+    this.cameras.main.setBackgroundColor('#000000');
+
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2;
+
+    const icon = this.add.image(centerX, centerY, 'xIcon')
+        .setInteractive({ useHandCursor: true })
+        .setScale(this.scale.width < 500 ? 0.7 : 1.0);
+
+    icon.on('pointerdown', () => {
+        loginWithTwitter(this);
+    });
+
+    pixelText(this, centerX, centerY + 100, 'Login with X to Continue', 16);
+
+};
+
+LoginScene.prototype.update = function() {};
+
+
+function loginWithTwitter(scene) {
+    const provider = new firebase.auth.TwitterAuthProvider();
+
+    firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+            const user = result.user;
+            console.log('Logged in as:', user.displayName);
+            scene.scene.start('MenuScene');
+        })
+        .catch((error) => {
+            console.error('Login failed:', error);
+        });
+}
+
 // ✅ Flappy Trump — Full Game.js with Pixel Font + Stroke + Scrollable Background + Clean Hitboxes 
 
 const firebaseConfig = {
@@ -26,7 +73,7 @@ const config = {
             debug: false
         }
     },
-    scene: [PreloadScene, MenuScene, GameScene, GameOverScene, LeaderboardScene],
+    scene: [LoginScene, PreloadScene, MenuScene, GameScene, GameOverScene, LeaderboardScene],
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
@@ -36,27 +83,6 @@ const config = {
 const game = new Phaser.Game(config);
 
 // Helper function for pixel text with stroke
-
-function createMuteIcon(scene) {
-    const icon = scene.add.image(scene.scale.width - 10, 10, isMuted ? 'sound_off' : 'sound_on')
-        .setOrigin(1, 0)
-        .setInteractive()
-        .setScale(1.5);
-
-    icon.on('pointerdown', () => {
-        isMuted = !isMuted;
-        icon.setTexture(isMuted ? 'sound_off' : 'sound_on');
-        if (isMuted) {
-            scene.sound.pauseAll();
-        } else {
-            scene.sound.resumeAll();
-        }
-    });
-
-    return icon;
-}
-
-
 function pixelText(scene, x, y, text, size = 16) {
     return scene.add.text(x, y, text, {
         fontFamily: '"Press Start 2P"',
@@ -74,9 +100,6 @@ function PreloadScene() { Phaser.Scene.call(this, { key: 'PreloadScene' }); }
 PreloadScene.prototype = Object.create(Phaser.Scene.prototype);
 PreloadScene.prototype.constructor = PreloadScene;
 PreloadScene.prototype.preload = function () {
-    this.load.image('sound_on', 'https://files.catbox.moe/plr5pn.png');
-    this.load.image('sound_off', 'https://files.catbox.moe/i3u2ci.png');
-
     this.load.image('background', 'https://files.catbox.moe/chw14r.png');
     this.load.image('pipe', 'https://files.catbox.moe/7mgltx.png');
     this.load.image('burger', 'https://files.catbox.moe/uif031.png');
