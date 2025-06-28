@@ -1,4 +1,6 @@
 
+// ✅ Flappy Trump Game — Debug Version with Pixel Font Fix and Hitboxes On
+
 const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
     authDomain: "flappytrump.firebaseapp.com",
@@ -20,7 +22,10 @@ const config = {
     height: 600,
     physics: {
         default: 'arcade',
-        arcade: { gravity: { y: 1000 }, debug: false }
+        arcade: {
+            gravity: { y: 1000 },
+            debug: true // ✅ Hitbox Debug ON
+        }
     },
     scene: [PreloadScene, MenuScene, GameScene, GameOverScene, LeaderboardScene],
     scale: {
@@ -43,7 +48,6 @@ function pixelText(scene, x, y, text, size = 16) {
     }).setOrigin(0.5);
 }
 
-// Preload Scene with WebFont loader
 function PreloadScene() { Phaser.Scene.call(this, { key: 'PreloadScene' }); }
 PreloadScene.prototype = Object.create(Phaser.Scene.prototype);
 PreloadScene.prototype.constructor = PreloadScene;
@@ -76,7 +80,6 @@ PreloadScene.prototype.ready = function () {
     }
 };
 
-// Menu Scene
 function MenuScene() { Phaser.Scene.call(this, { key: 'MenuScene' }); }
 MenuScene.prototype = Object.create(Phaser.Scene.prototype);
 MenuScene.prototype.constructor = MenuScene;
@@ -99,7 +102,6 @@ MenuScene.prototype.create = function () {
     });
 };
 
-// Game Scene
 function GameScene() { Phaser.Scene.call(this, { key: 'GameScene' }); }
 GameScene.prototype = Object.create(Phaser.Scene.prototype);
 GameScene.prototype.constructor = GameScene;
@@ -200,7 +202,6 @@ GameScene.prototype.gameOver = function () {
     this.scene.start('GameOverScene', { score: this.score });
 };
 
-// Game Over Scene
 function GameOverScene() { Phaser.Scene.call(this, { key: 'GameOverScene' }); }
 GameOverScene.prototype = Object.create(Phaser.Scene.prototype);
 GameOverScene.prototype.constructor = GameOverScene;
@@ -226,7 +227,6 @@ GameOverScene.prototype.create = function () {
     });
 };
 
-// Leaderboard Scene
 function LeaderboardScene() { Phaser.Scene.call(this, { key: 'LeaderboardScene' }); }
 LeaderboardScene.prototype = Object.create(Phaser.Scene.prototype);
 LeaderboardScene.prototype.constructor = LeaderboardScene;
