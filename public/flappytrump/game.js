@@ -12,7 +12,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1000 },
-            debug: true
+            debug: false
         }
     },
     scene: [PreloadScene, MenuScene, GameScene, GameOverScene, LeaderboardScene],
@@ -165,7 +165,7 @@ GameScene.prototype.update = function () {
     this.burgerTime += this.game.loop.delta;
     this.burgers.children.iterate(burger => {
         if (burger) {
-            burger.y = burger.baseY + Math.sin(this.burgerTime / 400) * 150; // Smooth float
+            burger.setY(burger.baseY + Math.sin(this.burgerTime / 200) * 3); // Smooth float
         }
     });
 
