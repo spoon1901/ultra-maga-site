@@ -1,265 +1,295 @@
-// ✅ Initialize Firebase
+// ✅ Flappy Trump — Full Game.js with Pixel Font + Stroke + Scrollable Background + Clean Hitboxes 
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
-  authDomain: "flappytrump.firebaseapp.com",
-  databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
-  projectId: "flappytrump",
-  storageBucket: "flappytrump.appspot.com",
-  messagingSenderId: "513580021078",
-  appId: "1:513580021078:web:caacd9c4a55acee33712f7"
+    apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
+    authDomain: "flappytrump.firebaseapp.com",
+    databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
+    projectId: "flappytrump",
+    storageBucket: "flappytrump.appspot.com",
+    messagingSenderId: "513580021078",
+    appId: "1:513580021078:web:caacd9c4a55acee33712f7"
 };
 
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
 const db = firebase.database();
 
-// ✅ Global state
 let isMuted = false;
-let isLoggedIn = false;
 
-// ✅ Helper for pixel text with stroke
-function pixelText(scene, x, y, text, size = 16) {
-  return scene.add.text(x, y, text, {
-    fontFamily: '"Press Start 2P"',
-    fontSize: `${size}px`,
-    color: '#FFFFFF',
-    stroke: '#000000',
-    strokeThickness: 4,
-    align: 'center',
-    resolution: 10
-  }).setOrigin(0.5);
-}
-
-// ✅ Game Config
 const config = {
-  type: Phaser.AUTO,
-  width: 400,
-  height: 600,
-  backgroundColor: '#000000',
-  physics: {
-    default: 'arcade',
-    arcade: { gravity: { y: 1000 }, debug: false }
-  },
-  scene: [LoginScene, MenuScene, GameScene, GameOverScene, LeaderboardScene],
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-  },
+    type: Phaser.AUTO,
+    width: 400,
+    height: 600,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 1000 },
+            debug: false
+        }
+    },
+    scene: [PreloadScene, MenuScene, GameScene, GameOverScene, LeaderboardScene],
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    }
 };
 
 const game = new Phaser.Game(config);
 
-//////////////////////////////
-// ✅ Login Scene
-class LoginScene extends Phaser.Scene {
-  constructor() {
-    super('LoginScene');
-  }
+// Helper function for pixel text with stroke
 
-  preload() {
-    this.load.image('xLogo', 'https://files.catbox.moe/3j4bd9.png');
-  }
-
-  create() {
-    this.add.rectangle(200, 300, 400, 600, 0x000000); // Background
-
-    pixelText(this, 200, 500, 'Login with X to Continue', 10);
-
-    const logo = this.add.image(200, 300, 'xLogo').setScale(0.8).setInteractive();
-
-    logo.on('pointerdown', async () => {
-      const provider = new firebase.auth.TwitterAuthProvider();
-      try {
-        await auth.signInWithPopup(provider);
-        isLoggedIn = true;
-        this.scene.start('MenuScene');
-      } catch (error) {
-        console.error(error);
-      }
-    });
-  }
-}
-
-//////////////////////////////
-// ✅ Menu Scene
-class MenuScene extends Phaser.Scene {
-  constructor() {
-    super('MenuScene');
-  }
-
-  create() {
-    this.add.rectangle(200, 300, 400, 600, 0x000000);
-
-    pixelText(this, 200, 100, 'Flappy Trump', 14);
-    pixelText(this, 200, 150, 'Brought to you', 8);
-    pixelText(this, 200, 180, 'by Ultra $MAGA', 8);
-
-    const start = pixelText(this, 200, 300, 'Start Game', 10).setInteractive();
-    const leaderboard = pixelText(this, 200, 350, 'Leaderboard', 10).setInteractive();
-
-    start.on('pointerdown', () => this.scene.start('GameScene'));
-    leaderboard.on('pointerdown', () => this.scene.start('LeaderboardScene'));
-
-    this.createMuteIcon();
-  }
-
-  createMuteIcon() {
-    const icon = this.add.image(380, 20, isMuted ? 'muteOff' : 'muteOn')
-      .setScale(0.5)
-      .setOrigin(1, 0)
-      .setInteractive();
+function createMuteIcon(scene) {
+    const icon = scene.add.image(scene.scale.width - 10, 10, isMuted ? 'sound_off' : 'sound_on')
+        .setOrigin(1, 0)
+        .setInteractive()
+        .setScale(1.5);
 
     icon.on('pointerdown', () => {
-      isMuted = !isMuted;
-      icon.setTexture(isMuted ? 'muteOff' : 'muteOn');
+        isMuted = !isMuted;
+        icon.setTexture(isMuted ? 'sound_off' : 'sound_on');
+        if (isMuted) {
+            scene.sound.pauseAll();
+        } else {
+            scene.sound.resumeAll();
+        }
     });
-  }
+
+    return icon;
 }
 
-//////////////////////////////
-// ✅ Game Scene
-class GameScene extends Phaser.Scene {
-  constructor() {
-    super('GameScene');
-  }
 
-  preload() {
-    this.load.image('trump', 'https://files.catbox.moe/wlm5xw.png');
+function pixelText(scene, x, y, text, size = 16) {
+    return scene.add.text(x, y, text, {
+        fontFamily: '"Press Start 2P"',
+        fontSize: `${size}px`,
+        color: '#FFFFFF',
+        stroke: '#000000',
+        strokeThickness: 4,
+        align: 'center',
+        resolution: 10
+    }).setOrigin(0.5);
+}
+
+// Preload Scene
+function PreloadScene() { Phaser.Scene.call(this, { key: 'PreloadScene' }); }
+PreloadScene.prototype = Object.create(Phaser.Scene.prototype);
+PreloadScene.prototype.constructor = PreloadScene;
+PreloadScene.prototype.preload = function () {
+    this.load.image('sound_on', 'https://files.catbox.moe/plr5pn.png');
+    this.load.image('sound_off', 'https://files.catbox.moe/i3u2ci.png');
+
+    this.load.image('background', 'https://files.catbox.moe/chw14r.png');
     this.load.image('pipe', 'https://files.catbox.moe/7mgltx.png');
-    this.load.image('background', 'https://files.catbox.moe/k7n7fa.png');
-    this.load.image('muteOn', 'https://files.catbox.moe/plr5pn.png');
-    this.load.image('muteOff', 'https://files.catbox.moe/i3u2ci.png');
-  }
+    this.load.image('burger', 'https://files.catbox.moe/uif031.png');
+    this.load.image('trump', 'https://files.catbox.moe/wlm5xw.png');
+    this.load.audio('flap', 'https://files.catbox.moe/2oly9t.mp3');
+    this.load.audio('hit', 'https://files.catbox.moe/2v2pm7.mp3');
+    this.load.audio('burgerSound', 'https://files.catbox.moe/5c5st7.mp3');
+    this.load.audio('bgm', 'https://files.catbox.moe/4eq3qy.mp3');
+};
+PreloadScene.prototype.create = function () {
+    this.scene.start('MenuScene');
+};
 
-  create() {
-    this.bg = this.add.tileSprite(200, 300, 400, 600, 'background');
+// Menu Scene
+function MenuScene() {
+    Phaser.Scene.call(this, { key: 'MenuScene' });
+}
+MenuScene.prototype = Object.create(Phaser.Scene.prototype);
+MenuScene.prototype.constructor = MenuScene;
 
-    this.player = this.physics.add.sprite(100, 300, 'trump').setScale(1);
-    this.player.setCollideWorldBounds(true);
+MenuScene.prototype.create = function() {
+    // Background
+    this.bg = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0);
 
-    this.pipes = this.physics.add.group();
+    // Title
+    pixelText(this, this.scale.width / 2, 80, 'Flappy Trump', 32);
+    pixelText(this, this.scale.width / 2, 120, 'Brought to you', 16);
+    pixelText(this, this.scale.width / 2, 140, 'by Ultra $MAGA', 16);
 
-    this.input.on('pointerdown', this.flap, this);
+    // Start Button
+    const startButton = pixelText(this, this.scale.width / 2, 220, 'Start Game', 24).setInteractive();
+    startButton.on('pointerdown', () => {
+        this.scene.start('GameScene');
+    });
+
+    // Leaderboard Button
+    const leaderboardButton = pixelText(this, this.scale.width / 2, 270, 'Leaderboard', 24).setInteractive();
+    leaderboardButton.on('pointerdown', () => {
+        this.scene.start('LeaderboardScene');
+    });
+
+    // Optional: Sound toggle button
+    const muteButton = pixelText(this, this.scale.width - 30, 30, isMuted ? '🔇' : '🔊', 18).setInteractive();
+    muteButton.setOrigin(1, 0);
+    muteButton.on('pointerdown', () => {
+        isMuted = !isMuted;
+        muteButton.setText(isMuted ? '🔇' : '🔊');
+        if (isMuted) {
+            this.sound.pauseAll();
+        } else {
+            this.sound.resumeAll();
+        }
+    });
+};
+
+MenuScene.prototype.update = function() {
+    this.bg.tilePositionX += 0.5;
+};
+
+// Game Scene
+function GameScene() { Phaser.Scene.call(this, { key: 'GameScene' }); }
+GameScene.prototype = Object.create(Phaser.Scene.prototype);
+GameScene.prototype.constructor = GameScene;
+GameScene.prototype.create = function () {
+    this.bg = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
+
+    this.bgm = this.sound.add('bgm', { loop: true, volume: 0.5 });
+    if (!isMuted) this.bgm.play();
+
+    this.flapSound = this.sound.add('flap');
+    this.hitSound = this.sound.add('hit');
+    this.burgerSound = this.sound.add('burgerSound');
+
+    this.trump = this.physics.add.sprite(100, 245, 'trump').setOrigin(0.5);
+    this.trump.setSize(50, 50).setOffset(7, 7);
+    this.trump.setCollideWorldBounds(true);
+
+    this.input.on('pointerdown', () => {
+        this.trump.setVelocityY(-350);
+        if (!isMuted) this.flapSound.play();
+    });
+
+    this.pipes = this.physics.add.group({ allowGravity: false, immovable: true });
+    this.burgers = this.physics.add.group({ allowGravity: false });
 
     this.score = 0;
-    this.scoreText = pixelText(this, 200, 50, 'Score: 0', 10);
+    this.scoreText = pixelText(this, 200, 30, 'Score: 0', 14);
 
-    this.time.addEvent({ delay: 1500, callback: this.addPipe, callbackScope: this, loop: true });
+    this.timer = this.time.addEvent({
+        delay: 1500,
+        callback: this.spawnPipes,
+        callbackScope: this,
+        loop: true
+    });
 
-    this.createMuteIcon();
+    this.physics.add.collider(this.trump, this.pipes, this.gameOver, null, this);
+    this.physics.add.overlap(this.trump, this.burgers, this.collectBurger, null, this);
 
-    this.physics.add.overlap(this.player, this.pipes, this.gameOver, null, this);
-  }
+    const muteBtn = pixelText(this, 370, 570, isMuted ? '🔇' : '🔊', 12).setInteractive();
+    muteBtn.on('pointerdown', () => {
+        isMuted = !isMuted;
+        muteBtn.setText(isMuted ? '🔇' : '🔊');
+        if (isMuted) this.bgm.pause();
+        else this.bgm.resume();
+    });
+};
 
-  update() {
-    this.bg.tilePositionX += 2;
+GameScene.prototype.spawnPipes = function () {
+    const gap = 160;
+    const minPipeY = 100;
+    const maxPipeY = 350;
 
-    if (this.player.y > 600) {
-      this.gameOver();
-    }
-  }
+    const topPipeY = Phaser.Math.Between(minPipeY, maxPipeY);
+    const bottomPipeY = topPipeY + gap;
 
-  flap() {
-    this.player.setVelocityY(-350);
-  }
-
-  addPipe() {
-    const gap = Phaser.Math.Between(120, 200);
-    const y = Phaser.Math.Between(100, 400);
-
-    const topPipe = this.pipes.create(400, y - gap / 2 - 320, 'pipe').setOrigin(0, 1).setImmovable();
-    const bottomPipe = this.pipes.create(400, y + gap / 2, 'pipe').setOrigin(0, 0).setImmovable();
-
+    const topPipe = this.pipes.create(400, topPipeY, 'pipe').setOrigin(0, 1).setFlipY(true);
     topPipe.body.velocity.x = -200;
+    topPipe.setSize(64, 450).setOffset(0, 0);
+    topPipe.scored = false;
+
+    const bottomPipe = this.pipes.create(400, bottomPipeY, 'pipe').setOrigin(0, 0);
     bottomPipe.body.velocity.x = -200;
+    bottomPipe.setSize(64, 450).setOffset(0, 0);
 
-    topPipe.checkWorldBounds = true;
-    bottomPipe.checkWorldBounds = true;
+    if (Phaser.Math.Between(0, 9) === 0) {
+        const burger = this.burgers.create(400, topPipeY + gap / 2, 'burger');
+        burger.body.velocity.x = -200;
+    }
+};
 
-    topPipe.outOfBoundsKill = true;
-    bottomPipe.outOfBoundsKill = true;
+GameScene.prototype.update = function () {
+    this.bg.tilePositionX += 0.7;
 
-    this.score += 1;
+    this.pipes.children.iterate(pipe => {
+        if (!pipe.scored && pipe.x + pipe.width < this.trump.x) {
+            pipe.scored = true;
+            this.score++;
+            this.scoreText.setText('Score: ' + this.score);
+        }
+    });
+
+    if (this.trump.y > 600 || this.trump.y < 0) {
+        this.gameOver();
+    }
+};
+
+GameScene.prototype.collectBurger = function (trump, burger) {
+    if (!isMuted) this.burgerSound.play();
+    burger.destroy();
+    this.score += 10;
     this.scoreText.setText('Score: ' + this.score);
-  }
+};
 
-  createMuteIcon() {
-    const icon = this.add.image(380, 20, isMuted ? 'muteOff' : 'muteOn')
-      .setScale(0.5)
-      .setOrigin(1, 0)
-      .setInteractive();
-
-    icon.on('pointerdown', () => {
-      isMuted = !isMuted;
-      icon.setTexture(isMuted ? 'muteOff' : 'muteOn');
-    });
-  }
-
-  gameOver() {
-    db.ref('scores').push(this.score);
+GameScene.prototype.gameOver = function () {
+    if (!isMuted) this.hitSound.play();
+    this.bgm.stop();
     this.scene.start('GameOverScene', { score: this.score });
-  }
-}
+};
+// Game Over Scene
+function GameOverScene() { Phaser.Scene.call(this, { key: 'GameOverScene' }); }
+GameOverScene.prototype = Object.create(Phaser.Scene.prototype);
+GameOverScene.prototype.constructor = GameOverScene;
+GameOverScene.prototype.init = function (data) {
+    this.finalScore = data.score;
+};
+GameOverScene.prototype.create = function () {
+    this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
 
-//////////////////////////////
-// ✅ Game Over Scene
-class GameOverScene extends Phaser.Scene {
-  constructor() {
-    super('GameOverScene');
-  }
+    pixelText(this, 200, 200, 'Game Over', 18);
+    pixelText(this, 200, 250, 'Score: ' + this.finalScore, 14);
 
-  init(data) {
-    this.score = data.score;
-  }
+    // Save score to Firebase
+    db.ref('scores').push({ score: this.finalScore });
 
-  create() {
-    this.add.rectangle(200, 300, 400, 600, 0x000000);
+    const retryBtn = pixelText(this, 200, 320, 'Retry', 14).setInteractive();
+    retryBtn.on('pointerdown', () => this.scene.start('GameScene'));
 
-    pixelText(this, 200, 150, 'Game Over', 14);
-    pixelText(this, 200, 230, 'Score: ' + this.score, 10);
+    const leaderboardBtn = pixelText(this, 200, 380, 'Leaderboard', 14).setInteractive();
+    leaderboardBtn.on('pointerdown', () => this.scene.start('LeaderboardScene'));
 
-    const retry = pixelText(this, 200, 320, 'Retry', 10).setInteractive();
-    const leaderboard = pixelText(this, 200, 370, 'Leaderboard', 10).setInteractive();
-
-    retry.on('pointerdown', () => this.scene.start('GameScene'));
-    leaderboard.on('pointerdown', () => this.scene.start('LeaderboardScene'));
-
-    this.createMuteIcon();
-  }
-
-  createMuteIcon() {
-    const icon = this.add.image(380, 20, isMuted ? 'muteOff' : 'muteOn')
-      .setScale(0.5)
-      .setOrigin(1, 0)
-      .setInteractive();
-
-    icon.on('pointerdown', () => {
-      isMuted = !isMuted;
-      icon.setTexture(isMuted ? 'muteOff' : 'muteOn');
+    const muteBtn = pixelText(this, 370, 570, isMuted ? '🔇' : '🔊', 12).setInteractive();
+    muteBtn.on('pointerdown', () => {
+        isMuted = !isMuted;
+        muteBtn.setText(isMuted ? '🔇' : '🔊');
     });
-  }
-}
+};
 
-//////////////////////////////
-// ✅ Leaderboard Scene
-class LeaderboardScene extends Phaser.Scene {
-  constructor() {
-    super('LeaderboardScene');
-  }
+// Leaderboard Scene
+function LeaderboardScene() { Phaser.Scene.call(this, { key: 'LeaderboardScene' }); }
+LeaderboardScene.prototype = Object.create(Phaser.Scene.prototype);
+LeaderboardScene.prototype.constructor = LeaderboardScene;
+LeaderboardScene.prototype.create = function () {
+    this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
+    pixelText(this, 200, 80, 'Leaderboard', 18);
 
-  create() {
-    this.add.rectangle(200, 300, 400, 600, 0x000000);
+    db.ref('scores').orderByChild('score').limitToLast(5).once('value', snapshot => {
+        const scores = [];
+        snapshot.forEach(data => {
+            scores.push(data.val().score);
+        });
+        scores.sort((a, b) => b - a);
 
-    pixelText(this, 200, 80, 'Leaderboard', 14);
-
-    db.ref('scores').orderByValue().limitToLast(5).once('value', snapshot => {
-      const scores = Object.values(snapshot.val() || {}).sort((a, b) => b - a);
-      scores.forEach((score, i) => {
-        pixelText(this, 200, 150 + i * 50, `${i + 1}. ${score}`, 10);
-      });
+        scores.forEach((score, index) => {
+            pixelText(this, 200, 150 + index * 30, (index + 1) + '. ' + score, 14);
+        });
     });
 
-    const back = pixelText(this, 200, 500, 'Back', 10).setInteractive();
-    back.on('pointerdown', () => this.scene.start('MenuScene'));
-  }
-}
+    const startBtn = pixelText(this, 200, 500, 'Start Game', 14).setInteractive();
+    startBtn.on('pointerdown', () => this.scene.start('GameScene'));
+
+    const muteBtn = pixelText(this, 370, 570, isMuted ? '🔇' : '🔊', 12).setInteractive();
+    muteBtn.on('pointerdown', () => {
+        isMuted = !isMuted;
+        muteBtn.setText(isMuted ? '🔇' : '🔊');
+    });
+};
