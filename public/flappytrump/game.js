@@ -50,6 +50,9 @@ PreloadScene.prototype.preload = function () {
     this.load.audio('hit', 'https://files.catbox.moe/2v2pm7.mp3');
     this.load.audio('burgerSound', 'https://files.catbox.moe/5c5st7.mp3');
     this.load.audio('bgm', 'https://files.catbox.moe/4eq3qy.mp3');
+    this.load.image('magaHat', 'https://files.catbox.moe/3zv4y9.png');
+    this.load.audio('eagle', 'https://files.catbox.moe/6vkm2r.mp3');
+
 };
 PreloadScene.prototype.create = function () {
     this.scene.start('MenuScene');
@@ -98,6 +101,8 @@ GameScene.prototype.create = function () {
     this.trump = this.physics.add.sprite(100, 245, 'trump').setOrigin(0.5);
     this.trump.setSize(50, 50).setOffset(7, 7);
     this.trump.setCollideWorldBounds(true);
+    this.eagleSound = this.sound.add('eagle');
+    this.isInvincible = false;
 
     this.input.on('pointerdown', () => {
         this.trump.setVelocityY(-350);
@@ -134,7 +139,7 @@ GameScene.prototype.create = function () {
     });
 
 
-    this.physics.add.collider(this.trump, this.pipes, this.gameOver, null, this);
+    this.physics.add.collider(this.trump, this.pipes, () => { if (!this.isInvincible) { this.gameOver(); } }, null, this);
     this.physics.add.overlap(this.trump, this.burgers, this.collectBurger, null, this);
 };
 GameScene.prototype.spawnPipes = function () {
@@ -163,6 +168,19 @@ GameScene.prototype.spawnPipes = function () {
     burger.body.velocity.x = -200;
 }
     bottomPipe.setSize(64, 450).setOffset(0, 0);
+
+    
+    if (Phaser.Math.Between(0, 1) === 0) {
+        const pipeX = 400;
+        const pipeSpacing = Phaser.Math.Between(200, 300);
+        const nextPipeX = pipeX + pipeSpacing;
+        const magaX = Phaser.Math.Between(pipeX + 80, nextPipeX - 80);
+        const magaY = Phaser.Math.Between(80, 520);
+        const maga = this.burgers.create(magaX, magaY, 'magaHat');
+        maga.body.velocity.x = -200;
+        maga.isMaga = true;
+    }
+
 
     if (Phaser.Math.Between(0, 9) === 0) {
         const burger = this.burgers.create(400, topPipeY + gap / 2, 'burger');
@@ -198,6 +216,18 @@ GameScene.prototype.update = function () {
     }
 };
 GameScene.prototype.collectBurger = function (trump, burger) {
+    if (burger.isMaga) {
+        if (!this.isInvincible) {
+            this.isInvincible = true;
+            this.trump.setTint(0xFFA500);
+            if (this.eagleSound) this.eagleSound.play();
+            this.time.delayedCall(5000, () => {
+                this.isInvincible = false;
+                this.trump.clearTint();
+            });
+        }
+    } else {
+
     const popup = pixelText(this, trump.x, trump.y - 30, '+10', 12);
     this.tweens.add({
         targets: popup,
@@ -209,7 +239,7 @@ GameScene.prototype.collectBurger = function (trump, burger) {
     });
 
     if (!isMuted) this.burgerSound.play();
-    burger.destroy();
+        burger.destroy();
     this.score += 10;
     this.scoreText.setText('Score: ' + this.score);
 };
