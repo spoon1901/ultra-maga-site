@@ -1,5 +1,5 @@
 
-// ✅ Flappy Trump Game — Debug Version with Pixel Font Fix and Hitboxes On
+// ✅ Flappy Trump Game — Final Fixed Build with Correct Hitboxes, Pipes, Scaling, and Debug On
 
 const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
@@ -24,7 +24,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1000 },
-            debug: true // ✅ Hitbox Debug ON
+            debug: true
         }
     },
     scene: [PreloadScene, MenuScene, GameScene, GameOverScene, LeaderboardScene],
@@ -115,16 +115,16 @@ GameScene.prototype.create = function () {
     this.hitSound = this.sound.add('hit');
     this.burgerSound = this.sound.add('burgerSound');
 
-    this.bird = this.physics.add.sprite(100, 300, 'bird').setScale(3).setOrigin(0.5);
+    this.bird = this.physics.add.sprite(100, 245, 'bird').setOrigin(0.5);
+    this.bird.setSize(30, 20).setOffset(2, 2);
     this.bird.setCollideWorldBounds(true);
-    this.bird.body.gravity.y = 1000;
 
     this.input.on('pointerdown', () => {
         this.bird.setVelocityY(-350);
         if (!isMuted) this.flapSound.play();
     });
 
-    this.pipes = this.physics.add.group({ allowGravity: false });
+    this.pipes = this.physics.add.group({ allowGravity: false, immovable: true });
     this.burgers = this.physics.add.group({ allowGravity: false });
 
     this.score = 0;
@@ -137,7 +137,7 @@ GameScene.prototype.create = function () {
         loop: true
     });
 
-    this.physics.add.overlap(this.bird, this.pipes, this.gameOver, null, this);
+    this.physics.add.collider(this.bird, this.pipes, this.gameOver, null, this);
     this.physics.add.overlap(this.bird, this.burgers, this.collectBurger, null, this);
 
     const muteBtn = pixelText(this, 370, 30, isMuted ? '🔇' : '🔊', 12).setInteractive();
@@ -150,19 +150,23 @@ GameScene.prototype.create = function () {
 };
 
 GameScene.prototype.spawnPipes = function () {
-    const gap = 150;
-    const y = Phaser.Math.Between(120, 400);
+    const pipeGap = 140;
+    const minPipeHeight = 50;
+    const maxPipeHeight = 400;
 
-    const topPipe = this.pipes.create(400, y - gap / 2 - 320, 'pipe')
-        .setOrigin(0, 0)
+    const topPipeHeight = Phaser.Math.Between(minPipeHeight, maxPipeHeight);
+    const bottomPipeY = topPipeHeight + pipeGap;
+
+    const topPipe = this.pipes.create(400, topPipeHeight, 'pipe')
+        .setOrigin(0, 1)
         .setFlipY(true)
-        .setScale(0.5)
-        .refreshBody();
+        .setSize(52, 320)
+        .setOffset(0, 0);
 
-    const bottomPipe = this.pipes.create(400, y + gap / 2, 'pipe')
+    const bottomPipe = this.pipes.create(400, bottomPipeY, 'pipe')
         .setOrigin(0, 0)
-        .setScale(0.5)
-        .refreshBody();
+        .setSize(52, 320)
+        .setOffset(0, 0);
 
     topPipe.body.velocity.x = -200;
     bottomPipe.body.velocity.x = -200;
@@ -170,7 +174,7 @@ GameScene.prototype.spawnPipes = function () {
     topPipe.scored = false;
 
     if (Phaser.Math.Between(0, 9) === 0) {
-        const burger = this.burgers.create(400, y, 'burger').setScale(0.3);
+        const burger = this.burgers.create(400, topPipeHeight + pipeGap / 2, 'burger').setScale(0.3);
         burger.body.velocity.x = -200;
     }
 };
