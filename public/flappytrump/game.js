@@ -105,9 +105,10 @@ GameScene.prototype.create = function () {
     this.pipes = this.physics.add.group({ allowGravity: false, immovable: true });
     this.burgers = this.physics.add.group({ allowGravity: false });
 
-    this.score = 0;
+    this.uiLayer = this.add.layer();
+    this.score = 0;    
     this.scoreText = pixelText(this, 200, 30, 'Score: 0', 14);
-    this.children.bringToTop(this.scoreText);
+    this.uiLayer.add(this.scoreText);
 
     this.timer = this.time.addEvent({
         delay: 1500,
