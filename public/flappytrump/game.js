@@ -50,6 +50,10 @@ PreloadScene.prototype.preload = function () {
     this.load.audio('hit', 'https://files.catbox.moe/2v2pm7.mp3');
     this.load.audio('burgerSound', 'https://files.catbox.moe/5c5st7.mp3');
     this.load.audio('bgm', 'https://files.catbox.moe/4eq3qy.mp3');
+    this.load.image('maga', 'https://files.catbox.moe/pzmcm5.png');
+    this.load.image('sparkle', 'https://files.catbox.moe/2hm9xw.png');
+    this.load.audio('eagle', 'https://orangefreesounds.com/wp-content/uploads/2021/11/Cinematic-Eagle-Screech.mp3');
+
 };
 PreloadScene.prototype.create = function () {
     this.scene.start('MenuScene');
@@ -94,6 +98,13 @@ GameScene.prototype.create = function () {
 
     this.pipes = this.physics.add.group({ allowGravity: false, immovable: true });
     this.burgers = this.physics.add.group({ allowGravity: false });
+    this.magaHats = this.physics.add.group({ allowGravity: false });
+    this.sparkles = this.add.particles('sparkle');
+    this.sparkleEmitter = null;
+    this.isInvincible = false;
+
+    this.physics.add.overlap(this.trump, this.magaHats, this.collectMaga, null, this);
+
 
     this.trump = this.physics.add.sprite(100, 245, 'trump').setOrigin(0.5);
     this.trump.setSize(50, 50).setOffset(7, 7);
@@ -134,7 +145,11 @@ GameScene.prototype.create = function () {
     });
 
 
-    this.physics.add.collider(this.trump, this.pipes, this.gameOver, null, this);
+    this.physics.add.collider(this.trump, this.pipes, (trump, pipe) => {
+        if (!this.isInvincible) {
+            this.gameOver();
+        }
+    }, null, this);
     this.physics.add.overlap(this.trump, this.burgers, this.collectBurger, null, this);
 };
 GameScene.prototype.spawnPipes = function () {
@@ -153,6 +168,13 @@ GameScene.prototype.spawnPipes = function () {
     const bottomPipe = this.pipes.create(400, bottomPipeY, 'pipe').setOrigin(0, 0);
     bottomPipe.body.velocity.x = -200;
 
+    if (Phaser.Math.Between(0, 1) === 0) { // MAGA Hat spawn chance (50% for testing)
+        const magaX = 400;
+        const magaY = Phaser.Math.Between(100, 500);
+        const maga = this.magaHats.create(magaX, magaY, 'maga');
+        maga.body.velocity.x = -200;
+    }
+
     if (Phaser.Math.Between(0, 9) === 0) {
     const pipeX = 400;
     const pipeSpacing = Phaser.Math.Between(200, 300);
@@ -163,6 +185,13 @@ GameScene.prototype.spawnPipes = function () {
     burger.body.velocity.x = -200;
 }
     bottomPipe.setSize(64, 450).setOffset(0, 0);
+
+    if (Phaser.Math.Between(0, 1) === 0) { // MAGA Hat spawn chance (50% for testing)
+        const magaX = 400;
+        const magaY = Phaser.Math.Between(100, 500);
+        const maga = this.magaHats.create(magaX, magaY, 'maga');
+        maga.body.velocity.x = -200;
+    }
 
     if (Phaser.Math.Between(0, 9) === 0) {
         const burger = this.burgers.create(400, topPipeY + gap / 2, 'burger');
@@ -186,6 +215,13 @@ GameScene.prototype.update = function () {
             this.pipes.remove(pipe, true, true);
         }
     });
+    
+    this.magaHats.children.iterate(hat => {
+        if (hat && hat.x + hat.width < 0) {
+            this.magaHats.remove(hat, true, true);
+        }
+    });
+
     this.burgers.children.iterate(burger => {
         if (burger && burger.x + burger.width < 0) {
             this.burgers.remove(burger, true, true);
@@ -325,39 +361,6 @@ LeaderboardScene.prototype.create = function () {
     logoutBtn.on('pointerdown', () => logout());
 };
 
-
-
-    this.load.image('maga', 'https://files.catbox.moe/pzmcm5.png');
-    this.load.image('sparkle', 'https://files.catbox.moe/2hm9xw.png');
-    this.load.audio('eagle', 'https://orangefreesounds.com/wp-content/uploads/2021/11/Cinematic-Eagle-Screech.mp3'); // Replace with hosted file if needed
-
-
-// === MAGA MODE POWER-UP ===
-// Inside GameScene.create
-this.magaHats = this.physics.add.group({ allowGravity: false });
-this.sparkles = this.add.particles('sparkle');
-this.sparkleEmitter = null;
-this.isInvincible = false;
-
-// Overlap with MAGA hat
-this.physics.add.overlap(this.trump, this.magaHats, this.collectMaga, null, this);
-
-// === Add to spawnPipes ===
-if (Phaser.Math.Between(0, 1) === 0) { // 50% chance for testing
-    const magaX = 400;
-    const magaY = Phaser.Math.Between(100, 500);
-    const maga = this.magaHats.create(magaX, magaY, 'maga');
-    maga.body.velocity.x = -200;
-}
-
-// === Add to update ===
-this.magaHats.children.iterate(hat => {
-    if (hat && hat.x + hat.width < 0) {
-        this.magaHats.remove(hat, true, true);
-    }
-});
-
-// === Collect MAGA hat ===
 GameScene.prototype.collectMaga = function (trump, maga) {
     maga.destroy();
     if (!this.isMuted) this.sound.play('eagle');
@@ -397,10 +400,3 @@ GameScene.prototype.collectMaga = function (trump, maga) {
         }
     });
 };
-
-// === Modify collider with pipes ===
-this.physics.add.collider(this.trump, this.pipes, (trump, pipe) => {
-    if (!this.isInvincible) {
-        this.gameOver();
-    }
-}, null, this);
