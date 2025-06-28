@@ -1,5 +1,4 @@
-
-// ✅ Flappy Trump — Full Build with Scaling Fixed and All Scenes
+// ✅ Flappy Trump — Full Game.js with Pixel Font + Stroke + Scrollable Background + Clean Hitboxes
 
 const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
@@ -36,7 +35,19 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-////////////////////////////////////////////
+// Helper function for pixel text with stroke
+function pixelText(scene, x, y, text, size = 16) {
+    return scene.add.text(x, y, text, {
+        fontFamily: '"Press Start 2P"',
+        fontSize: `${size}px`,
+        color: '#FFFFFF',
+        stroke: '#000000',
+        strokeThickness: 4,
+        align: 'center',
+        resolution: 10
+    }).setOrigin(0.5);
+}
+
 // Preload Scene
 function PreloadScene() { Phaser.Scene.call(this, { key: 'PreloadScene' }); }
 PreloadScene.prototype = Object.create(Phaser.Scene.prototype);
@@ -55,7 +66,6 @@ PreloadScene.prototype.create = function () {
     this.scene.start('MenuScene');
 };
 
-////////////////////////////////////////////
 // Menu Scene
 function MenuScene() { Phaser.Scene.call(this, { key: 'MenuScene' }); }
 MenuScene.prototype = Object.create(Phaser.Scene.prototype);
@@ -63,24 +73,22 @@ MenuScene.prototype.constructor = MenuScene;
 MenuScene.prototype.create = function () {
     this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
 
-    this.add.text(200, 120, 'Flappy Trump', { fontSize: '24px', color: '#fff' }).setOrigin(0.5);
-    this.add.text(200, 160, 'Brought to you', { fontSize: '14px', color: '#fff' }).setOrigin(0.5);
-    this.add.text(200, 180, 'by Ultra $MAGA', { fontSize: '14px', color: '#fff' }).setOrigin(0.5);
+    pixelText(this, 200, 120, 'Flappy Trump', 18);
+    pixelText(this, 200, 160, 'Brought to you', 10);
+    pixelText(this, 200, 180, 'by Ultra $MAGA', 10);
 
-    const startBtn = this.add.text(200, 260, 'Start Game', { fontSize: '18px', color: '#fff' }).setOrigin(0.5).setInteractive();
+    const startBtn = pixelText(this, 200, 260, 'Start Game', 14).setInteractive();
     startBtn.on('pointerdown', () => this.scene.start('GameScene'));
 
-    const leaderboardBtn = this.add.text(200, 320, 'Leaderboard', { fontSize: '18px', color: '#fff' }).setOrigin(0.5).setInteractive();
+    const leaderboardBtn = pixelText(this, 200, 320, 'Leaderboard', 14).setInteractive();
     leaderboardBtn.on('pointerdown', () => this.scene.start('LeaderboardScene'));
 
-    const muteBtn = this.add.text(370, 570, isMuted ? '🔇' : '🔊', { fontSize: '20px', color: '#fff' }).setOrigin(0.5).setInteractive();
+    const muteBtn = pixelText(this, 370, 570, isMuted ? '🔇' : '🔊', 12).setInteractive();
     muteBtn.on('pointerdown', () => {
         isMuted = !isMuted;
         muteBtn.setText(isMuted ? '🔇' : '🔊');
     });
 };
-
-////////////////////////////////////////////
 // Game Scene
 function GameScene() { Phaser.Scene.call(this, { key: 'GameScene' }); }
 GameScene.prototype = Object.create(Phaser.Scene.prototype);
@@ -108,7 +116,7 @@ GameScene.prototype.create = function () {
     this.burgers = this.physics.add.group({ allowGravity: false });
 
     this.score = 0;
-    this.scoreText = this.add.text(200, 30, 'Score: 0', { fontSize: '18px', color: '#fff' }).setOrigin(0.5);
+    this.scoreText = pixelText(this, 200, 30, 'Score: 0', 14);
 
     this.timer = this.time.addEvent({
         delay: 1500,
@@ -119,6 +127,14 @@ GameScene.prototype.create = function () {
 
     this.physics.add.collider(this.trump, this.pipes, this.gameOver, null, this);
     this.physics.add.overlap(this.trump, this.burgers, this.collectBurger, null, this);
+
+    const muteBtn = pixelText(this, 370, 570, isMuted ? '🔇' : '🔊', 12).setInteractive();
+    muteBtn.on('pointerdown', () => {
+        isMuted = !isMuted;
+        muteBtn.setText(isMuted ? '🔇' : '🔊');
+        if (isMuted) this.bgm.pause();
+        else this.bgm.resume();
+    });
 };
 
 GameScene.prototype.spawnPipes = function () {
@@ -172,8 +188,6 @@ GameScene.prototype.gameOver = function () {
     this.bgm.stop();
     this.scene.start('GameOverScene', { score: this.score });
 };
-
-////////////////////////////////////////////
 // Game Over Scene
 function GameOverScene() { Phaser.Scene.call(this, { key: 'GameOverScene' }); }
 GameOverScene.prototype = Object.create(Phaser.Scene.prototype);
@@ -183,26 +197,33 @@ GameOverScene.prototype.init = function (data) {
 };
 GameOverScene.prototype.create = function () {
     this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
-    this.add.text(200, 200, 'Game Over', { fontSize: '24px', color: '#fff' }).setOrigin(0.5);
-    this.add.text(200, 250, 'Score: ' + this.finalScore, { fontSize: '18px', color: '#fff' }).setOrigin(0.5);
 
+    pixelText(this, 200, 200, 'Game Over', 18);
+    pixelText(this, 200, 250, 'Score: ' + this.finalScore, 14);
+
+    // Save score to Firebase
     db.ref('scores').push({ score: this.finalScore });
 
-    const retryBtn = this.add.text(200, 320, 'Retry', { fontSize: '18px', color: '#fff' }).setOrigin(0.5).setInteractive();
+    const retryBtn = pixelText(this, 200, 320, 'Retry', 14).setInteractive();
     retryBtn.on('pointerdown', () => this.scene.start('GameScene'));
 
-    const leaderboardBtn = this.add.text(200, 380, 'Leaderboard', { fontSize: '18px', color: '#fff' }).setOrigin(0.5).setInteractive();
+    const leaderboardBtn = pixelText(this, 200, 380, 'Leaderboard', 14).setInteractive();
     leaderboardBtn.on('pointerdown', () => this.scene.start('LeaderboardScene'));
+
+    const muteBtn = pixelText(this, 370, 570, isMuted ? '🔇' : '🔊', 12).setInteractive();
+    muteBtn.on('pointerdown', () => {
+        isMuted = !isMuted;
+        muteBtn.setText(isMuted ? '🔇' : '🔊');
+    });
 };
 
-////////////////////////////////////////////
 // Leaderboard Scene
 function LeaderboardScene() { Phaser.Scene.call(this, { key: 'LeaderboardScene' }); }
 LeaderboardScene.prototype = Object.create(Phaser.Scene.prototype);
 LeaderboardScene.prototype.constructor = LeaderboardScene;
 LeaderboardScene.prototype.create = function () {
     this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
-    this.add.text(200, 80, 'Leaderboard', { fontSize: '24px', color: '#fff' }).setOrigin(0.5);
+    pixelText(this, 200, 80, 'Leaderboard', 18);
 
     db.ref('scores').orderByChild('score').limitToLast(5).once('value', snapshot => {
         const scores = [];
@@ -212,10 +233,16 @@ LeaderboardScene.prototype.create = function () {
         scores.sort((a, b) => b - a);
 
         scores.forEach((score, index) => {
-            this.add.text(200, 150 + index * 30, (index + 1) + '. ' + score, { fontSize: '18px', color: '#fff' }).setOrigin(0.5);
+            pixelText(this, 200, 150 + index * 30, (index + 1) + '. ' + score, 14);
         });
     });
 
-    const startBtn = this.add.text(200, 500, 'Start Game', { fontSize: '18px', color: '#fff' }).setOrigin(0.5).setInteractive();
+    const startBtn = pixelText(this, 200, 500, 'Start Game', 14).setInteractive();
     startBtn.on('pointerdown', () => this.scene.start('GameScene'));
+
+    const muteBtn = pixelText(this, 370, 570, isMuted ? '🔇' : '🔊', 12).setInteractive();
+    muteBtn.on('pointerdown', () => {
+        isMuted = !isMuted;
+        muteBtn.setText(isMuted ? '🔇' : '🔊');
+    });
 };
