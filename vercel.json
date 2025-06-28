@@ -1,7 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/flappytrump", "destination": "/flappytrump/index.html" },
-    { "source": "/flappytrump/(.*)", "destination": "/flappytrump/$1" }
-  ],
-  "cleanUrls": true
-}
