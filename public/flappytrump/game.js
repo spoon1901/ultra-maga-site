@@ -53,6 +53,7 @@ PreloadScene.prototype.preload = function () {
     this.load.image('maga', 'https://files.catbox.moe/pzmcm5.png');
     this.load.image('sparkle', 'https://files.catbox.moe/2hm9xw.png');
     this.load.audio('eagle', 'https://files.catbox.moe/ksi4ze.mp3');
+
 };
 PreloadScene.prototype.create = function () {
     this.scene.start('MenuScene');
@@ -167,14 +168,13 @@ GameScene.prototype.spawnPipes = function () {
     topPipe.scored = false;
 
     const bottomPipe = this.pipes.create(400, bottomPipeY, 'pipe').setOrigin(0, 0);
-    bottomPipe.body.velocity.x = -200;
 
-    if (Phaser.Math.Between(0, 1) === 0) { // MAGA Hat spawn chance (50% for testing)
-        const magaX = 400;
-        const magaY = Phaser.Math.Between(100, 500);
-        const maga = this.magaHats.create(magaX, magaY, 'maga');
+    if (Phaser.Math.Between(0, 1) === 0) {
+        const maga = this.magaHats.create(400, topPipeY + gap / 2, 'maga');
         maga.body.velocity.x = -200;
     }
+
+    bottomPipe.body.velocity.x = -200;
 
     if (Phaser.Math.Between(0, 9) === 0) {
     const pipeX = 400;
@@ -186,13 +186,6 @@ GameScene.prototype.spawnPipes = function () {
     burger.body.velocity.x = -200;
 }
     bottomPipe.setSize(64, 450).setOffset(0, 0);
-
-    if (Phaser.Math.Between(0, 1) === 0) { // MAGA Hat spawn chance (50% for testing)
-        const magaX = 400;
-        const magaY = Phaser.Math.Between(100, 500);
-        const maga = this.magaHats.create(magaX, magaY, 'maga');
-        maga.body.velocity.x = -200;
-    }
 
     if (Phaser.Math.Between(0, 9) === 0) {
         const burger = this.burgers.create(400, topPipeY + gap / 2, 'burger');
@@ -362,15 +355,15 @@ LeaderboardScene.prototype.create = function () {
     logoutBtn.on('pointerdown', () => logout());
 };
 
+
 GameScene.prototype.collectMaga = function (trump, maga) {
     maga.destroy();
-    if (!this.isMuted) this.sound.play('eagle');
+    if (!isMuted) this.eagleSound.play();
 
     this.isInvincible = true;
     this.trump.setTint(0xFFA500);
     this.pipeCollider.active = false;
 
-    // Start sparkle emitter
     this.sparkleEmitter = this.sparkles.createEmitter({
         x: this.trump.x,
         y: this.trump.y,
@@ -383,7 +376,6 @@ GameScene.prototype.collectMaga = function (trump, maga) {
         on: true
     });
 
-    // Update emitter position with Trump
     this.events.on('update', () => {
         if (this.sparkleEmitter) {
             this.sparkleEmitter.setPosition(this.trump.x, this.trump.y);
@@ -395,11 +387,11 @@ GameScene.prototype.collectMaga = function (trump, maga) {
         callback: () => {
             this.isInvincible = false;
             this.trump.clearTint();
+            this.pipeCollider.active = true;
             if (this.sparkleEmitter) {
                 this.sparkleEmitter.stop();
                 this.sparkleEmitter = null;
             }
-            this.pipeCollider.active = true;
         }
     });
 };
