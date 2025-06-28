@@ -113,6 +113,7 @@ GameScene.prototype.create = function () {
 
     this.score = 0;
     this.scoreText = pixelText(this, 200, 30, 'Score: 0', 14);
+    this.burgerTime = 0;
     // ✅ Fetch and display the global high score
     db.ref('scores').once('value').then(snapshot => {
         const leaderboard = [];
@@ -160,6 +161,13 @@ GameScene.prototype.spawnPipes = function () {
     }
 };
 GameScene.prototype.update = function () {
+    this.burgerTime += this.game.loop.delta;
+    this.burgers.children.iterate(burger => {
+        if (burger) {
+            burger.y += Math.sin(this.burgerTime / 300) * 0.5; // Smooth float
+        }
+    });
+
     this.bg.tilePositionX += 0.7;
 
     this.pipes.children.iterate(pipe => {
@@ -175,6 +183,16 @@ GameScene.prototype.update = function () {
     }
 };
 GameScene.prototype.collectBurger = function (trump, burger) {
+    const popup = pixelText(this, trump.x, trump.y - 30, '+10', 12);
+    this.tweens.add({
+        targets: popup,
+        y: popup.y - 30,
+        alpha: 0,
+        duration: 800,
+        ease: 'Power1',
+        onComplete: () => popup.destroy()
+    });
+
     if (!isMuted) this.burgerSound.play();
     burger.destroy();
     this.score += 10;
@@ -222,7 +240,7 @@ GameOverScene.prototype.create = function () {
     logoutBtn.on('pointerdown', () => logout());
     const shareBtn = pixelText(this, 200, 500, 'Share to X', 14).setInteractive();
     shareBtn.on('pointerdown', () => {
-        const shareText = `I scored ${this.finalScore} in #FlappyTrump! 🇺🇸🦅#UltraMAGA\nCan you beat me?\nPlay 👉 https://flappytrump.ultramagaxrpl.com`;
+        const shareText = `I scored ${this.finalScore} in #FlappyTrump! 🇺🇸🦅\nCan you beat me?\nPlay 👉 https://flappytrump.com`;
         const twitterURL = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
         window.open(twitterURL, '_blank');
     });
