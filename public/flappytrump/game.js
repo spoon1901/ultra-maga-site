@@ -209,13 +209,10 @@ function LeaderboardScene() { Phaser.Scene.call(this, { key: 'LeaderboardScene' 
 LeaderboardScene.prototype = Object.create(Phaser.Scene.prototype);
 LeaderboardScene.prototype.constructor = LeaderboardScene;
 LeaderboardScene.prototype.create = function () {
-    console.log('Leaderboard Scene started');
     this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
     pixelText(this, 200, 80, 'Leaderboard', 18);
-
     db.ref('scores').once('value').then(snapshot => {
-        console.log('Snapshot:', snapshot.val());
-        const leaderboard = [];
+                const leaderboard = [];
         snapshot.forEach(child => {
             const data = child.val();
             leaderboard.push({
@@ -227,6 +224,7 @@ LeaderboardScene.prototype.create = function () {
         });
 
         leaderboard.sort((a, b) => b.score - a.score);
+        leaderboard.splice(10);
 
         if (leaderboard.length === 0) {
             pixelText(this, 200, 300, 'No scores yet!', 14);
