@@ -102,14 +102,8 @@ GameScene.prototype.create = function () {
     this.sparkleEmitter = null;
     this.isInvincible = false;
 
-    this.pipeCollider = this.physics.add.collider(this.trump, this.pipes, (trump, pipe) => {
-        if (!this.isInvincible) {
-            this.gameOver();
-        }
-    }, null, this);
 
-
-    this.trump = this.physics.add.sprite(150, 245, 'trump').setOrigin(0.5);
+    this.trump = this.physics.add.sprite(130, 245, 'trump').setOrigin(0.5);
     this.trump.setSize(50, 50).setOffset(7, 7);
     this.trump.setCollideWorldBounds(true);
 
@@ -148,7 +142,15 @@ GameScene.prototype.create = function () {
     });
 
 
-    this.physics.add.collider(this.trump, this.pipes, this.gameOver, null, this);
+    this.pipeCollider = this.physics.add.collider(this.trump, this.pipes, (trump, pipe) => {
+        if (!this.isInvincible) {
+            this.gameOver();
+        }
+    }, null, this);
+
+    this.physics.add.overlap(this.trump, this.burgers, this.collectBurger, null, this);
+    this.physics.add.overlap(this.trump, this.magaHats, this.collectMaga, null, this);
+
     this.physics.add.overlap(this.trump, this.burgers, this.collectBurger, null, this);
 };
 GameScene.prototype.spawnPipes = function () {
