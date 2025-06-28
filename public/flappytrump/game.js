@@ -1,4 +1,4 @@
-// ✅ Full game.js — Flappy Trump with Twitter Login, Leaderboard, Profile Pictures, Score Fix, and All Bug Fixes
+// ✅ Full game.js — Flappy Trump with Twitter Login, Leaderboard, Profile Pictures, Score Fix, and All Bug Fixes 
 
 // Firebase is initialized in index.html
 let isMuted = false;
