@@ -220,6 +220,13 @@ GameOverScene.prototype.create = function () {
 
     const logoutBtn = pixelText(this, 200, 440, 'Logout', 14).setInteractive();
     logoutBtn.on('pointerdown', () => logout());
+    const shareBtn = pixelText(this, 200, 500, 'Share to X', 14).setInteractive();
+    shareBtn.on('pointerdown', () => {
+        const shareText = `I scored ${this.finalScore} in #FlappyTrump! 🇺🇸🦅\nCan you beat me?\nPlay 👉 https://flappytrump.com`;
+        const twitterURL = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+        window.open(twitterURL, '_blank');
+    });
+
 };
 
 // Leaderboard Scene
