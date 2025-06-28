@@ -36,6 +36,27 @@ const config = {
 const game = new Phaser.Game(config);
 
 // Helper function for pixel text with stroke
+
+function createMuteIcon(scene) {
+    const icon = scene.add.image(scene.scale.width - 10, 10, isMuted ? 'sound_off' : 'sound_on')
+        .setOrigin(1, 0)
+        .setInteractive()
+        .setScale(1.5);
+
+    icon.on('pointerdown', () => {
+        isMuted = !isMuted;
+        icon.setTexture(isMuted ? 'sound_off' : 'sound_on');
+        if (isMuted) {
+            scene.sound.pauseAll();
+        } else {
+            scene.sound.resumeAll();
+        }
+    });
+
+    return icon;
+}
+
+
 function pixelText(scene, x, y, text, size = 16) {
     return scene.add.text(x, y, text, {
         fontFamily: '"Press Start 2P"',
@@ -53,6 +74,9 @@ function PreloadScene() { Phaser.Scene.call(this, { key: 'PreloadScene' }); }
 PreloadScene.prototype = Object.create(Phaser.Scene.prototype);
 PreloadScene.prototype.constructor = PreloadScene;
 PreloadScene.prototype.preload = function () {
+    this.load.image('sound_on', 'https://files.catbox.moe/plr5pn.png');
+    this.load.image('sound_off', 'https://files.catbox.moe/i3u2ci.png');
+
     this.load.image('background', 'https://files.catbox.moe/chw14r.png');
     this.load.image('pipe', 'https://files.catbox.moe/7mgltx.png');
     this.load.image('burger', 'https://files.catbox.moe/uif031.png');
