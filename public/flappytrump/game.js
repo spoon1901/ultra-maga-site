@@ -1,5 +1,5 @@
 const firebaseConfig = {
-    apiKey: "AIzaSyBlvFjps90wJtHQjajvmneGwB18mYYDCUI",
+    apiKey: "AIzaSyBlvFjps9OwJ1hQjajvmneGwB18mYYDCUI",
     authDomain: "flappytrump.firebaseapp.com",
     databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
     projectId: "flappytrump",
@@ -12,19 +12,16 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let isMuted = false;
-let isLoggedIn = false;
 
-// Phaser Game Config
 const config = {
     type: Phaser.AUTO,
     width: 400,
     height: 600,
-    backgroundColor: '#000000',
     physics: {
         default: 'arcade',
         arcade: {
             gravity: { y: 1000 },
-            debug: false
+            debug: true
         }
     },
     scene: [LoginScene, PreloadScene, MenuScene, GameScene, GameOverScene, LeaderboardScene],
@@ -36,10 +33,10 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-// ✅ Pixel Text Function
+// Helper function for pixel text with stroke
 function pixelText(scene, x, y, text, size = 16) {
     return scene.add.text(x, y, text, {
-        fontFamily: '"Press Start 2P"',
+        fontFamily: "'Press Start 2P'",
         fontSize: `${size}px`,
         color: '#FFFFFF',
         stroke: '#000000',
@@ -49,30 +46,28 @@ function pixelText(scene, x, y, text, size = 16) {
     }).setOrigin(0.5);
 }
 
-// ✅ Login Scene
+// Login Scene
 function LoginScene() {
     Phaser.Scene.call(this, { key: 'LoginScene' });
 }
 LoginScene.prototype = Object.create(Phaser.Scene.prototype);
 LoginScene.prototype.constructor = LoginScene;
 
-LoginScene.prototype.preload = function () {
-    this.load.image('xlogo', 'https://files.catbox.moe/asvbfq.png');
+LoginScene.prototype.preload = function() {
+    this.load.image('xlogo', 'https://files.catbox.moe/3j4bd9.png');
 };
 
-LoginScene.prototype.create = function () {
-    const centerX = this.scale.width / 2;
-    const centerY = this.scale.height / 2;
+LoginScene.prototype.create = function() {
+    this.cameras.main.setBackgroundColor('#000000');
 
-    pixelText(this, centerX, centerY + 100, 'Login with X to Continue', 10);
+    pixelText(this, this.scale.width / 2, this.scale.height - 50, "Login with X to Continue", 12);
 
-    const xLogo = this.add.image(centerX, centerY, 'xlogo')
-        .setScale(0.5)
-        .setInteractive({ useHandCursor: true });
+    const xButton = this.add.image(this.scale.width / 2, this.scale.height / 2, 'xlogo')
+        .setInteractive({ useHandCursor: true })
+        .setDisplaySize(100, 100);
 
-    xLogo.on('pointerdown', () => {
-        isLoggedIn = true;
-        this.scene.start('MenuScene');
+    xButton.on('pointerdown', () => {
+        this.scene.start('PreloadScene');
     });
 };
 
