@@ -4,9 +4,6 @@
       "source": "/flappytrump",
       "destination": "/flappytrump/index.html"
     },
-    {
-      "source": "/flappytrump/:match*",
-      "destination": "/flappytrump/:match*"
-    }
+  
   ]
 }
