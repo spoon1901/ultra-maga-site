@@ -1,4 +1,4 @@
-// ✅ Full game.js — Flappy Trump with Twitter Login, Leaderboard, Profile Pictures, and Bug Fixes
+// ✅ Full game.js — Flappy Trump with Twitter Login, Leaderboard, Profile Pictures, and All Bug Fixes
 
 // Firebase, Auth, and currentUser are initialized in index.html
 
@@ -231,7 +231,6 @@ LeaderboardScene.prototype.create = function () {
             return;
         }
 
-        // ✅ Queue image loads if photoURL exists
         leaderboard.forEach(entry => {
             const imgKey = 'pfp_' + entry.uid;
             if (entry.photoURL) {
@@ -244,20 +243,15 @@ LeaderboardScene.prototype.create = function () {
                 const y = 150 + index * 60;
                 const imgKey = 'pfp_' + entry.uid;
 
-                // ✅ Draw profile picture if available
                 if (this.textures.exists(imgKey)) {
                     this.add.image(80, y, imgKey).setDisplaySize(40, 40);
                 } else {
-                    // If image fails, fallback placeholder (simple white circle)
                     const graphics = this.add.graphics();
                     graphics.fillStyle(0xffffff, 1);
                     graphics.fillCircle(80, y, 20);
                 }
 
-                // Username
                 pixelText(this, 200, y, `${entry.username}`, 14);
-
-                // Score
                 pixelText(this, 350, y, `${entry.score}`, 14);
             });
         });
@@ -271,4 +265,3 @@ LeaderboardScene.prototype.create = function () {
     const logoutBtn = pixelText(this, 200, 550, 'Logout', 14).setInteractive();
     logoutBtn.on('pointerdown', () => logout());
 };
-
