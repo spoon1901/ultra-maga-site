@@ -1,7 +1,6 @@
-// ✅ Full game.js — Flappy Trump with Twitter Login, Leaderboard, Profile Pictures, and All Bug Fixes
+// ✅ Full game.js — Flappy Trump with Twitter Login, Leaderboard, Profile Pictures, Score Fix, and All Bug Fixes
 
-// Firebase, Auth, and currentUser are initialized in index.html
-
+// Firebase is initialized in index.html
 let isMuted = false;
 
 // Phaser Game Config
@@ -25,7 +24,7 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-// Helper for pixel text with stroke
+// Helper function for pixel text
 function pixelText(scene, x, y, text, size = 16) {
     return scene.add.text(x, y, text, {
         fontFamily: '"Press Start 2P"',
@@ -60,22 +59,22 @@ PreloadScene.prototype.create = function () {
 function MenuScene() { Phaser.Scene.call(this, { key: 'MenuScene' }); }
 MenuScene.prototype = Object.create(Phaser.Scene.prototype);
 MenuScene.prototype.constructor = MenuScene;
-MenuScene.prototype.create = function() {
+MenuScene.prototype.create = function () {
     this.bg = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0);
-    pixelText(this, this.scale.width / 2, 80, 'Flappy Trump', 32);
-    pixelText(this, this.scale.width / 2, 120, 'Brought to you', 16);
-    pixelText(this, this.scale.width / 2, 140, 'by Ultra $MAGA', 16);
+    pixelText(this, 200, 80, 'Flappy Trump', 32);
+    pixelText(this, 200, 130, 'Brought to you', 16);
+    pixelText(this, 200, 150, 'by Ultra $MAGA', 16);
 
-    const startButton = pixelText(this, this.scale.width / 2, 220, 'Start Game', 24).setInteractive();
+    const startButton = pixelText(this, 200, 220, 'Start Game', 24).setInteractive();
     startButton.on('pointerdown', () => this.scene.start('GameScene'));
 
-    const leaderboardButton = pixelText(this, this.scale.width / 2, 270, 'Leaderboard', 24).setInteractive();
+    const leaderboardButton = pixelText(this, 200, 270, 'Leaderboard', 24).setInteractive();
     leaderboardButton.on('pointerdown', () => this.scene.start('LeaderboardScene'));
 
-    const logoutBtn = pixelText(this, 200, 320, 'Logout', 14).setInteractive();
-    logoutBtn.on('pointerdown', () => logout());
+    const logoutButton = pixelText(this, 200, 320, 'Logout', 14).setInteractive();
+    logoutButton.on('pointerdown', () => logout());
 };
-MenuScene.prototype.update = function() {
+MenuScene.prototype.update = function () {
     this.bg.tilePositionX += 0.5;
 };
 
@@ -84,7 +83,7 @@ function GameScene() { Phaser.Scene.call(this, { key: 'GameScene' }); }
 GameScene.prototype = Object.create(Phaser.Scene.prototype);
 GameScene.prototype.constructor = GameScene;
 GameScene.prototype.create = function () {
-    this.bg = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
+    this.bg = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0);
 
     this.bgm = this.sound.add('bgm', { loop: true, volume: 0.5 });
     if (!isMuted) this.bgm.play();
@@ -92,6 +91,9 @@ GameScene.prototype.create = function () {
     this.flapSound = this.sound.add('flap');
     this.hitSound = this.sound.add('hit');
     this.burgerSound = this.sound.add('burgerSound');
+
+    this.pipes = this.physics.add.group({ allowGravity: false, immovable: true });
+    this.burgers = this.physics.add.group({ allowGravity: false });
 
     this.trump = this.physics.add.sprite(100, 245, 'trump').setOrigin(0.5);
     this.trump.setSize(50, 50).setOffset(7, 7);
@@ -102,20 +104,15 @@ GameScene.prototype.create = function () {
         if (!isMuted) this.flapSound.play();
     });
 
-    this.pipes = this.physics.add.group({ allowGravity: false, immovable: true });
-    this.burgers = this.physics.add.group({ allowGravity: false });
-
-    this.uiLayer = this.add.layer();
-    this.score = 0;    
-    this.scoreText = pixelText(this, 200, 30, 'Score: 0', 14);
-    this.uiLayer.add(this.scoreText);
-
     this.timer = this.time.addEvent({
         delay: 1500,
         callback: this.spawnPipes,
         callbackScope: this,
         loop: true
     });
+
+    this.score = 0;
+    this.scoreText = pixelText(this, 200, 30, 'Score: 0', 14);
 
     this.physics.add.collider(this.trump, this.pipes, this.gameOver, null, this);
     this.physics.add.overlap(this.trump, this.burgers, this.collectBurger, null, this);
@@ -177,7 +174,7 @@ GameOverScene.prototype.init = function (data) {
     this.finalScore = data.score;
 };
 GameOverScene.prototype.create = function () {
-    this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
+    this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0);
 
     pixelText(this, 200, 200, 'Game Over', 18);
     pixelText(this, 200, 250, 'Score: ' + this.finalScore, 14);
@@ -210,10 +207,11 @@ function LeaderboardScene() { Phaser.Scene.call(this, { key: 'LeaderboardScene' 
 LeaderboardScene.prototype = Object.create(Phaser.Scene.prototype);
 LeaderboardScene.prototype.constructor = LeaderboardScene;
 LeaderboardScene.prototype.create = function () {
-    this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0, 0);
+    this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0);
     pixelText(this, 200, 80, 'Leaderboard', 18);
+
     db.ref('scores').once('value').then(snapshot => {
-                const leaderboard = [];
+        const leaderboard = [];
         snapshot.forEach(child => {
             const data = child.val();
             leaderboard.push({
@@ -225,7 +223,7 @@ LeaderboardScene.prototype.create = function () {
         });
 
         leaderboard.sort((a, b) => b.score - a.score);
-        leaderboard.splice(10);
+        leaderboard.splice(10); // ✅ Keep top 10
 
         if (leaderboard.length === 0) {
             pixelText(this, 200, 300, 'No scores yet!', 14);
