@@ -156,7 +156,8 @@ GameScene.prototype.spawnPipes = function () {
     bottomPipe.setSize(64, 450).setOffset(0, 0);
 
     if (Phaser.Math.Between(0, 9) === 0) {
-        const burger = this.burgers.create(400, topPipeY + gap / 2, 'burger');
+        const burgerY = Phaser.Math.Between(80, 520);
+    const burger = this.burgers.create(400, burgerY, 'burger');
         burger.body.velocity.x = -200;
     }
 };
