@@ -53,7 +53,6 @@ PreloadScene.prototype.preload = function () {
     this.load.image('maga', 'https://files.catbox.moe/pzmcm5.png');
     this.load.image('sparkle', 'https://files.catbox.moe/2hm9xw.png');
     this.load.audio('eagle', 'https://files.catbox.moe/ksi4ze.mp3');
-
 };
 PreloadScene.prototype.create = function () {
     this.scene.start('MenuScene');
@@ -103,8 +102,6 @@ GameScene.prototype.create = function () {
     this.sparkleEmitter = null;
     this.isInvincible = false;
 
-    this.physics.add.overlap(this.trump, this.magaHats, this.collectMaga, null, this);
-
 
     this.trump = this.physics.add.sprite(100, 245, 'trump').setOrigin(0.5);
     this.trump.setSize(50, 50).setOffset(7, 7);
@@ -150,6 +147,10 @@ GameScene.prototype.create = function () {
             this.gameOver();
         }
     }, null, this);
+
+    this.physics.add.overlap(this.trump, this.burgers, this.collectBurger, null, this);
+    this.physics.add.overlap(this.trump, this.magaHats, this.collectMaga, null, this);
+
     this.physics.add.overlap(this.trump, this.burgers, this.collectBurger, null, this);
 };
 GameScene.prototype.spawnPipes = function () {
