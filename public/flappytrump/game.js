@@ -1,3 +1,4 @@
+
 const firebaseConfig = {
     apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
     authDomain: "flappytrump.firebaseapp.com",
@@ -37,16 +38,24 @@ function pixelText(scene, x, y, text, size = 16) {
         color: '#FFFFFF',
         stroke: '#000000',
         strokeThickness: 4,
-        align: 'center'
+        align: 'center',
+        resolution: 10
     }).setOrigin(0.5);
 }
 
-function PreloadScene() {
-    Phaser.Scene.call(this, { key: 'PreloadScene' });
-}
+// Preload Scene with WebFont loader
+function PreloadScene() { Phaser.Scene.call(this, { key: 'PreloadScene' }); }
 PreloadScene.prototype = Object.create(Phaser.Scene.prototype);
 PreloadScene.prototype.constructor = PreloadScene;
 PreloadScene.prototype.preload = function () {
+    const self = this;
+    this.readyCount = 0;
+
+    WebFont.load({
+        google: { families: ['Press Start 2P'] },
+        active: function () { self.ready(); }
+    });
+
     this.load.image('background', 'https://files.catbox.moe/chw14r.png');
     this.load.image('pipe', 'https://files.catbox.moe/qswcqq.png');
     this.load.image('burger', 'https://files.catbox.moe/hwbf07.png');
@@ -55,14 +64,20 @@ PreloadScene.prototype.preload = function () {
     this.load.audio('hit', 'https://files.catbox.moe/2v2pm7.mp3');
     this.load.audio('burgerSound', 'https://files.catbox.moe/5c5st7.mp3');
     this.load.audio('bgm', 'https://files.catbox.moe/4eq3qy.mp3');
+
+    this.load.on('complete', () => {
+        self.ready();
+    });
 };
-PreloadScene.prototype.create = function () {
-    this.scene.start('MenuScene');
+PreloadScene.prototype.ready = function () {
+    this.readyCount++;
+    if (this.readyCount === 2) {
+        this.scene.start('MenuScene');
+    }
 };
 
-function MenuScene() {
-    Phaser.Scene.call(this, { key: 'MenuScene' });
-}
+// Menu Scene
+function MenuScene() { Phaser.Scene.call(this, { key: 'MenuScene' }); }
 MenuScene.prototype = Object.create(Phaser.Scene.prototype);
 MenuScene.prototype.constructor = MenuScene;
 MenuScene.prototype.create = function () {
@@ -84,9 +99,8 @@ MenuScene.prototype.create = function () {
     });
 };
 
-function GameScene() {
-    Phaser.Scene.call(this, { key: 'GameScene' });
-}
+// Game Scene
+function GameScene() { Phaser.Scene.call(this, { key: 'GameScene' }); }
 GameScene.prototype = Object.create(Phaser.Scene.prototype);
 GameScene.prototype.constructor = GameScene;
 GameScene.prototype.create = function () {
@@ -186,14 +200,11 @@ GameScene.prototype.gameOver = function () {
     this.scene.start('GameOverScene', { score: this.score });
 };
 
-function GameOverScene() {
-    Phaser.Scene.call(this, { key: 'GameOverScene' });
-}
+// Game Over Scene
+function GameOverScene() { Phaser.Scene.call(this, { key: 'GameOverScene' }); }
 GameOverScene.prototype = Object.create(Phaser.Scene.prototype);
 GameOverScene.prototype.constructor = GameOverScene;
-GameOverScene.prototype.init = function (data) {
-    this.score = data.score;
-};
+GameOverScene.prototype.init = function (data) { this.score = data.score; };
 GameOverScene.prototype.create = function () {
     this.add.image(200, 300, 'background').setScale(1.1);
     pixelText(this, 200, 100, 'Game Over', 20);
@@ -215,9 +226,8 @@ GameOverScene.prototype.create = function () {
     });
 };
 
-function LeaderboardScene() {
-    Phaser.Scene.call(this, { key: 'LeaderboardScene' });
-}
+// Leaderboard Scene
+function LeaderboardScene() { Phaser.Scene.call(this, { key: 'LeaderboardScene' }); }
 LeaderboardScene.prototype = Object.create(Phaser.Scene.prototype);
 LeaderboardScene.prototype.constructor = LeaderboardScene;
 LeaderboardScene.prototype.create = function () {
