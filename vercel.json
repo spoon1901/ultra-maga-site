@@ -3,7 +3,6 @@
     {
       "source": "/flappytrump",
       "destination": "/flappytrump/index.html"
-    },
-  
+    }
   ]
 }
