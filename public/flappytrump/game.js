@@ -182,12 +182,12 @@ GameScene.prototype.update = function () {
 
     
     this.pipes.children.iterate(pipe => {
-        if (pipe.x + pipe.width < 0) {
+        if (pipe && pipe.x + pipe.width < 0) {
             this.pipes.remove(pipe, true, true);
         }
     });
     this.burgers.children.iterate(burger => {
-        if (burger.x + burger.width < 0) {
+        if (burger && burger.x + burger.width < 0) {
             this.burgers.remove(burger, true, true);
         }
     });
