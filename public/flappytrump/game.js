@@ -213,6 +213,7 @@ LeaderboardScene.prototype.create = function () {
     pixelText(this, 200, 80, 'Leaderboard', 18);
 
     db.ref('scores').once('value').then(snapshot => {
+        console.log('Snapshot:', snapshot.val());
         const leaderboard = [];
         snapshot.forEach(child => {
             const data = child.val();
