@@ -113,6 +113,26 @@ GameScene.prototype.create = function () {
 
     this.score = 0;
     this.scoreText = pixelText(this, 200, 30, 'Score: 0', 14);
+    // ✅ Fetch and display the global high score
+    db.ref('scores').once('value').then(snapshot => {
+        const leaderboard = [];
+        snapshot.forEach(child => {
+            const data = child.val();
+            leaderboard.push({
+                username: data.username,
+                score: data.score
+            });
+        });
+
+        leaderboard.sort((a, b) => b.score - a.score);
+        const topEntry = leaderboard[0];
+        this.highScore = topEntry ? topEntry.score : 0;
+        this.highPlayer = topEntry ? topEntry.username : 'None';
+
+        // Show the high score under the current score
+        this.highScoreText = pixelText(this, 200, 60, `High: ${this.highScore} (${this.highPlayer})`, 14);
+    });
+
 
     this.physics.add.collider(this.trump, this.pipes, this.gameOver, null, this);
     this.physics.add.overlap(this.trump, this.burgers, this.collectBurger, null, this);
