@@ -44,7 +44,7 @@ PreloadScene.prototype.constructor = PreloadScene;
 PreloadScene.prototype.preload = function () {
     this.load.image('background', 'https://files.catbox.moe/chw14r.png');
     this.load.image('pipe', 'https://files.catbox.moe/7mgltx.png');
-    this.load.image('burger', 'https://files.catbox.moe/uif031.png');
+    this.load.image('burger', 'https://files.catbox.moe/ptmqsb.png');
     this.load.image('trump', 'https://files.catbox.moe/wlm5xw.png');
     this.load.audio('flap', 'https://files.catbox.moe/2oly9t.mp3');
     this.load.audio('hit', 'https://files.catbox.moe/2v2pm7.mp3');
@@ -188,12 +188,16 @@ GameScene.prototype.spawnPipes = function () {
     const burgerY = Phaser.Math.Between(80, 520);
     const burger = this.burgers.create(burgerX, burgerY, 'burger');
     burger.body.velocity.x = -200;
+    burger.setSize(40, 40).setOffset(0, 0);
+    
 }
     bottomPipe.setSize(64, 450).setOffset(0, 0);
 
     if (Phaser.Math.Between(0, 9) === 0) {
         const burger = this.burgers.create(400, topPipeY + gap / 2, 'burger');
         burger.body.velocity.x = -200;
+        burger.setSize(40, 40).setOffset(0, 0);
+
     }
 };
 GameScene.prototype.update = function () {
