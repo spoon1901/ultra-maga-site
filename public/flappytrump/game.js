@@ -173,7 +173,7 @@ GameScene.prototype.spawnPipes = function () {
 
     const bottomPipe = this.pipes.create(400, bottomPipeY, 'pipe').setOrigin(0, 0);
 
-    if (Phaser.Math.Between(0, 1) === 0) {
+    if (Phaser.Math.Between(0, 19) === 0) {
         const maga = this.magaHats.create(400, topPipeY + gap / 2, 'maga');
         maga.body.velocity.x = -200;
     }
