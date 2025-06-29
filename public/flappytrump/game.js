@@ -1,4 +1,4 @@
-// ✅ Full game.js — Flappy Trump with Twitter Login, Leaderboard, Profile Pictures, Score Fix, and All Bug Fixes 
+// ✅ Full game.js — Flappy Trump with Twitter Login, Leaderboard, Profile Pictures, Score Fix, and All Bug Fixes
 
 // Firebase is initialized in index.html
 let isMuted = false;
@@ -104,7 +104,7 @@ GameScene.prototype.create = function () {
     this.isInvincible = false;
 
 
-    this.trump = this.physics.add.sprite(130, 245, 'trump').setOrigin(0.5);
+    this.trump = this.physics.add.sprite(100, 245, 'trump').setOrigin(0.5);
     this.trump.setSize(50, 50).setOffset(7, 7);
     this.trump.setCollideWorldBounds(true);
 
