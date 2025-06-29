@@ -125,8 +125,7 @@ GameScene.prototype.create = function () {
 
     this.score = 0;
     this.scoreText = pixelText(this, 200, 30, 'Score: 0', 14);
-    this.magaText = pixelText(this, 200, 100, '', 24).setVisible(false);
-
+   
     // ✅ Fetch and display the global high score
     db.ref('scores').once('value').then(snapshot => {
         const leaderboard = [];
