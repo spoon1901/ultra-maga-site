@@ -95,6 +95,8 @@ GameScene.prototype.create = function () {
     this.flapSound = this.sound.add('flap');
     this.hitSound = this.sound.add('hit');
     this.burgerSound = this.sound.add('burgerSound');
+    this.eagleSound = this.sound.add('eagle');
+
 
     this.pipes = this.physics.add.group({ allowGravity: false, immovable: true });
     this.burgers = this.physics.add.group({ allowGravity: false });
