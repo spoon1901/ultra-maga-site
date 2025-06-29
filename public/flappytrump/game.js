@@ -125,6 +125,8 @@ GameScene.prototype.create = function () {
 
     this.score = 0;
     this.scoreText = pixelText(this, 200, 30, 'Score: 0', 14);
+    this.magaText = pixelText(this, 200, 100, '', 24).setVisible(false);
+
     // ✅ Fetch and display the global high score
     db.ref('scores').once('value').then(snapshot => {
         const leaderboard = [];
@@ -367,21 +369,22 @@ GameScene.prototype.collectMaga = function (trump, maga) {
     this.trump.setTint(0xFFA500);
     this.pipeCollider.active = false;
 
-    this.magaText.setText('MAGA MODE').setVisible(true);
+   this.magaText.setText('MAGA MODE').setVisible(true);
 
-    let countdown = 5;
-    const countdownTimer = this.time.addEvent({
-        delay: 1000,
-        repeat: 5,
-        callback: () => {
-            countdown--;
-            if (countdown > 0) {
-                this.magaText.setText(countdown.toString());
-            } else {
-                this.magaText.setVisible(false);
-            }
+let countdown = 5;
+const countdownTimer = this.time.addEvent({
+    delay: 1000,
+    repeat: 4,  // 🔥 Important: 4 not 5
+    callback: () => {
+        countdown--;
+        if (countdown > 0) {
+            this.magaText.setText(countdown.toString());
+        } else {
+            this.magaText.setVisible(false);
         }
-    });
+    }
+});
+
 
     this.sparkleEmitter = this.sparkles.createEmitter({
         x: this.trump.x,
