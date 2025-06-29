@@ -416,7 +416,9 @@ const countdownTimer = this.time.addEvent({
             this.magaText.setVisible(false);
             if (this.sparkleEmitter) {
                 this.sparkleEmitter.stop();
+                this.sparkleEmitter.manager.removeEmitter(this.sparkleEmitter);
                 this.sparkleEmitter = null;
+
             }
         }
     });
