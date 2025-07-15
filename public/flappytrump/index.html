@@ -39,7 +39,29 @@
 
   <canvas id="gameCanvas" width="320" height="480"></canvas>
 
+  
+  <!-- Firebase v8 SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- Firebase Init -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlvFjps9OwJIhQjajvmneGwB18mYYDCUI",
+      authDomain: "flappytrump.firebaseapp.com",
+      databaseURL: "https://flappytrump-default-rtdb.firebaseio.com",
+      projectId: "flappytrump",
+      storageBucket: "flappytrump.firebasestorage.app",
+      messagingSenderId: "513580021078",
+      appId: "1:513580021078:web:caacd9c4a55acee33712f7"
+    };
+    firebase.initializeApp(firebaseConfig);
+    window.db = firebase.database();
+  </script>
+
+  <!-- Phaser -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+
   <script type="module" src="game.js"></script>
 </body>
 </html>
