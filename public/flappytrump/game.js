@@ -270,14 +270,15 @@ GameOverScene.prototype.create = function () {
     pixelText(this, 200, 200, 'Game Over', 18);
     pixelText(this, 200, 250, 'Score: ' + this.finalScore, 14);
 
-    const userRef = db.ref('scores/' + currentUser.uid);
+    const playerId = localStorage.getItem("playerId") || "anonymous";
+    const playerName = localStorage.getItem("playerName") || "Guest";
+    const userRef = db.ref('scores/' + playerId);
     userRef.once('value')
         .then(snapshot => {
             const existing = snapshot.val();
             if (!existing || this.finalScore > existing.score) {
                 return userRef.set({
-                    username: currentUser.displayName,
-                    photoURL: currentUser.photoURL,
+                    username: playerName,
                     score: this.finalScore
                 });
             }
