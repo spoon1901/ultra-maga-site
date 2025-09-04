@@ -38,7 +38,7 @@ export default function Hero() {
             </div>
           </a>
 
-          <a href="https://t.me/UltraMAGAXRP" target="_blank" rel="noopener noreferrer" className="hover:animate-bounce" title="Telegram">
+          <a href="https://t.me/UltraMAGAXRPL" target="_blank" rel="noopener noreferrer" className="hover:animate-bounce" title="Telegram">
             <div className="w-[3rem] h-[3rem] flex items-center justify-center">
               <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg" alt="Telegram" className="w-full h-full object-contain invert" />
             </div>
@@ -79,3 +79,4 @@ export default function Hero() {
     </section>
   );
 }
+
