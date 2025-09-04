@@ -49,16 +49,22 @@ export default function Hero() {
               <img src="https://files.catbox.moe/rtxl3m.png" alt="TikTok" className="w-full h-full object-contain invert" />
             </div>
           </a>
-          <a
-          href="https://xrp.cafe/collection/ultramagaeagle"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:animate-bounce"
-          title="Ultra Maga Eagle NFT">
-            <div className="w-[3rem] h-[3rem] flex items-center justify-center">
-              <img src="https://files.catbox.moe/tvlu06.png" alt="Ultra Maga Eagle NFT" className="w-full h-full object-contain" />
-            </div>
-          </a>
+        <a
+  href="https://xrp.cafe/collection/ultramagaeagle"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="hover:animate-bounce"
+  title="Ultra Maga Eagle NFT"
+>
+  <div className="w-[3rem] h-[3rem] flex items-center justify-center overflow-visible">
+    <img
+      src="https://files.catbox.moe/tvlu06.png"
+      alt="Ultra Maga Eagle NFT"
+      className="scale-150 mx-auto"
+      style={{ maxWidth: 'none', maxHeight: 'none' }}
+    />
+  </div>
+</a>
 
           <a href="https://dexscreener.com/xrpl/4d41474100000000000000000000000000000000.rwh49fhnr48feup7nx9eul4k1pelrpws3d_xrp" target="_blank" rel="noopener noreferrer" className="hover:animate-bounce" title="DexScreener">
             <div className="w-[3rem] h-[3rem] flex items-center justify-center">
@@ -89,5 +95,6 @@ export default function Hero() {
     </section>
   );
 }
+
 
 
