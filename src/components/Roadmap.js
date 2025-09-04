@@ -54,9 +54,12 @@ export default function Roadmap() {
               <span className="text-green-400 mr-2">✔</span>
               <span className="text-white/30 text-xl sm:text-3xl md:text-4xl lg:text-2xl">Create a Memedeck profile for $MAGA meme creation and contests</span>
             </li>
+            <li className="text-xl sm:text-3xl md:text-4xl lg:text-2xl text-white">
+              <span className="text-green-400 mr-2">✔</span>
+              <span className="text-white/30 text-xl sm:text-3xl md:text-4xl lg:text-2xl">Launch NFTs</span>
+            </li>
             <li className="text-xl sm:text-3xl md:text-4xl lg:text-2xl text-white">Update all sites with latest updates</li>
-            <li className="text-xl sm:text-3xl md:text-4xl lg:text-2xl text-white">Launch NFTs</li>
-          </ul>
+                      </ul>
         </div>
 
         {/* Phase 3 */}
@@ -72,3 +75,4 @@ export default function Roadmap() {
     </section>
   );
 }
+
